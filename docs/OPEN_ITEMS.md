@@ -12,6 +12,7 @@ Update this file whenever something is finished, decided or added.
 | 6 | **Code review leftovers** — allocate/return logic in 5 places → one flow or user-defined function; SharePoint indexes; `"Days"` → `TimeUnit.Days` (8 places) | Recommended | — |
 | 7 | **Verify Data Cleanup flow** on the other lists; turn off old Usage Log Cleanup | To do | Ben (in Power Automate) |
 | 8 | **Desktop App.OnStart** old-equipment filter matches `Physiotherapist = User().FullName` — if Physiotherapist is a Person column, match email instead | Question | Ben: column type |
+| 10 | **DTV Dashboard** — built, not yet pasted in Studio. Verify: CSV attachment arrives and opens in Excel (if Studio rejects `ContentBytes` as text, move the send to a flow); numbers match a manual count | To verify | Ben: paste + test |
 | 9 | **Templates** (`templates/Template_*.pa.yaml`) generated from proven helpers but **not yet pasted in Studio** — first real use: confirm they paste clean, then remove this line | To verify | First new build |
 
 ## Day 1 DTV results (7 Oct 2026, 21 DTVs, 6 auditors) — context for item 1

@@ -41,3 +41,10 @@ Control names are shared by the whole app, so delete the old screen first or Stu
 1. Add `App_Formulas_additions.txt` lines that are missing.
 2. For each screen: copy the old screen's code somewhere safe, delete the screen, add a blank screen, rename it exactly `Home` / `SelectDTV` / `Audit` / `Done`, paste the new file with Paste code.
 3. Run the app: Home → Start → pick a DTV → fill in → Submit.
+
+## Dashboard (Oct 2026)
+- New screen `Dashboard` (`DTV_Dashboard.pa.yaml`, built by `tools/dtv_generator/dashbuild.py`). Home has a new **Dashboard** tile.
+- Built for a desktop browser; under 1000 wide everything stacks in one column.
+- Needs: App > Formulas lines `C_Teal`, `DashW`, `DashX`, `DashWide`, `DashGap` (end of `App_Formulas_additions.txt`); the **Office 365 Outlook** connector; Settings → General → Data row limit **2000** ("All Time" reads up to that many audits).
+- Every audit counts (a DTV audited twice counts twice).
+- Email button: branded summary (KPI tiles, results by check, why it failed, coverage by stream, newest 30 follow-ups) + `DTV_Audits_<date>.csv` with every audit in the chosen period and stream. Sent to the signed-in user only.

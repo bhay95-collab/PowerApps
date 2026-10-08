@@ -10,7 +10,7 @@ def load(path):
 
 COL = {'C_Ink': '#0e1c2a', 'C_Ink2': '#3a5068', 'C_Muted': '#8c9bae', 'C_Bg': '#ebf2f8', 'C_Bg2': '#f4f9fc', 'C_Line': 'rgba(14,42,70,.12)',
        'C_White': '#fff', 'C_Accent': '#1a5a99', 'C_AccentDark': '#124070', 'C_AccentSoft': 'rgba(26,90,153,.10)', 'C_Good': '#0c7a52',
-       'C_GoodBg': '#e8f6f0', 'C_Danger': '#b41a1a', 'C_DangerBg': '#fef2f2', 'C_Amber': '#b26900', 'C_AmberBg': '#fff6e5'}
+       'C_GoodBg': '#e8f6f0', 'C_Danger': '#b41a1a', 'C_DangerBg': '#fef2f2', 'C_Amber': '#b26900', 'C_AmberBg': '#fff6e5', 'C_Teal': '#009099'}
 
 def color(expr, pick='last'):
     if expr is None:
@@ -250,6 +250,7 @@ def render(path, aw, ah, outpng, extra_screens=()):
     else:
         Wd = False; UI = max(0.9, min(1.25, min(aw, ah * 0.55) / 390)); PageW = min(aw, 720)
     env = {'AW': aw, 'AH': ah, 'PW': aw, 'PH': ah, 'PTW': aw, 'PTH': 70, 'SH': 0, 'SWD': 0, 'UI': UI, 'PageW': PageW, 'Wide': Wd, 'GapPx': round(20 * UI), 'ListW': (min(525 * UI, (PageW - 3 * round(20 * UI)) * 0.4) if Wd else PageW - 2 * round(20 * UI)), 'DetailX': ((aw - PageW) / 2 + 2 * round(20 * UI) + (min(525 * UI, (PageW - 3 * round(20 * UI)) * 0.4)) if Wd else (aw - PageW) / 2 + round(20 * UI)), 'DetailW': (PageW - 3 * round(20 * UI) - min(525 * UI, (PageW - 3 * round(20 * UI)) * 0.4) if Wd else PageW - 2 * round(20 * UI)), 'Gutter': (aw - PageW) / 2, 'SheetW': min(aw, 600), 'SX': aw / 1366, 'SY': ah / 768, 'SF': max(0.75, min(1.4, min(aw / 1366, ah / 768))), 'SR': min(aw / 1366, ah / 768)}
+    env['DashW'] = min(aw - round(48 * UI), 1400); env['DashX'] = (aw - env['DashW']) / 2; env['DashWide'] = aw >= 1000; env['DashGap'] = round(16 * UI)
     body = ''
     for kn, kc in flat(scr.get('Children') or []):
         kc['_inauto'] = False

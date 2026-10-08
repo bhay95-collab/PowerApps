@@ -39,7 +39,8 @@ Try sizes: 375×700, 360×640 (small phone), 768×1024 (tablet).
 
 Formulas with newlines / `: ` / ` #` are written as block scalars automatically.
 
-- DTV app: `cd tools/dtv_generator && python3 dtvbuild.py` → rewrites `powerapps/dtv/*.pa.yaml`.
+- DTV app: `cd tools/dtv_generator && python3 dtvbuild.py && python3 dashbuild.py` → rewrites `powerapps/dtv/*.pa.yaml` (dashbuild = Dashboard).
+- Simulator knows `DashW/DashX/DashWide/DashGap`: render the dashboard at `1440 2200` (wide) and `390 3000` (phone).
 - Templates: `cd tools/templates && python3 build_templates.py` → rewrites `templates/Template_*.pa.yaml`. Copy this file as the start of a new app's builder.
 
 ## Desktop responsive converter

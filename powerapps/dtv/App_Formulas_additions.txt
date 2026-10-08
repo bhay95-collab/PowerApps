@@ -25,3 +25,12 @@ HeaderImage = "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.
 UI = Max(0.9, Min(1.25, Min(App.Width, App.Height * 0.55) / 390));
 PageW = Min(App.Width, 720);
 Gutter = (App.Width - PageW) / 2;
+
+// ---- Dashboard (added Oct 2026): extra colour and the wide-screen layout
+C_Teal = RGBA(0, 144, 153, 1);
+// DashW is the width of the dashboard content (stops at 1400); DashX the space either side.
+DashW = Min(App.Width - Round(48 * UI, 0), 1400);
+DashX = (App.Width - DashW) / 2;
+// side-by-side panels from 1000 wide (desktop browser); one column on phones
+DashWide = App.Width >= 1000;
+DashGap = Round(16 * UI, 0);

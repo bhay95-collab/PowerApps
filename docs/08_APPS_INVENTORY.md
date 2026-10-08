@@ -58,15 +58,16 @@ Roles: Director, Team Leader, CA4 → manager tools. Training managers from `Tra
 
 ## DTV Audit
 
-Source = generator `tools/dtv_generator/dtvbuild.py` → `powerapps/dtv/*.pa.yaml`. `varStream` set in App.OnStart.
+Source = generators `tools/dtv_generator/dtvbuild.py` (Home, SelectDTV, ReAuditList, Audit, Done) and `dashbuild.py` (Dashboard) → `powerapps/dtv/*.pa.yaml`. Needs Office 365 Outlook connector and data row limit 2000. `varStream` set in App.OnStart.
 
 | Screen | Purpose |
 |---|---|
-| `Home` | Start an Audit (your stream, or all if none), Your Stream progress, All DTVs tile, Re-audit tile. OnVisible builds `colRecentAudits`, `colAllTags`, counts/percentages |
+| `Home` | Start an Audit (your stream, or all if none), Your Stream progress, All DTVs tile, Re-audit tile, Dashboard tile. OnVisible builds `colRecentAudits`, `colAllTags`, counts/percentages |
 | `SelectDTV` | Search; one row of pills (My Stream / other streams / All) from `colPills`; hides DTVs audited in last month |
 | `ReAuditList` | Latest audit per DTV in last month (`colReaudit`); Needs Follow-up / All Audited; red/green stripe |
 | `Audit` | Re-audit amber card; info; 1 Found · 2 Login + Patient list · 3 Print · 4 Kit + Folder · 5 Staff + Education · 6 Photo · Notes; sticky submit; writes `ReAudit` |
 | `Done` | Thank you + result line; Audit Another; Home |
+| `Dashboard` | Desktop-first (one column under 1000 wide). Filters: period (7 / 30 / 90 days / all) + stream. KPI tiles (audits, DTVs covered, all clear, need follow-up, not found), results by check, why it failed (print/login reasons), coverage by stream, education given, top auditors, audit list with search. Tapping a tile, check, reason, stream or auditor filters the list. **Email Me the Data**: branded summary + CSV of every audit in the period/stream. Counts **every audit** (Ben's choice), not latest per DTV. Source: `tools/dtv_generator/dashbuild.py` |
 
 Rule: any audit in the last month (rolling) drops the DTV off the to-do list — including "not found" (decision pending).
 Manual Studio edits already mirrored in repo: `lblRemovePhoto_Aud.Color = RGBA(176, 52, 40, 1)`; Home OnVisible `Set(varStreamPick, Blank())`; `lblProg_Hm` ends "audited".

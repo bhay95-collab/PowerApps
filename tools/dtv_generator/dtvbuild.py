@@ -47,7 +47,15 @@ tileRe=inflow('conTileRe_Hm',r(90),fill='C_White',border='C_Line',radius=r(20),c
   ico('icoTileGoRe_Hm','ChevronRight',f"Parent.Width - {r(38)}",r(33),24,'C_Muted'),
   tbtn('btnTileRe_Hm','Navigate(ReAuditList, ScreenTransition.Cover)'),
 ])
-body=vbody('conBody_Hm',[hero,stream,cap,tile,tileRe],gap=15,top=20,bottom=30,scroll=True)
+tileDash=inflow('conTileDash_Hm',r(90),fill='C_White',border='C_Line',radius=r(20),children=[
+  box('conTileIcDash_Hm',x=r(18),y=r(18),w=r(55),h=r(55),fill='C_AccentSoft',radius=r(28),children=[ico('icoTileDash_Hm','Eye',r(13),r(13),30,'C_Accent',True)]),
+  lbl('lblTileTDash_Hm','"Dashboard"',x=r(88),y=r(18),w=f"Parent.Width - {r(130)}",h=r(26),size=19,color='C_Ink',bold=True),
+  lbl('lblTileSDash_Hm','"Results and data extract"',x=r(88),y=r(46),w=f"Parent.Width - {r(130)}",h=r(22),size=15,color='C_Muted'),
+  ico('icoTileGoDash_Hm','ChevronRight',f"Parent.Width - {r(38)}",r(33),24,'C_Muted'),
+  tbtn('btnTileDash_Hm','Navigate(Dashboard, ScreenTransition.Cover)'),
+])
+endHm=inflow('conEnd_Hm',r(16),extra={'DropShadow':'DropShadow.None'})
+body=vbody('conBody_Hm',[hero,stream,cap,tile,tileRe,tileDash,endHm],gap=15,top=20,bottom=30,scroll=True)
 onv_hm='''Set(varStreamPick, Blank());
 // back on Home: the next audit is a normal audit unless Re-audit is chosen
 Set(varReaudit, false);
