@@ -45,6 +45,8 @@ Control names are shared by the whole app, so delete the old screen first or Stu
 ## Dashboard (Oct 2026)
 - New screen `Dashboard` (`DTV_Dashboard.pa.yaml`, built by `tools/dtv_generator/dashbuild.py`). Home has a new **Dashboard** tile.
 - Built for a desktop browser; under 1000 wide everything stacks in one column.
-- Needs: App > Formulas lines `C_Teal`, `DashW`, `DashX`, `DashWide`, `DashGap` (end of `App_Formulas_additions.txt`); the **Office 365 Outlook** connector; Settings → General → Data row limit **2000** ("All Time" reads up to that many audits).
+- No date filter: the audit is a one-off, so the Dashboard always shows every DTV's latest audit. Stream pills only.
+- Email goes through the flow `DTVDashboardEmail` (`powerapps/flows/DTV_Dashboard_Email.zip`); import it and add it to the app.
+- Needs: App > Formulas lines `C_Teal`, `DashW`, `DashX`, `DashWide`, `DashGap` (end of `App_Formulas_additions.txt`); Settings → General → Data row limit **2000** ("All Time" reads up to that many audits).
 - Final state only: each DTV counted once, using its latest audit in the period. Default period: All Time.
 - Email button: branded summary (KPI tiles, results by check, why it failed, coverage by stream, newest 30 follow-ups) + `DTV_Audits_<date>.csv` with one row per DTV (latest audit, plus how many audits it has had) in the chosen period and stream. Sent to the signed-in user only.

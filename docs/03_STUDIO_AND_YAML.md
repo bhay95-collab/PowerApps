@@ -48,6 +48,7 @@ Screens:
 - Text literals: `Text: ="Hello"`. Empty text: `Text: =""`.
 - **Studio omits default values when exporting.** When writing by hand, set `Width`, `Height`, `Size`, `Font` explicitly on every control.
 - Children order = z-order. Last child is on top (put transparent tap buttons last).
+- **Gallery rows: put everything in ONE container** (`Width: Parent.TemplateWidth`, `Height: Parent.TemplateHeight`) and position controls inside it. Controls placed directly in a gallery template came out at X = 0 in Studio (DTV Dashboard, Oct 2026).
 - Property keys sorted alphabetically (the generator does this; keeps diffs clean).
 
 ---

@@ -58,7 +58,7 @@ Roles: Director, Team Leader, CA4 → manager tools. Training managers from `Tra
 
 ## DTV Audit
 
-Source = generators `tools/dtv_generator/dtvbuild.py` (Home, SelectDTV, ReAuditList, Audit, Done) and `dashbuild.py` (Dashboard) → `powerapps/dtv/*.pa.yaml`. Needs Office 365 Outlook connector and data row limit 2000. `varStream` set in App.OnStart.
+Source = generators `tools/dtv_generator/dtvbuild.py` (Home, SelectDTV, ReAuditList, Audit, Done) and `dashbuild.py` (Dashboard) → `powerapps/dtv/*.pa.yaml`. Needs flow `DTVDashboardEmail` and data row limit 2000. `varStream` set in App.OnStart.
 
 | Screen | Purpose |
 |---|---|
@@ -67,7 +67,7 @@ Source = generators `tools/dtv_generator/dtvbuild.py` (Home, SelectDTV, ReAuditL
 | `ReAuditList` | Latest audit per DTV in last month (`colReaudit`); Needs Follow-up / All Audited; red/green stripe |
 | `Audit` | Re-audit amber card; info; 1 Found · 2 Login + Patient list · 3 Print · 4 Kit + Folder · 5 Staff + Education · 6 Photo · Notes; sticky submit; writes `ReAudit` |
 | `Done` | Thank you + result line; Audit Another; Home |
-| `Dashboard` | Desktop-first (one column under 1000 wide). Filters: period (7 / 30 / 90 days / all) + stream. KPI tiles (audits, DTVs covered, all clear, need follow-up, not found), results by check, why it failed (print/login reasons), coverage by stream, education given, top auditors, audit list with search. Tapping a tile, check, reason, stream or auditor filters the list. **Email Me the Data**: branded summary + CSV of every audit in the period/stream. Shows the **final state**: one row per DTV = its latest audit in the period (earlier audits and re-audits are replaced). Default period All Time. Source: `tools/dtv_generator/dashbuild.py` |
+| `Dashboard` | Desktop-first (one column under 1000 wide). Filter: stream (no date filter; one-off audit). KPI tiles (audits, DTVs covered, all clear, need follow-up, not found), results by check, why it failed (print/login reasons), coverage by stream, education given, top auditors, audit list with search. Tapping a tile, check, reason, stream or auditor filters the list. **Email Me the Data**: branded summary + CSV of every audit in the period/stream. Shows the **final state**: one row per DTV = its latest audit (earlier audits are replaced by the re-audit). Email via flow `DTVDashboardEmail`. Source: `tools/dtv_generator/dashbuild.py` |
 
 Rule: any audit in the last month (rolling) drops the DTV off the to-do list — including "not found" (decision pending).
 Manual Studio edits already mirrored in repo: `lblRemovePhoto_Aud.Color = RGBA(176, 52, 40, 1)`; Home OnVisible `Set(varStreamPick, Blank())`; `lblProg_Hm` ends "audited".

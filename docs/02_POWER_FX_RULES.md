@@ -169,7 +169,11 @@ Data row limit: set **2000** (Settings → General). Above that, non-delegable f
 
 ---
 
-## 8. User identity
+## 8. Email attachments
+
+`Office365Outlook.SendEmailV2(..., { Attachments: Table({ Name, ContentBytes: <text> }) })` is **rejected** in Studio: ContentBytes must be a file/blob, not text. To attach a CSV or text file, pass the text to a flow (Power Apps V2 trigger) and attach it there (see `DTVDashboardEmail`).
+
+## 9. User identity
 
 ```
 MeEmail = Lower(User().Email);
@@ -181,6 +185,6 @@ Roles come from `ClinicianDirectory.Access` (Director, Team Leader, HP4, HP3, CA
 
 ---
 
-## 9. After editing Formulas / OnVisible
+## 10. After editing Formulas / OnVisible
 
 Run **Run OnVisible** (⋯ on the screen) in Studio to clear stale red errors. Save, close, reopen if errors persist.
