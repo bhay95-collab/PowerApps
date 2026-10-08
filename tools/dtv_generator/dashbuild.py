@@ -42,7 +42,7 @@ hdr = inflow('conHdr_Dsh', r(95), w='App.Width', fill=HDR_FILL, radius='0', extr
     N('imgHdr_Dsh', 'Image@2.2.3', props={'Height': 'Parent.Height', 'Image': 'HeaderImage', 'ImagePosition': 'ImagePosition.Fill', 'Width': 'Parent.Width'}),
     N('btnBack_Dsh', 'ModernButton@1.0.0', props=dict({'Align': 'Align.Center', 'Appearance': 'ButtonAppearance.Transparent', 'Color': 'C_White', 'FontWeight': '""', 'Height': r(60), 'Icon': '"ChevronLeft"', 'OnSelect': 'Navigate(Home, ScreenTransition.UnCoverRight)', 'Size': r(24), 'Text': '""', 'VerticalAlign': 'VerticalAlign.Middle', 'Width': r(60), 'X': f'DashX - {r(10)}', 'Y': r(18)}, **SBOX)),
     lbl('lblHdrT_Dsh', '"Audit Dashboard"', x=f'DashX + {r(55)}', y=r(12), w=f'DashW - {r(55)} - If({WIDE}, {r(250)}, {r(80)})', h=r(42), size=24, color='C_White', bold=True),
-    lbl('lblHdrS_Dsh', f'{RANGE} & "  ·  " & {STREAM} & "  ·  " & varDashN & If(varDashN = 1, " audit", " audits")', x=f'DashX + {r(55)}', y=r(53), w=f'DashW - {r(55)} - If({WIDE}, {r(250)}, {r(80)})', h=r(25), size=15, color='RGBA(255, 255, 255, 0.85)'),
+    lbl('lblHdrS_Dsh', f'{RANGE} & "  ·  " & {STREAM} & "  ·  " & varDashN & If(varDashN = 1, " DTV", " DTVs")', x=f'DashX + {r(55)}', y=r(53), w=f'DashW - {r(55)} - If({WIDE}, {r(250)}, {r(80)})', h=r(25), size=15, color='RGBA(255, 255, 255, 0.85)'),
     box('conEmail_Dsh', x=f'DashX + DashW - If({WIDE}, {r(230)}, {r(60)})', y=r(22), w=f'If({WIDE}, {r(230)}, {r(60)})', h=r(50), fill='RGBA(255, 255, 255, 0.16)', border='RGBA(255, 255, 255, 0.45)', radius=r(25), children=[
         N('btnEmail_Dsh', 'ModernButton@1.0.0', props=dict({'Align': 'Align.Center', 'Appearance': 'ButtonAppearance.Transparent', 'Color': 'C_White', 'DisplayMode': 'If(varSaving || varDashN = 0, DisplayMode.Disabled, DisplayMode.Edit)', 'Font': 'AppFont', 'FontWeight': 'FontWeight.Bold', 'Height': 'Parent.Height', 'Icon': '"Mail"', 'OnSelect': 'Select(btnSend_Dsh)', 'Size': r(F(15)), 'Text': f'If({WIDE}, If(varSaving, "Sending...", "Email Me the Data"), "")', 'VerticalAlign': 'VerticalAlign.Middle', 'Width': 'Parent.Width'}, **rad(r(25)), **NOSB))]),
 ])
@@ -62,10 +62,10 @@ filters = inflow('conFilters_Dsh', f'If({WIDE}, {r(76)}, {r(136)})', w='DashW', 
 
 # ------------------------------------------------------------------ KPI tiles
 KPIS = [  # key, caption, value, sub, colour, focus
-    ('Aud', 'AUDITS', 'varDashN', 'varDashReN & If(varDashReN = 1, " re-audit", " re-audits")', 'C_Ink', ''),
-    ('Cov', 'DTVS COVERED', 'varDashCovN & " / " & varDashRegN', 'Text(If(varDashRegN > 0, varDashCovN / varDashRegN, 0), "0%") & " of DTVs audited"', 'C_Accent', ''),
-    ('Clr', 'ALL CLEAR', 'varDashClearN', 'Text(If(varDashN > 0, varDashClearN / varDashN, 0), "0%") & " of audits"', GREEN, 'Clear'),
-    ('Fol', 'NEED FOLLOW-UP', 'varDashFollowN', 'Text(If(varDashN > 0, varDashFollowN / varDashN, 0), "0%") & " of audits"', RED, 'Follow'),
+    ('Aud', 'DTVS AUDITED', 'varDashN & " / " & varDashRegN', 'Text(If(varDashRegN > 0, varDashCovN / varDashRegN, 0), "0%") & " of the register"', 'C_Ink', ''),
+    ('Cov', 'NOT YET AUDITED', 'Max(0, varDashRegN - varDashCovN)', '"DTVs with no audit"', 'C_Accent', ''),
+    ('Clr', 'ALL CLEAR', 'varDashClearN', 'Text(If(varDashN > 0, varDashClearN / varDashN, 0), "0%") & " of DTVs"', GREEN, 'Clear'),
+    ('Fol', 'NEED FOLLOW-UP', 'varDashFollowN', 'Text(If(varDashN > 0, varDashFollowN / varDashN, 0), "0%") & " of DTVs"', RED, 'Follow'),
     ('Nf', 'DTV NOT FOUND', 'varDashNotFoundN', '"Tap to list them"', 'C_Amber', 'Found'),
 ]
 TH = 112
@@ -98,8 +98,8 @@ galChk = N('galChecks_Dsh', 'Gallery@2.15.0', 'Vertical', {'Height': f'7 * {r(RH
     tbtn('btnChk_Dsh', f'Set(varDashFocus, If({selC}, "", ThisItem.Key));\nSet(varDashWhyR, "");\nIf(ThisItem.Key in ["Print", "Login"], Set(varDashWhyKind, ThisItem.Key))'),
 ])
 pChecks = panel('Checks', 'RESULTS BY CHECK', [galChk,
-    lbl('lblChkHint_Dsh', '"Green passed, red failed. Tap a row to list those audits below."', x=r(20), y=f'Parent.Height - {r(34)}', w=f'Parent.Width - {r(40)}', h=r(22), size=13, color='C_Muted')],
-    sub='"Each audit counted once per check"')
+    lbl('lblChkHint_Dsh', '"Green passed, red failed. Tap a row to list those DTVs below."', x=r(20), y=f'Parent.Height - {r(34)}', w=f'Parent.Width - {r(40)}', h=r(22), size=13, color='C_Muted')],
+    sub='"Latest audit for each DTV"')
 
 # ------------------------------------------------------------------ why it failed
 WH = 56
@@ -119,7 +119,7 @@ galWhy = N('galWhy_Dsh', 'Gallery@2.15.0', 'Vertical', {'Height': f'6 * {r(WH)}'
 pWhy = panel('Why', 'WHY IT FAILED', [kindpill('Print', 'Print', f'Parent.Width - {r(216)}'), kindpill('Login', 'Login', f'Parent.Width - {r(112)}'), galWhy,
     lbl('lblWhyNone_Dsh', 'If(varDashWhyKind = "Print", "No print failures", "No login failures") & " in this period"', x=r(20), y=r(150), w=f'Parent.Width - {r(40)}', h=r(30), size=15, color='C_Muted', align='Align.Center',
         visible='If(varDashWhyKind = "Print", varDashMaxPrint, varDashMaxLogin) = 0')],
-    sub='"Tap a reason to list those audits"')
+    sub='"Tap a reason to list those DTVs"')
 
 # ------------------------------------------------------------------ coverage / education / auditors
 SH = 56
@@ -134,14 +134,14 @@ def listpanel(name, title, sub, items, label, value, frac, color, onsel=None, se
     kids = [g]
     if empty: kids.append(lbl(f'lbl{name}None_Dsh', f'"{empty}"', x=r(20), y=r(150), w=f'Parent.Width - {r(40)}', h=r(30), size=15, color='C_Muted', align='Align.Center', visible=f'CountRows(gal{name}_Dsh.AllItems) = 0 || Sum(gal{name}_Dsh.AllItems, N) = 0'))
     return panel(name, title, kids, sub=sub)
-pCov = listpanel('Cov', 'COVERAGE BY STREAM', '"DTVs audited in this period"', 'colDashCov', 'ThisItem.Short', 'ThisItem.Done & " / " & ThisItem.Total',
+pCov = listpanel('Cov', 'COVERAGE BY STREAM', '"DTVs with an audit in this period"', 'colDashCov', 'ThisItem.Short', 'ThisItem.Done & " / " & ThisItem.Total',
                  'If(ThisItem.Total > 0, ThisItem.Done / ThisItem.Total, 0)', 'If(ThisItem.Done >= ThisItem.Total && ThisItem.Total > 0, ' + GREEN + ', C_Accent)',
                  onsel='Set(varDashStream, If(varDashStream = ThisItem.Stream, "ALL", ThisItem.Stream));\nSelect(btnCalc_Dsh)', selexpr='varDashStream = ThisItem.Stream')
-pEdu = listpanel('Edu', 'EDUCATION GIVEN', '"Share of audits where it was given"', 'colDashEdu', 'ThisItem.Item', 'ThisItem.N & "  ·  " & Text(If(varDashN > 0, ThisItem.N / varDashN, 0), "0%")',
+pEdu = listpanel('Edu', 'EDUCATION GIVEN', '"Share of DTVs (latest audit)"', 'colDashEdu', 'ThisItem.Item', 'ThisItem.N & "  ·  " & Text(If(varDashN > 0, ThisItem.N / varDashN, 0), "0%")',
                  'If(varDashN > 0, ThisItem.N / varDashN, 0)', 'C_Teal', empty='No education recorded in this period')
-pBy = listpanel('By', 'AUDITORS', '"Top 5 by audits. Tap to list their audits"', 'colDashBy', 'ThisItem.Auditor', 'ThisItem.N',
+pBy = listpanel('By', 'AUDITORS', '"Latest audit by. Tap to list their DTVs"', 'colDashBy', 'ThisItem.Auditor', 'ThisItem.N',
                 'If(varDashMaxBy > 0, ThisItem.N / varDashMaxBy, 0)', 'C_Accent',
-                onsel='Set(varDashBy, If(varDashBy = ThisItem.Auditor, "", ThisItem.Auditor))', selexpr='varDashBy = ThisItem.Auditor', empty='No audits in this period')
+                onsel='Set(varDashBy, If(varDashBy = ThisItem.Auditor, "", ThisItem.Auditor))', selexpr='varDashBy = ThisItem.Auditor', empty='No DTVs audited in this period')
 
 # ------------------------------------------------------------------ audit list
 FOCUS = ('Concat(Filter(Table({ t: Switch(varDashFocus, "Follow", "Needs follow-up", "Clear", "All clear", "Found", "DTV not found", "Login", "Login failed", "PList", "Patient list failed", '
@@ -177,14 +177,14 @@ lrow = box('conRow_Dsh', x='1', y=r(5), w=f'Parent.TemplateWidth - {r(12)}', h=r
     box('conStripe_Dsh', w=r(8), h='Parent.Height', fill=f'If(ThisItem.Follow, {RED}, {GREEN})', extra={'RadiusTopLeft': r(16), 'RadiusBottomLeft': r(16), 'RadiusTopRight': '0', 'RadiusBottomRight': '0'}),
     lbl('lblRowT_Dsh', 'ThisItem.Dept & If(IsBlank(ThisItem.Loc), "", "  ·  " & ThisItem.Loc)', x=r(22), y=r(8), w=f'Parent.Width - {r(240)}', h=r(24), size=16, color='C_Ink', bold=True),
     lbl('lblRowW_Dsh', 'Text(ThisItem.When, "ddd d mmm yyyy, h:mm AM/PM")', x=f'Parent.Width - {r(220)}', y=r(8), w=r(206), h=r(24), size=13, color='C_Ink2', bold=True, align='Align.Right'),
-    lbl('lblRowS_Dsh', 'ThisItem.Title & "  ·  " & ThisItem.Stream & "  ·  " & ThisItem.Auditor & If(ThisItem.ReAudit, "  ·  Re-audit", "")', x=r(22), y=r(32), w=f'Parent.Width - {r(36)}', h=r(20), size=13, color='C_Muted'),
+    lbl('lblRowS_Dsh', 'ThisItem.Title & "  ·  " & ThisItem.Stream & "  ·  " & ThisItem.Auditor & If(ThisItem.AuditN > 1, "  ·  " & ThisItem.AuditN & " audits, showing latest", "")', x=r(22), y=r(32), w=f'Parent.Width - {r(36)}', h=r(20), size=13, color='C_Muted'),
     lbl('lblRowI_Dsh', 'If(ThisItem.Follow, ThisItem.Fails, "All clear")', x=r(22), y=r(54), w=f'Parent.Width - {r(36)}', h=r(20), size=14, color=f'If(ThisItem.Follow, {RED}, {GREEN})', bold=True),
     lbl('lblRowD_Dsh', DETAIL, x=r(22), y=r(74), w=f'Parent.Width - {r(36)}', h=r(20), size=13, color='C_Ink2'),
 ])
 galList = N('galList_Dsh', 'Gallery@2.15.0', 'Vertical', {'Height': f'Parent.Height - {r(128)}', 'Items': ITEMS, 'TemplatePadding': '0', 'TemplateSize': r(LH), 'Width': f'Parent.Width - {r(28)}', 'X': r(16), 'Y': r(118)}, [lrow])
 nf = '!IsBlank(varDashFocus) || !IsBlank(varDashWhyR) || !IsBlank(varDashBy)'
-pList = panel('List', 'AUDITS', [
-    lbl('lblListN_Dsh', 'CountRows(galList_Dsh.AllItems) & If(CountRows(galList_Dsh.AllItems) = 1, " audit", " audits") & If(' + nf + ', " match", " in this period") & ", newest first"', x=r(20), y=r(38), w=f'Parent.Width - {r(40)}', h=r(22), size=14, color='C_Ink2', bold=True),
+pList = panel('List', 'DTVS', [
+    lbl('lblListN_Dsh', 'CountRows(galList_Dsh.AllItems) & If(CountRows(galList_Dsh.AllItems) = 1, " DTV", " DTVs") & If(' + nf + ', " match", " audited in this period") & ", latest audit each, newest first"', x=r(20), y=r(38), w=f'Parent.Width - {r(40)}', h=r(22), size=14, color='C_Ink2', bold=True),
     box('conFocus_Dsh', x=r(20), y=r(66), w=f'If({WIDE}, Parent.Width - {r(400)}, Parent.Width - {r(40)})', h=r(40), fill='C_AccentSoft', border='C_Accent', radius=r(20), visible=nf, children=[
         lbl('lblFocus_Dsh', '"Showing: " & ' + FOCUS, x=r(16), w=f'Parent.Width - {r(130)}', h=r(40), size=14, color='C_Accent', bold=True, extra={'VerticalAlign': 'VerticalAlign.Middle'}),
         lbl('lblFocusX_Dsh', '"Clear  ✕"', x=f'Parent.Width - {r(110)}', w=r(96), h=r(40), size=14, color='C_Accent', bold=True, align='Align.Right', extra={'VerticalAlign': 'VerticalAlign.Middle'}),
@@ -192,7 +192,7 @@ pList = panel('List', 'AUDITS', [
     box('conSearch_Dsh', x=f'Parent.Width - {r(360)}', y=r(14), w=r(340), h=r(44), fill='C_White', border=LINE, radius=r(14), visible=WIDE, children=[
         ico('icoSearch_Dsh', 'Search', r(12), r(11), 22, 'C_Muted'),
         N('txtSearch_Dsh', 'Classic/TextInput@2.3.2', props={'BorderStyle': 'BorderStyle.None', 'Color': 'C_Ink', 'Default': '""', 'DelayOutput': 'true', 'Fill': 'RGBA(0, 0, 0, 0)', 'Font': 'AppFont', 'Height': 'Parent.Height', 'HintText': '"Search department, location, tag, auditor"', 'Size': r(F(14)), 'Width': f'Parent.Width - {r(44)}', 'X': r(40)})]),
-    lbl('lblListNone_Dsh', 'If(varDashN = 0, "No audits in this period", "No audits match")', x=r(20), y=r(200), w=f'Parent.Width - {r(40)}', h=r(30), size=16, color='C_Muted', align='Align.Center', visible='CountRows(galList_Dsh.AllItems) = 0'),
+    lbl('lblListNone_Dsh', 'If(varDashN = 0, "No DTVs audited in this period", "No DTVs match")', x=r(20), y=r(200), w=f'Parent.Width - {r(40)}', h=r(30), size=16, color='C_Muted', align='Align.Center', visible='CountRows(galList_Dsh.AllItems) = 0'),
     galList])
 pList.props.update({'Width': 'DashW', 'Height': r(760), 'AlignInContainer': 'AlignInContainer.SetByContainer', 'FillPortions': '0', 'LayoutMinHeight': r(760)})
 
@@ -213,19 +213,23 @@ def hidden(name, onselect):
     return N(name, 'ModernButton@1.0.0', props=dict({'Align': 'Align.Center', 'FontWeight': '""', 'Height': '1', 'OnSelect': onselect, 'Size': r(11), 'Text': '""', 'VerticalAlign': 'VerticalAlign.Middle', 'Visible': 'false', 'Width': '1'}, **SBOX))
 
 SHORT = 'Trim(First(Split(Substitute(s.Value, ",", "&"), "&")).Value)'
-LOAD = f'''// LOAD: audits in the chosen period, flattened to plain text columns (one row per audit)
+LOAD = f'''// LOAD: audits in the chosen period, flattened to plain text columns (one row per DTV, latest audit)
 Set(varDashLoading, true);
 Refresh(Audit_Results);
 ClearCollect(colDashReg, DTV_Register);
+// newest first, so LookUp below returns each DTV's latest audit
 If(
     varDashDays > 0,
-    ClearCollect(colDashSrc, Filter(Audit_Results, Created >= DateAdd(Today(), -varDashDays, TimeUnit.Days))),
-    ClearCollect(colDashSrc, Audit_Results)
+    ClearCollect(colDashSrc, SortByColumns(Filter(Audit_Results, Created >= DateAdd(Today(), -varDashDays, TimeUnit.Days)), "Created", SortOrder.Descending)),
+    ClearCollect(colDashSrc, SortByColumns(Audit_Results, "Created", SortOrder.Descending))
 );
+// FINAL STATE: one row per DTV = its latest audit in the period (earlier audits and re-audits are replaced)
 ClearCollect(
     colDashRows,
     ForAll(
-        colDashSrc As a,
+        Distinct(colDashSrc, Title) As u,
+        With(
+            {{ a: LookUp(colDashSrc, Title = u.Value), cnt: CountIf(colDashSrc, Title = u.Value) }},
         With(
             {{
                 d: LookUp(colDashReg, Title = a.Title),
@@ -276,8 +280,10 @@ ClearCollect(
                 Notes: a.Notes,
                 ReAudit: !IsBlank(a.ReAudit),
                 Fails: fails,
-                Follow: !IsBlank(fails)
+                Follow: !IsBlank(fails),
+                AuditN: cnt
             }}
+        )
         )
     )
 );
@@ -312,7 +318,6 @@ edurows = ', '.join(f'{{ V: "{e}" }}' for e in EDU)
 CALC = f'''// CALC: apply the stream filter, then every number and chart on the screen
 ClearCollect(colDash, Filter(colDashRows, varDashStream = "ALL" || Stream = varDashStream || Stream = "All"));
 Set(varDashN, CountRows(colDash));
-Set(varDashReN, CountIf(colDash, ReAudit));
 Set(varDashFollowN, CountIf(colDash, Follow));
 Set(varDashClearN, varDashN - varDashFollowN);
 Set(varDashNotFoundN, CountIf(colDash, FoundRes = "No"));
@@ -346,7 +351,7 @@ Set(varDashMaxBy, Max(colDashBy, N))'''
 def q(expr):
     return f'Char(34) & Substitute(Substitute(Substitute(Coalesce({expr}, ""), Char(34), Char(34) & Char(34)), Char(13), " "), Char(10), " ") & Char(34)'
 CSV_COLS = [('Audit Date', 'Text(When, "yyyy-mm-dd hh:mm")'), ('Asset Tag', 'Title'), ('Department', 'Dept'), ('Location', 'Loc'), ('Stream', 'Stream'), ('Auditor', 'Auditor'),
-            ('Re-audit', 'If(ReAudit, "Yes", "No")'), ('Result', 'If(Follow, "Needs follow-up", "All clear")'), ('Issues Summary', 'Fails'),
+            ('Audits Done', 'Text(AuditN)'), ('Latest Was Re-audit', 'If(ReAudit, "Yes", "No")'), ('Result', 'If(Follow, "Needs follow-up", "All clear")'), ('Issues Summary', 'Fails'),
             ('DTV Found', 'FoundRes'), ('Login Worked', 'LoginRes'), ('Login Fail Reason', 'LoginWhy'), ('Login Notes', 'LoginNotes'), ('Patient List Worked', 'PListRes'),
             ('Print Worked', 'PrintRes'), ('Print Fail Reason', 'PrintWhy'), ('Print Notes', 'PrintNotes'), ('Folder and Kit Found', 'FolderRes'), ('Contents List In Folder', 'ListRes'),
             ('Kit Matched', 'MatchRes'), ('Missing Items', 'Missing'), ('Extra Items', 'Extra'), ('Spoke To', 'Spoke'), ('Education Given', 'Edu'), ('Issues Raised', 'Issues'), ('Notes', 'Notes')]
@@ -362,10 +367,10 @@ def kcell(label, val, sub, col):
                 "<div style='font-size:24px;font-weight:700;color:{col};padding-top:4px;'>" & {val} & "</div>" &
                 "<div style='font-size:12px;color:#3A5068;padding-top:2px;'>" & {sub} & "</div>" &
             "</td></tr></table></td>" &''')
-SEND = f'''// EMAIL: branded summary + CSV of every audit in the chosen period and stream (Office 365 Outlook connector)
+SEND = f'''// EMAIL: branded summary + CSV of the final state of every DTV (latest audit each) in the chosen period and stream (Office 365 Outlook connector)
 If(
     varDashN = 0,
-    Notify("No audits in this period to send.", NotificationType.Information),
+    Notify("No DTVs audited in this period.", NotificationType.Information),
     Set(varSaving, true);
     Set(varDashRange, {RANGE});
     Set(varDashStreamLbl, {STREAM});
@@ -382,21 +387,21 @@ If(
     // ---- HTML summary
     Set(
         varDashEmail,
-        Substitute(Substitute(EmailHead, "{{{{TITLE}}}}", "DTV Audit Summary"), "{{{{SUB}}}}", varDashRange & "&nbsp;&nbsp;|&nbsp;&nbsp;" & varDashStreamLbl & "&nbsp;&nbsp;|&nbsp;&nbsp;" & varDashN & If(varDashN = 1, " audit", " audits")) &
+        Substitute(Substitute(EmailHead, "{{{{TITLE}}}}", "DTV Audit Summary"), "{{{{SUB}}}}", varDashRange & "&nbsp;&nbsp;|&nbsp;&nbsp;" & varDashStreamLbl & "&nbsp;&nbsp;|&nbsp;&nbsp;" & varDashN & If(varDashN = 1, " DTV", " DTVs")) &
 
         // greeting
         "<tr><td style='padding:28px 32px 8px 32px;font-size:15px;line-height:22px;color:#3A5068;'>" &
             "Hi " & First(Split(User().FullName, " ")).Value & ",<br><br>" &
             "Here is the ieMR Downtime Viewer audit summary for <b style='color:#0E1C2A;'>" & Lower(varDashRange) & "</b> (" & varDashStreamLbl & "). " &
-            "Every audit in this view is in the attached CSV file, which opens in Excel." &
+            "Each DTV is counted once, using its latest audit. The attached CSV file (opens in Excel) has one row per DTV." &
         "</td></tr>" &
 
         // KPI tiles
         "<tr><td style='padding:16px 28px 4px 28px;'><table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0'><tr>" &
-            {kcell('AUDITS', 'varDashN', 'varDashReN & " re-audits"', '#0E1C2A')}
-            {kcell('DTVS COVERED', 'varDashCovN & " / " & varDashRegN', 'Text(If(varDashRegN > 0, varDashCovN / varDashRegN, 0), "0%") & " audited"', '#1A5A99')}
-            {kcell('ALL CLEAR', 'varDashClearN', 'Text(If(varDashN > 0, varDashClearN / varDashN, 0), "0%") & " of audits"', '#1E7A50')}
-            {kcell('FOLLOW-UP', 'varDashFollowN', 'Text(If(varDashN > 0, varDashFollowN / varDashN, 0), "0%") & " of audits"', '#B03428')}
+            {kcell('DTVS AUDITED', 'varDashN', '"of " & varDashRegN & " on register"', '#0E1C2A')}
+            {kcell('NOT AUDITED', 'Max(0, varDashRegN - varDashCovN)', '"DTVs"', '#1A5A99')}
+            {kcell('ALL CLEAR', 'varDashClearN', 'Text(If(varDashN > 0, varDashClearN / varDashN, 0), "0%") & " of DTVs"', '#1E7A50')}
+            {kcell('FOLLOW-UP', 'varDashFollowN', 'Text(If(varDashN > 0, varDashFollowN / varDashN, 0), "0%") & " of DTVs"', '#B03428')}
             {kcell('NOT FOUND', 'varDashNotFoundN', '"DTVs"', '#B26900')}
         "</tr></table></td></tr>" &
 
@@ -511,7 +516,7 @@ If(
     Set(varSaving, false)
 )'''
 
-ONV = f'''If(IsBlank(varDashDays), Set(varDashDays, 30));
+ONV = f'''If(IsBlank(varDashDays), Set(varDashDays, 0));
 If(IsBlank(varDashStream), Set(varDashStream, "ALL"));
 If(IsBlank(varDashWhyKind), Set(varDashWhyKind, "Print"));
 Set(varDashFocus, "");

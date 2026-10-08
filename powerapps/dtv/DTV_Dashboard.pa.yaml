@@ -3,7 +3,7 @@ Screens:
     Properties:
       Fill: =C_Bg
       OnVisible: |-
-        =If(IsBlank(varDashDays), Set(varDashDays, 30));
+        =If(IsBlank(varDashDays), Set(varDashDays, 0));
         If(IsBlank(varDashStream), Set(varDashStream, "ALL"));
         If(IsBlank(varDashWhyKind), Set(varDashWhyKind, "Print"));
         Set(varDashFocus, "");
@@ -101,7 +101,7 @@ Screens:
                         Font: =AppFont
                         Height: =Round(25 * UI, 0)
                         Size: =Round(12 * UI, 0)
-                        Text: =Switch(varDashDays, 7, "Last 7 days", 30, "Last 30 days", 90, "Last 90 days", "All time") & "  ·  " & If(varDashStream = "ALL", "All streams", varDashStream) & "  ·  " & varDashN & If(varDashN = 1, " audit", " audits")
+                        Text: =Switch(varDashDays, 7, "Last 7 days", 30, "Last 30 days", 90, "Last 90 days", "All time") & "  ·  " & If(varDashStream = "ALL", "All streams", varDashStream) & "  ·  " & varDashN & If(varDashN = 1, " DTV", " DTVs")
                         Width: =DashW - Round(55 * UI, 0) - If(DashWide, Round(250 * UI, 0), Round(80 * UI, 0))
                         Wrap: =false
                         X: =DashX + Round(55 * UI, 0)
@@ -357,7 +357,7 @@ Screens:
                                     FontWeight: =FontWeight.Bold
                                     Height: =Round(20 * UI, 0)
                                     Size: =Round(11 * UI, 0)
-                                    Text: ="AUDITS"
+                                    Text: ="DTVS AUDITED"
                                     Width: =Parent.Width - Round(36 * UI, 0)
                                     Wrap: =false
                                     X: =Round(18 * UI, 0)
@@ -370,7 +370,7 @@ Screens:
                                     FontWeight: =FontWeight.Bold
                                     Height: =Round(46 * UI, 0)
                                     Size: =Round(28 * UI, 0)
-                                    Text: =varDashN
+                                    Text: =varDashN & " / " & varDashRegN
                                     Width: =Parent.Width - Round(36 * UI, 0)
                                     Wrap: =false
                                     X: =Round(18 * UI, 0)
@@ -382,7 +382,7 @@ Screens:
                                     Font: =AppFont
                                     Height: =Round(20 * UI, 0)
                                     Size: =Round(11 * UI, 0)
-                                    Text: =varDashReN & If(varDashReN = 1, " re-audit", " re-audits")
+                                    Text: =Text(If(varDashRegN > 0, varDashCovN / varDashRegN, 0), "0%") & " of the register"
                                     Width: =Parent.Width - Round(36 * UI, 0)
                                     Wrap: =false
                                     X: =Round(18 * UI, 0)
@@ -435,7 +435,7 @@ Screens:
                                     FontWeight: =FontWeight.Bold
                                     Height: =Round(20 * UI, 0)
                                     Size: =Round(11 * UI, 0)
-                                    Text: ="DTVS COVERED"
+                                    Text: ="NOT YET AUDITED"
                                     Width: =Parent.Width - Round(36 * UI, 0)
                                     Wrap: =false
                                     X: =Round(18 * UI, 0)
@@ -448,7 +448,7 @@ Screens:
                                     FontWeight: =FontWeight.Bold
                                     Height: =Round(46 * UI, 0)
                                     Size: =Round(28 * UI, 0)
-                                    Text: =varDashCovN & " / " & varDashRegN
+                                    Text: =Max(0, varDashRegN - varDashCovN)
                                     Width: =Parent.Width - Round(36 * UI, 0)
                                     Wrap: =false
                                     X: =Round(18 * UI, 0)
@@ -460,7 +460,7 @@ Screens:
                                     Font: =AppFont
                                     Height: =Round(20 * UI, 0)
                                     Size: =Round(11 * UI, 0)
-                                    Text: =Text(If(varDashRegN > 0, varDashCovN / varDashRegN, 0), "0%") & " of DTVs audited"
+                                    Text: ="DTVs with no audit"
                                     Width: =Parent.Width - Round(36 * UI, 0)
                                     Wrap: =false
                                     X: =Round(18 * UI, 0)
@@ -538,7 +538,7 @@ Screens:
                                     Font: =AppFont
                                     Height: =Round(20 * UI, 0)
                                     Size: =Round(11 * UI, 0)
-                                    Text: =Text(If(varDashN > 0, varDashClearN / varDashN, 0), "0%") & " of audits"
+                                    Text: =Text(If(varDashN > 0, varDashClearN / varDashN, 0), "0%") & " of DTVs"
                                     Width: =Parent.Width - Round(36 * UI, 0)
                                     Wrap: =false
                                     X: =Round(18 * UI, 0)
@@ -615,7 +615,7 @@ Screens:
                                     Font: =AppFont
                                     Height: =Round(20 * UI, 0)
                                     Size: =Round(11 * UI, 0)
-                                    Text: =Text(If(varDashN > 0, varDashFollowN / varDashN, 0), "0%") & " of audits"
+                                    Text: =Text(If(varDashN > 0, varDashFollowN / varDashN, 0), "0%") & " of DTVs"
                                     Width: =Parent.Width - Round(36 * UI, 0)
                                     Wrap: =false
                                     X: =Round(18 * UI, 0)
@@ -767,7 +767,7 @@ Screens:
                                     Font: =AppFont
                                     Height: =Round(20 * UI, 0)
                                     Size: =Round(11 * UI, 0)
-                                    Text: ="Each audit counted once per check"
+                                    Text: ="Latest audit for each DTV"
                                     Width: =Parent.Width - Round(40 * UI, 0)
                                     Wrap: =false
                                     X: =Round(20 * UI, 0)
@@ -898,7 +898,7 @@ Screens:
                                     Font: =AppFont
                                     Height: =Round(22 * UI, 0)
                                     Size: =Round(11 * UI, 0)
-                                    Text: ="Green passed, red failed. Tap a row to list those audits below."
+                                    Text: ="Green passed, red failed. Tap a row to list those DTVs below."
                                     Width: =Parent.Width - Round(40 * UI, 0)
                                     Wrap: =false
                                     X: =Round(20 * UI, 0)
@@ -940,7 +940,7 @@ Screens:
                                     Font: =AppFont
                                     Height: =Round(20 * UI, 0)
                                     Size: =Round(11 * UI, 0)
-                                    Text: ="Tap a reason to list those audits"
+                                    Text: ="Tap a reason to list those DTVs"
                                     Width: =Parent.Width - Round(40 * UI, 0)
                                     Wrap: =false
                                     X: =Round(20 * UI, 0)
@@ -1187,7 +1187,7 @@ Screens:
                                     Font: =AppFont
                                     Height: =Round(20 * UI, 0)
                                     Size: =Round(11 * UI, 0)
-                                    Text: ="DTVs audited in this period"
+                                    Text: ="DTVs with an audit in this period"
                                     Width: =Parent.Width - Round(40 * UI, 0)
                                     Wrap: =false
                                     X: =Round(20 * UI, 0)
@@ -1332,7 +1332,7 @@ Screens:
                                     Font: =AppFont
                                     Height: =Round(20 * UI, 0)
                                     Size: =Round(11 * UI, 0)
-                                    Text: ="Share of audits where it was given"
+                                    Text: ="Share of DTVs (latest audit)"
                                     Width: =Parent.Width - Round(40 * UI, 0)
                                     Wrap: =false
                                     X: =Round(20 * UI, 0)
@@ -1455,7 +1455,7 @@ Screens:
                                     Font: =AppFont
                                     Height: =Round(20 * UI, 0)
                                     Size: =Round(11 * UI, 0)
-                                    Text: ="Top 5 by audits. Tap to list their audits"
+                                    Text: ="Latest audit by. Tap to list their DTVs"
                                     Width: =Parent.Width - Round(40 * UI, 0)
                                     Wrap: =false
                                     X: =Round(20 * UI, 0)
@@ -1569,7 +1569,7 @@ Screens:
                                     Font: =AppFont
                                     Height: =Round(30 * UI, 0)
                                     Size: =Round(12 * UI, 0)
-                                    Text: ="No audits in this period"
+                                    Text: ="No DTVs audited in this period"
                                     Visible: =CountRows(galBy_Dsh.AllItems) = 0 || Sum(galBy_Dsh.AllItems, N) = 0
                                     Width: =Parent.Width - Round(40 * UI, 0)
                                     Wrap: =false
@@ -1601,7 +1601,7 @@ Screens:
                               FontWeight: =FontWeight.Bold
                               Height: =Round(22 * UI, 0)
                               Size: =Round(11 * UI, 0)
-                              Text: ="AUDITS"
+                              Text: ="DTVS"
                               Width: =Parent.Width - Round(40 * UI, 0)
                               Wrap: =false
                               X: =Round(20 * UI, 0)
@@ -1614,7 +1614,7 @@ Screens:
                               FontWeight: =FontWeight.Bold
                               Height: =Round(22 * UI, 0)
                               Size: =Round(11 * UI, 0)
-                              Text: =CountRows(galList_Dsh.AllItems) & If(CountRows(galList_Dsh.AllItems) = 1, " audit", " audits") & If(!IsBlank(varDashFocus) || !IsBlank(varDashWhyR) || !IsBlank(varDashBy), " match", " in this period") & ", newest first"
+                              Text: =CountRows(galList_Dsh.AllItems) & If(CountRows(galList_Dsh.AllItems) = 1, " DTV", " DTVs") & If(!IsBlank(varDashFocus) || !IsBlank(varDashWhyR) || !IsBlank(varDashBy), " match", " audited in this period") & ", latest audit each, newest first"
                               Width: =Parent.Width - Round(40 * UI, 0)
                               Wrap: =false
                               X: =Round(20 * UI, 0)
@@ -1737,7 +1737,7 @@ Screens:
                               Font: =AppFont
                               Height: =Round(30 * UI, 0)
                               Size: =Round(13 * UI, 0)
-                              Text: =If(varDashN = 0, "No audits in this period", "No audits match")
+                              Text: =If(varDashN = 0, "No DTVs audited in this period", "No DTVs match")
                               Visible: =CountRows(galList_Dsh.AllItems) = 0
                               Width: =Parent.Width - Round(40 * UI, 0)
                               Wrap: =false
@@ -1840,7 +1840,7 @@ Screens:
                                           Font: =AppFont
                                           Height: =Round(20 * UI, 0)
                                           Size: =Round(11 * UI, 0)
-                                          Text: =ThisItem.Title & "  ·  " & ThisItem.Stream & "  ·  " & ThisItem.Auditor & If(ThisItem.ReAudit, "  ·  Re-audit", "")
+                                          Text: =ThisItem.Title & "  ·  " & ThisItem.Stream & "  ·  " & ThisItem.Auditor & If(ThisItem.AuditN > 1, "  ·  " & ThisItem.AuditN & " audits, showing latest", "")
                                           Width: =Parent.Width - Round(36 * UI, 0)
                                           Wrap: =false
                                           X: =Round(22 * UI, 0)
@@ -1888,19 +1888,23 @@ Screens:
             FontWeight: =""
             Height: =1
             OnSelect: |-
-              =// LOAD: audits in the chosen period, flattened to plain text columns (one row per audit)
+              =// LOAD: audits in the chosen period, flattened to plain text columns (one row per DTV, latest audit)
               Set(varDashLoading, true);
               Refresh(Audit_Results);
               ClearCollect(colDashReg, DTV_Register);
+              // newest first, so LookUp below returns each DTV's latest audit
               If(
                   varDashDays > 0,
-                  ClearCollect(colDashSrc, Filter(Audit_Results, Created >= DateAdd(Today(), -varDashDays, TimeUnit.Days))),
-                  ClearCollect(colDashSrc, Audit_Results)
+                  ClearCollect(colDashSrc, SortByColumns(Filter(Audit_Results, Created >= DateAdd(Today(), -varDashDays, TimeUnit.Days)), "Created", SortOrder.Descending)),
+                  ClearCollect(colDashSrc, SortByColumns(Audit_Results, "Created", SortOrder.Descending))
               );
+              // FINAL STATE: one row per DTV = its latest audit in the period (earlier audits and re-audits are replaced)
               ClearCollect(
                   colDashRows,
                   ForAll(
-                      colDashSrc As a,
+                      Distinct(colDashSrc, Title) As u,
+                      With(
+                          { a: LookUp(colDashSrc, Title = u.Value), cnt: CountIf(colDashSrc, Title = u.Value) },
                       With(
                           {
                               d: LookUp(colDashReg, Title = a.Title),
@@ -1951,8 +1955,10 @@ Screens:
                               Notes: a.Notes,
                               ReAudit: !IsBlank(a.ReAudit),
                               Fails: fails,
-                              Follow: !IsBlank(fails)
+                              Follow: !IsBlank(fails),
+                              AuditN: cnt
                           }
+                      )
                       )
                   )
               );
@@ -1998,7 +2004,6 @@ Screens:
               =// CALC: apply the stream filter, then every number and chart on the screen
               ClearCollect(colDash, Filter(colDashRows, varDashStream = "ALL" || Stream = varDashStream || Stream = "All"));
               Set(varDashN, CountRows(colDash));
-              Set(varDashReN, CountIf(colDash, ReAudit));
               Set(varDashFollowN, CountIf(colDash, Follow));
               Set(varDashClearN, varDashN - varDashFollowN);
               Set(varDashNotFoundN, CountIf(colDash, FoundRes = "No"));
@@ -2061,17 +2066,17 @@ Screens:
             FontWeight: =""
             Height: =1
             OnSelect: |-
-              =// EMAIL: branded summary + CSV of every audit in the chosen period and stream (Office 365 Outlook connector)
+              =// EMAIL: branded summary + CSV of the final state of every DTV (latest audit each) in the chosen period and stream (Office 365 Outlook connector)
               If(
                   varDashN = 0,
-                  Notify("No audits in this period to send.", NotificationType.Information),
+                  Notify("No DTVs audited in this period.", NotificationType.Information),
                   Set(varSaving, true);
                   Set(varDashRange, Switch(varDashDays, 7, "Last 7 days", 30, "Last 30 days", 90, "Last 90 days", "All time"));
                   Set(varDashStreamLbl, If(varDashStream = "ALL", "All streams", varDashStream));
                   // ---- CSV (UTF-8 mark first so Excel shows names correctly)
                   Set(
                       varDashCsv,
-                      UniChar(65279) & "Audit Date,Asset Tag,Department,Location,Stream,Auditor,Re-audit,Result,Issues Summary,DTV Found,Login Worked,Login Fail Reason,Login Notes,Patient List Worked,Print Worked,Print Fail Reason,Print Notes,Folder and Kit Found,Contents List In Folder,Kit Matched,Missing Items,Extra Items,Spoke To,Education Given,Issues Raised,Notes" & Char(13) & Char(10) &
+                      UniChar(65279) & "Audit Date,Asset Tag,Department,Location,Stream,Auditor,Audits Done,Latest Was Re-audit,Result,Issues Summary,DTV Found,Login Worked,Login Fail Reason,Login Notes,Patient List Worked,Print Worked,Print Fail Reason,Print Notes,Folder and Kit Found,Contents List In Folder,Kit Matched,Missing Items,Extra Items,Spoke To,Education Given,Issues Raised,Notes" & Char(13) & Char(10) &
                       Concat(
                           SortByColumns(colDash, "When", SortOrder.Descending),
                           Char(34) & Substitute(Substitute(Substitute(Coalesce(Text(When, "yyyy-mm-dd hh:mm"), ""), Char(34), Char(34) & Char(34)), Char(13), " "), Char(10), " ") & Char(34) & "," &
@@ -2080,6 +2085,7 @@ Screens:
                           Char(34) & Substitute(Substitute(Substitute(Coalesce(Loc, ""), Char(34), Char(34) & Char(34)), Char(13), " "), Char(10), " ") & Char(34) & "," &
                           Char(34) & Substitute(Substitute(Substitute(Coalesce(Stream, ""), Char(34), Char(34) & Char(34)), Char(13), " "), Char(10), " ") & Char(34) & "," &
                           Char(34) & Substitute(Substitute(Substitute(Coalesce(Auditor, ""), Char(34), Char(34) & Char(34)), Char(13), " "), Char(10), " ") & Char(34) & "," &
+                          Char(34) & Substitute(Substitute(Substitute(Coalesce(Text(AuditN), ""), Char(34), Char(34) & Char(34)), Char(13), " "), Char(10), " ") & Char(34) & "," &
                           Char(34) & Substitute(Substitute(Substitute(Coalesce(If(ReAudit, "Yes", "No"), ""), Char(34), Char(34) & Char(34)), Char(13), " "), Char(10), " ") & Char(34) & "," &
                           Char(34) & Substitute(Substitute(Substitute(Coalesce(If(Follow, "Needs follow-up", "All clear"), ""), Char(34), Char(34) & Char(34)), Char(13), " "), Char(10), " ") & Char(34) & "," &
                           Char(34) & Substitute(Substitute(Substitute(Coalesce(Fails, ""), Char(34), Char(34) & Char(34)), Char(13), " "), Char(10), " ") & Char(34) & "," &
@@ -2106,36 +2112,36 @@ Screens:
                   // ---- HTML summary
                   Set(
                       varDashEmail,
-                      Substitute(Substitute(EmailHead, "{{TITLE}}", "DTV Audit Summary"), "{{SUB}}", varDashRange & "&nbsp;&nbsp;|&nbsp;&nbsp;" & varDashStreamLbl & "&nbsp;&nbsp;|&nbsp;&nbsp;" & varDashN & If(varDashN = 1, " audit", " audits")) &
+                      Substitute(Substitute(EmailHead, "{{TITLE}}", "DTV Audit Summary"), "{{SUB}}", varDashRange & "&nbsp;&nbsp;|&nbsp;&nbsp;" & varDashStreamLbl & "&nbsp;&nbsp;|&nbsp;&nbsp;" & varDashN & If(varDashN = 1, " DTV", " DTVs")) &
               
                       // greeting
                       "<tr><td style='padding:28px 32px 8px 32px;font-size:15px;line-height:22px;color:#3A5068;'>" &
                           "Hi " & First(Split(User().FullName, " ")).Value & ",<br><br>" &
                           "Here is the ieMR Downtime Viewer audit summary for <b style='color:#0E1C2A;'>" & Lower(varDashRange) & "</b> (" & varDashStreamLbl & "). " &
-                          "Every audit in this view is in the attached CSV file, which opens in Excel." &
+                          "Each DTV is counted once, using its latest audit. The attached CSV file (opens in Excel) has one row per DTV." &
                       "</td></tr>" &
               
                       // KPI tiles
                       "<tr><td style='padding:16px 28px 4px 28px;'><table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0'><tr>" &
                           "<td width='20%' valign='top' style='padding:4px;'><table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0'><tr><td bgcolor='#F4F9FC' style='background-color:#F4F9FC;border:1px solid #E3EAF1;border-radius:12px;padding:12px 12px;'>" &
-                              "<div style='font-size:10px;letter-spacing:1px;font-weight:700;color:#8C9BAE;'>AUDITS</div>" &
+                              "<div style='font-size:10px;letter-spacing:1px;font-weight:700;color:#8C9BAE;'>DTVS AUDITED</div>" &
                               "<div style='font-size:24px;font-weight:700;color:#0E1C2A;padding-top:4px;'>" & varDashN & "</div>" &
-                              "<div style='font-size:12px;color:#3A5068;padding-top:2px;'>" & varDashReN & " re-audits" & "</div>" &
+                              "<div style='font-size:12px;color:#3A5068;padding-top:2px;'>" & "of " & varDashRegN & " on register" & "</div>" &
                           "</td></tr></table></td>" &
                           "<td width='20%' valign='top' style='padding:4px;'><table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0'><tr><td bgcolor='#F4F9FC' style='background-color:#F4F9FC;border:1px solid #E3EAF1;border-radius:12px;padding:12px 12px;'>" &
-                              "<div style='font-size:10px;letter-spacing:1px;font-weight:700;color:#8C9BAE;'>DTVS COVERED</div>" &
-                              "<div style='font-size:24px;font-weight:700;color:#1A5A99;padding-top:4px;'>" & varDashCovN & " / " & varDashRegN & "</div>" &
-                              "<div style='font-size:12px;color:#3A5068;padding-top:2px;'>" & Text(If(varDashRegN > 0, varDashCovN / varDashRegN, 0), "0%") & " audited" & "</div>" &
+                              "<div style='font-size:10px;letter-spacing:1px;font-weight:700;color:#8C9BAE;'>NOT AUDITED</div>" &
+                              "<div style='font-size:24px;font-weight:700;color:#1A5A99;padding-top:4px;'>" & Max(0, varDashRegN - varDashCovN) & "</div>" &
+                              "<div style='font-size:12px;color:#3A5068;padding-top:2px;'>" & "DTVs" & "</div>" &
                           "</td></tr></table></td>" &
                           "<td width='20%' valign='top' style='padding:4px;'><table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0'><tr><td bgcolor='#F4F9FC' style='background-color:#F4F9FC;border:1px solid #E3EAF1;border-radius:12px;padding:12px 12px;'>" &
                               "<div style='font-size:10px;letter-spacing:1px;font-weight:700;color:#8C9BAE;'>ALL CLEAR</div>" &
                               "<div style='font-size:24px;font-weight:700;color:#1E7A50;padding-top:4px;'>" & varDashClearN & "</div>" &
-                              "<div style='font-size:12px;color:#3A5068;padding-top:2px;'>" & Text(If(varDashN > 0, varDashClearN / varDashN, 0), "0%") & " of audits" & "</div>" &
+                              "<div style='font-size:12px;color:#3A5068;padding-top:2px;'>" & Text(If(varDashN > 0, varDashClearN / varDashN, 0), "0%") & " of DTVs" & "</div>" &
                           "</td></tr></table></td>" &
                           "<td width='20%' valign='top' style='padding:4px;'><table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0'><tr><td bgcolor='#F4F9FC' style='background-color:#F4F9FC;border:1px solid #E3EAF1;border-radius:12px;padding:12px 12px;'>" &
                               "<div style='font-size:10px;letter-spacing:1px;font-weight:700;color:#8C9BAE;'>FOLLOW-UP</div>" &
                               "<div style='font-size:24px;font-weight:700;color:#B03428;padding-top:4px;'>" & varDashFollowN & "</div>" &
-                              "<div style='font-size:12px;color:#3A5068;padding-top:2px;'>" & Text(If(varDashN > 0, varDashFollowN / varDashN, 0), "0%") & " of audits" & "</div>" &
+                              "<div style='font-size:12px;color:#3A5068;padding-top:2px;'>" & Text(If(varDashN > 0, varDashFollowN / varDashN, 0), "0%") & " of DTVs" & "</div>" &
                           "</td></tr></table></td>" &
                           "<td width='20%' valign='top' style='padding:4px;'><table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0'><tr><td bgcolor='#F4F9FC' style='background-color:#F4F9FC;border:1px solid #E3EAF1;border-radius:12px;padding:12px 12px;'>" &
                               "<div style='font-size:10px;letter-spacing:1px;font-weight:700;color:#8C9BAE;'>NOT FOUND</div>" &
