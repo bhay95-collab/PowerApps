@@ -7,7 +7,7 @@ Screens:
         If(IsBlank(varDashWhyKind), Set(varDashWhyKind, "Print"));
         Set(varDashFocus, "");
         Set(varDashWhyR, "");
-        Set(varDashBy, "");
+        Set(varDashStage, "");
         Set(varSaving, false);
         Reset(txtSearch_Dsh);
         // stream pills: All, then one per stream (short name = text before the first "&" or ",")
@@ -342,7 +342,7 @@ Screens:
                                     OnSelect: |-
                                       =Set(varDashFocus, "");
                                       Set(varDashWhyR, "");
-                                      Set(varDashBy, "")
+                                      Set(varDashStage, "")
                                     PaddingBottom: =5
                                     PaddingLeft: =12
                                     PaddingRight: =12
@@ -420,7 +420,7 @@ Screens:
                                     OnSelect: |-
                                       =Set(varDashFocus, "");
                                       Set(varDashWhyR, "");
-                                      Set(varDashBy, "")
+                                      Set(varDashStage, "")
                                     PaddingBottom: =5
                                     PaddingLeft: =12
                                     PaddingRight: =12
@@ -1402,7 +1402,7 @@ Screens:
                                     Wrap: =false
                                     X: =Round(20 * UI, 0)
                                     Y: =Round(150 * UI, 0)
-                        - conBy_Dsh:
+                        - conStage_Dsh:
                             Control: GroupContainer@1.5.0
                             Variant: ManualLayout
                             Properties:
@@ -1419,7 +1419,7 @@ Screens:
                               X: =If(DashWide, (DashW - 2 * DashGap) * 0.6667 + 2 * DashGap, 0)
                               Y: =If(DashWide, 0, Round(360 * UI, 0) + Round(360 * UI, 0) + 2 * DashGap)
                             Children:
-                              - capBy_Dsh:
+                              - capStage_Dsh:
                                   Control: Label@2.5.1
                                   Properties:
                                     Color: =C_Muted
@@ -1427,29 +1427,29 @@ Screens:
                                     FontWeight: =FontWeight.Bold
                                     Height: =Round(22 * UI, 0)
                                     Size: =Round(11 * UI, 0)
-                                    Text: ="AUDITORS"
+                                    Text: ="FOLLOW-UP PROGRESS"
                                     Width: =Parent.Width - Round(40 * UI, 0)
                                     Wrap: =false
                                     X: =Round(20 * UI, 0)
                                     Y: =Round(16 * UI, 0)
-                              - subBy_Dsh:
+                              - subStage_Dsh:
                                   Control: Label@2.5.1
                                   Properties:
                                     Color: =C_Muted
                                     Font: =AppFont
                                     Height: =Round(20 * UI, 0)
                                     Size: =Round(11 * UI, 0)
-                                    Text: ="Latest audit by. Tap to list their DTVs"
+                                    Text: ="First audit vs latest. Tap to list them"
                                     Width: =Parent.Width - Round(40 * UI, 0)
                                     Wrap: =false
                                     X: =Round(20 * UI, 0)
                                     Y: =Round(38 * UI, 0)
-                              - galBy_Dsh:
+                              - galStage_Dsh:
                                   Control: Gallery@2.15.0
                                   Variant: Vertical
                                   Properties:
                                     Height: =5 * Round(56 * UI, 0)
-                                    Items: =colDashBy
+                                    Items: =colDashStage
                                     ShowScrollbar: =false
                                     TemplatePadding: =0
                                     TemplateSize: =Round(56 * UI, 0)
@@ -1457,7 +1457,7 @@ Screens:
                                     X: =Round(10 * UI, 0)
                                     Y: =Round(62 * UI, 0)
                                   Children:
-                                    - conByRow_Dsh:
+                                    - conStageRow_Dsh:
                                         Control: GroupContainer@1.5.0
                                         Variant: ManualLayout
                                         Properties:
@@ -1467,12 +1467,12 @@ Screens:
                                           X: =0
                                           Y: =0
                                         Children:
-                                          - conBySel_Dsh:
+                                          - conStageSel_Dsh:
                                               Control: GroupContainer@1.5.0
                                               Variant: ManualLayout
                                               Properties:
                                                 DropShadow: =DropShadow.None
-                                                Fill: =If(varDashBy = ThisItem.Auditor, C_AccentSoft, RGBA(0, 0, 0, 0))
+                                                Fill: =If(varDashStage = ThisItem.Key, C_AccentSoft, RGBA(0, 0, 0, 0))
                                                 Height: =Round(52 * UI, 0)
                                                 RadiusBottomLeft: =Round(12 * UI, 0)
                                                 RadiusBottomRight: =Round(12 * UI, 0)
@@ -1481,7 +1481,7 @@ Screens:
                                                 Width: =Parent.Width
                                                 X: =0
                                                 Y: =Round(2 * UI, 0)
-                                          - lblBy_Dsh:
+                                          - lblStage_Dsh:
                                               Control: Label@2.5.1
                                               Properties:
                                                 Color: =C_Ink
@@ -1489,12 +1489,12 @@ Screens:
                                                 FontWeight: =FontWeight.Bold
                                                 Height: =Round(24 * UI, 0)
                                                 Size: =Round(11 * UI, 0)
-                                                Text: =ThisItem.Auditor
+                                                Text: =ThisItem.Label
                                                 Width: =Parent.Width - Round(120 * UI, 0)
                                                 Wrap: =false
                                                 X: =Round(10 * UI, 0)
                                                 Y: =Round(4 * UI, 0)
-                                          - lblByN_Dsh:
+                                          - lblStageN_Dsh:
                                               Control: Label@2.5.1
                                               Properties:
                                                 Align: =Align.Right
@@ -1508,7 +1508,7 @@ Screens:
                                                 Wrap: =false
                                                 X: =Parent.Width - Round(110 * UI, 0)
                                                 Y: =Round(4 * UI, 0)
-                                          - conTrkBy_Dsh:
+                                          - conTrkStage_Dsh:
                                               Control: GroupContainer@1.5.0
                                               Variant: ManualLayout
                                               Properties:
@@ -1523,19 +1523,19 @@ Screens:
                                                 X: =Round(10 * UI, 0)
                                                 Y: =Round(32 * UI, 0)
                                               Children:
-                                                - conBarBy_Dsh:
+                                                - conBarStage_Dsh:
                                                     Control: GroupContainer@1.5.0
                                                     Variant: ManualLayout
                                                     Properties:
                                                       DropShadow: =DropShadow.None
-                                                      Fill: =C_Accent
+                                                      Fill: =Switch(ThisItem.Key, "Fixed", RGBA(30, 122, 80, 1), "New", C_Amber, RGBA(176, 52, 40, 1))
                                                       Height: =Parent.Height
                                                       RadiusBottomLeft: =Round(6 * UI, 0)
                                                       RadiusBottomRight: =Round(6 * UI, 0)
                                                       RadiusTopLeft: =Round(6 * UI, 0)
                                                       RadiusTopRight: =Round(6 * UI, 0)
-                                                      Width: =Parent.Width * Min(1, Max(0, If(varDashMaxBy > 0, ThisItem.N / varDashMaxBy, 0)))
-                                          - btnBy_Dsh:
+                                                      Width: =Parent.Width * Min(1, Max(0, If(varDashMaxStage > 0, ThisItem.N / varDashMaxStage, 0)))
+                                          - btnStage_Dsh:
                                               Control: ModernButton@1.0.0
                                               Properties:
                                                 Align: =Align.Center
@@ -1543,7 +1543,7 @@ Screens:
                                                 BorderStyle: =BorderStyle.None
                                                 FontWeight: =""
                                                 Height: =Parent.Height
-                                                OnSelect: =Set(varDashBy, If(varDashBy = ThisItem.Auditor, "", ThisItem.Auditor))
+                                                OnSelect: =Set(varDashStage, If(varDashStage = ThisItem.Key, "", ThisItem.Key))
                                                 PaddingBottom: =5
                                                 PaddingLeft: =12
                                                 PaddingRight: =12
@@ -1555,7 +1555,7 @@ Screens:
                                                 Text: =""
                                                 VerticalAlign: =VerticalAlign.Middle
                                                 Width: =Parent.Width
-                              - lblByNone_Dsh:
+                              - lblStageNone_Dsh:
                                   Control: Label@2.5.1
                                   Properties:
                                     Align: =Align.Center
@@ -1563,8 +1563,8 @@ Screens:
                                     Font: =AppFont
                                     Height: =Round(30 * UI, 0)
                                     Size: =Round(12 * UI, 0)
-                                    Text: ="No DTVs audited yet"
-                                    Visible: =CountRows(galBy_Dsh.AllItems) = 0 || Sum(galBy_Dsh.AllItems, N) = 0
+                                    Text: ="No failures found yet"
+                                    Visible: =CountRows(galStage_Dsh.AllItems) = 0 || Sum(galStage_Dsh.AllItems, N) = 0
                                     Width: =Parent.Width - Round(40 * UI, 0)
                                     Wrap: =false
                                     X: =Round(20 * UI, 0)
@@ -1608,7 +1608,7 @@ Screens:
                               FontWeight: =FontWeight.Bold
                               Height: =Round(22 * UI, 0)
                               Size: =Round(11 * UI, 0)
-                              Text: =CountRows(galList_Dsh.AllItems) & If(CountRows(galList_Dsh.AllItems) = 1, " DTV", " DTVs") & If(!IsBlank(varDashFocus) || !IsBlank(varDashWhyR) || !IsBlank(varDashBy), " match", " audited") & ", latest audit each, newest first"
+                              Text: =CountRows(galList_Dsh.AllItems) & If(CountRows(galList_Dsh.AllItems) = 1, " DTV", " DTVs") & If(!IsBlank(varDashFocus) || !IsBlank(varDashWhyR) || !IsBlank(varDashStage), " match", " audited") & ", latest audit each, newest first"
                               Width: =Parent.Width - Round(40 * UI, 0)
                               Wrap: =false
                               X: =Round(20 * UI, 0)
@@ -1626,7 +1626,7 @@ Screens:
                               RadiusBottomRight: =Round(20 * UI, 0)
                               RadiusTopLeft: =Round(20 * UI, 0)
                               RadiusTopRight: =Round(20 * UI, 0)
-                              Visible: =!IsBlank(varDashFocus) || !IsBlank(varDashWhyR) || !IsBlank(varDashBy)
+                              Visible: =!IsBlank(varDashFocus) || !IsBlank(varDashWhyR) || !IsBlank(varDashStage)
                               Width: =If(DashWide, Parent.Width - Round(400 * UI, 0), Parent.Width - Round(40 * UI, 0))
                               X: =Round(20 * UI, 0)
                               Y: =Round(66 * UI, 0)
@@ -1640,7 +1640,7 @@ Screens:
                                     Height: =Round(40 * UI, 0)
                                     Size: =Round(11 * UI, 0)
                                     Text: |-
-                                      ="Showing: " & Concat(Filter(Table({ t: Switch(varDashFocus, "Follow", "Needs follow-up", "Clear", "All clear", "Found", "DTV not found", "Login", "Login failed", "PList", "Patient list failed", "Print", "Print failed", "Folder", "Folder and kit not found", "List", "No contents list", "Match", "Kit does not match", "") }, { t: varDashWhyR }, { t: If(IsBlank(varDashBy), "", "By " & varDashBy) }), !IsBlank(t)), t, "  ·  ")
+                                      ="Showing: " & Concat(Filter(Table({ t: Switch(varDashFocus, "Follow", "Needs follow-up", "Clear", "All clear", "Found", "DTV not found", "Login", "Login failed", "PList", "Patient list failed", "Print", "Print failed", "Folder", "Folder and kit not found", "List", "No contents list", "Match", "Kit does not match", "") }, { t: varDashWhyR }, { t: Switch(varDashStage, "Waiting", "Failed, not re-audited", "Still", "Still failing after re-audit", "Fixed", "Fixed on re-audit", "New", "New issue on re-audit", "") }), !IsBlank(t)), t, "  ·  ")
                                     VerticalAlign: =VerticalAlign.Middle
                                     Width: =Parent.Width - Round(130 * UI, 0)
                                     Wrap: =false
@@ -1670,7 +1670,7 @@ Screens:
                                     OnSelect: |-
                                       =Set(varDashFocus, "");
                                       Set(varDashWhyR, "");
-                                      Set(varDashBy, "")
+                                      Set(varDashStage, "")
                                     PaddingBottom: =5
                                     PaddingLeft: =12
                                     PaddingRight: =12
@@ -1759,7 +1759,7 @@ Screens:
                                             "Match", MatchRes = "No",
                                             true
                                         )
-                                        && (IsBlank(varDashBy) || Auditor = varDashBy)
+                                        && (IsBlank(varDashStage) || Stage = varDashStage)
                                         && (IsBlank(Trim(txtSearch_Dsh.Text)) || Lower(Trim(txtSearch_Dsh.Text)) in Lower(Dept & " " & Loc & " " & Title & " " & Auditor))
                                     ),
                                     "When",
@@ -1894,7 +1894,11 @@ Screens:
                   ForAll(
                       Distinct(colDashSrc, Title) As u,
                       With(
-                          { a: LookUp(colDashSrc, Title = u.Value), cnt: CountIf(colDashSrc, Title = u.Value) },
+                          {
+                              a: LookUp(colDashSrc, Title = u.Value),
+                              f: Last(Filter(colDashSrc, Title = u.Value)),
+                              cnt: CountIf(colDashSrc, Title = u.Value)
+                          },
                       With(
                           {
                               d: LookUp(colDashReg, Title = a.Title),
@@ -1946,7 +1950,19 @@ Screens:
                               ReAudit: !IsBlank(a.ReAudit),
                               Fails: fails,
                               Follow: !IsBlank(fails),
-                              AuditN: cnt
+                              AuditN: cnt,
+                              // first audit vs latest: Waiting = failed, no re-audit yet; Still = failed both; Fixed = failed then clear; New = clear then failed
+                              Stage: With(
+                                  {
+                                      firstFail: f.DTVFound.Value = "No" || f.LoginWorked.Value = "No" || f.PatientListWorked.Value = "No" || f.PrintWorked.Value = "No"
+                                          || f.FolderFound.Value = "No" || f.ContentsListInFolder.Value = "No" || f.KitMatched.Value = "No"
+                                  },
+                                  If(
+                                      cnt > 1,
+                                      If(firstFail, If(IsBlank(fails), "Fixed", "Still"), If(IsBlank(fails), "Clear", "New")),
+                                      If(IsBlank(fails), "Clear", "Waiting")
+                                  )
+                              )
                           }
                       )
                       )
@@ -2034,8 +2050,14 @@ Screens:
               Set(varDashMaxPrint, Max(Filter(colDashWhy, Kind = "Print"), N));
               Set(varDashMaxLogin, Max(Filter(colDashWhy, Kind = "Login"), N));
               ClearCollect(colDashEdu, ForAll(Table({ V: "Downtime Escalation Pathway" }, { V: "Downtime Process" }, { V: "Downtime Coordinator" }, { V: "Key's Location" }, { V: "DMN Resourcing Page" }) As e, { Item: e.V, N: CountIf(colDash, e.V in Edu) }));
-              ClearCollect(colDashBy, FirstN(SortByColumns(AddColumns(GroupBy(colDash, Auditor, Rows), N, CountRows(Rows)), "N", SortOrder.Descending), 5));
-              Set(varDashMaxBy, Max(colDashBy, N))
+              ClearCollect(
+                  colDashStage,
+                  { Key: "Waiting", Label: "Failed, not re-audited yet", N: CountIf(colDash, Stage = "Waiting") },
+                  { Key: "Still", Label: "Still failing after re-audit", N: CountIf(colDash, Stage = "Still") },
+                  { Key: "Fixed", Label: "Fixed on re-audit", N: CountIf(colDash, Stage = "Fixed") },
+                  { Key: "New", Label: "New issue on re-audit", N: CountIf(colDash, Stage = "New") }
+              );
+              Set(varDashMaxStage, Max(colDashStage, N))
             PaddingBottom: =5
             PaddingLeft: =12
             PaddingRight: =12
@@ -2065,7 +2087,7 @@ Screens:
                   // ---- CSV (UTF-8 mark first so Excel shows names correctly)
                   Set(
                       varDashCsv,
-                      UniChar(65279) & "Audit Date,Asset Tag,Department,Location,Stream,Auditor,Audits Done,Latest Was Re-audit,Result,Issues Summary,DTV Found,Login Worked,Login Fail Reason,Login Notes,Patient List Worked,Print Worked,Print Fail Reason,Print Notes,Folder and Kit Found,Contents List In Folder,Kit Matched,Missing Items,Extra Items,Spoke To,Education Given,Issues Raised,Notes" & Char(13) & Char(10) &
+                      UniChar(65279) & "Audit Date,Asset Tag,Department,Location,Stream,Auditor,Audits Done,Follow-up Status,Latest Was Re-audit,Result,Issues Summary,DTV Found,Login Worked,Login Fail Reason,Login Notes,Patient List Worked,Print Worked,Print Fail Reason,Print Notes,Folder and Kit Found,Contents List In Folder,Kit Matched,Missing Items,Extra Items,Spoke To,Education Given,Issues Raised,Notes" & Char(13) & Char(10) &
                       Concat(
                           SortByColumns(colDash, "When", SortOrder.Descending),
                           Char(34) & Substitute(Substitute(Substitute(Coalesce(Text(When, "yyyy-mm-dd hh:mm"), ""), Char(34), Char(34) & Char(34)), Char(13), " "), Char(10), " ") & Char(34) & "," &
@@ -2075,6 +2097,7 @@ Screens:
                           Char(34) & Substitute(Substitute(Substitute(Coalesce(Stream, ""), Char(34), Char(34) & Char(34)), Char(13), " "), Char(10), " ") & Char(34) & "," &
                           Char(34) & Substitute(Substitute(Substitute(Coalesce(Auditor, ""), Char(34), Char(34) & Char(34)), Char(13), " "), Char(10), " ") & Char(34) & "," &
                           Char(34) & Substitute(Substitute(Substitute(Coalesce(Text(AuditN), ""), Char(34), Char(34) & Char(34)), Char(13), " "), Char(10), " ") & Char(34) & "," &
+                          Char(34) & Substitute(Substitute(Substitute(Coalesce(Switch(Stage, "Waiting", "Failed, not re-audited yet", "Still", "Still failing after re-audit", "Fixed", "Fixed on re-audit", "New", "New issue on re-audit", "Clear"), ""), Char(34), Char(34) & Char(34)), Char(13), " "), Char(10), " ") & Char(34) & "," &
                           Char(34) & Substitute(Substitute(Substitute(Coalesce(If(ReAudit, "Yes", "No"), ""), Char(34), Char(34) & Char(34)), Char(13), " "), Char(10), " ") & Char(34) & "," &
                           Char(34) & Substitute(Substitute(Substitute(Coalesce(If(Follow, "Needs follow-up", "All clear"), ""), Char(34), Char(34) & Char(34)), Char(13), " "), Char(10), " ") & Char(34) & "," &
                           Char(34) & Substitute(Substitute(Substitute(Coalesce(Fails, ""), Char(34), Char(34) & Char(34)), Char(13), " "), Char(10), " ") & Char(34) & "," &
@@ -2182,6 +2205,23 @@ Screens:
                                       "<td style='padding:10px 12px;border-top:1px solid #E3EAF1;color:#8C9BAE;font-size:12px;font-weight:700;' width='70'>" & Upper(Kind) & "</td>" &
                                       "<td style='padding:10px 12px;border-top:1px solid #E3EAF1;color:#0E1C2A;'>" & Reason & "</td>" &
                                       "<td align='right' style='padding:10px 12px;border-top:1px solid #E3EAF1;font-weight:700;color:#B03428;'>" & N & "</td>" &
+                                  "</tr>"
+                              ) &
+                          "</table></td></tr>",
+                          ""
+                      ) &
+              
+                      // follow-up progress
+                      If(
+                          varDashMaxStage > 0,
+                          "<tr><td style='padding:20px 32px 6px 32px;font-size:11px;letter-spacing:2px;font-weight:700;color:#8C9BAE;'>FOLLOW-UP PROGRESS</td></tr>" &
+                          "<tr><td style='padding:6px 32px 8px 32px;'>" &
+                          "<table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' style='border-collapse:separate;border-spacing:0;width:100%;font-size:14px;border:1px solid #E3EAF1;border-radius:14px;overflow:hidden;'>" &
+                              Concat(
+                                  colDashStage,
+                                  "<tr>" &
+                                      "<td style='padding:10px 12px;border-top:1px solid #E3EAF1;font-weight:600;color:#0E1C2A;'>" & Label & "</td>" &
+                                      "<td align='right' style='padding:10px 12px;border-top:1px solid #E3EAF1;font-weight:700;color:" & Switch(Key, "Fixed", "#1E7A50", "New", "#B26900", "#B03428") & ";' width='60'>" & N & "</td>" &
                                   "</tr>"
                               ) &
                           "</table></td></tr>",

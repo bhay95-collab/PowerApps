@@ -68,7 +68,7 @@ twW = f'(DashW - 4 * {GAP}) / 5'; twN = f'(DashW - {GAP}) / 2'
 tiles = []
 for i, (k, cap, val, sub, col, foc) in enumerate(KPIS):
     sel = f'varDashFocus = "{foc}"' if foc else 'false'
-    onsel = (f'Set(varDashFocus, If(varDashFocus = "{foc}", "", "{foc}"));\nSet(varDashWhyR, "")' if foc else 'Set(varDashFocus, "");\nSet(varDashWhyR, "");\nSet(varDashBy, "")')
+    onsel = (f'Set(varDashFocus, If(varDashFocus = "{foc}", "", "{foc}"));\nSet(varDashWhyR, "")' if foc else 'Set(varDashFocus, "");\nSet(varDashWhyR, "");\nSet(varDashStage, "")')
     t = box(f'conK{k}_Dsh', x=f'If({WIDE}, {i} * ({twW} + {GAP}), {i % 2} * ({twN} + {GAP}))', y=f'If({WIDE}, 0, {i // 2} * ({r(TH)} + {GAP}))', w=f'If({WIDE}, {twW}, {twN})', h=r(TH),
             fill=f'If({sel}, C_AccentSoft, C_White)', border=f'If({sel}, C_Accent, C_Line)', radius=r(20), children=[
         lbl(f'lblK{k}C_Dsh', f'"{cap}"', x=r(18), y=r(14), w=f'Parent.Width - {r(36)}', h=r(20), size=13, color='C_Muted', bold=True),
@@ -134,14 +134,15 @@ pCov = listpanel('Cov', 'COVERAGE BY STREAM', '"DTVs audited so far"', 'colDashC
                  onsel='Set(varDashStream, If(varDashStream = ThisItem.Stream, "ALL", ThisItem.Stream));\nSelect(btnCalc_Dsh)', selexpr='varDashStream = ThisItem.Stream')
 pEdu = listpanel('Edu', 'EDUCATION GIVEN', '"Share of DTVs (latest audit)"', 'colDashEdu', 'ThisItem.Item', 'ThisItem.N & "  ·  " & Text(If(varDashN > 0, ThisItem.N / varDashN, 0), "0%")',
                  'If(varDashN > 0, ThisItem.N / varDashN, 0)', 'C_Teal', empty='No education recorded yet')
-pBy = listpanel('By', 'AUDITORS', '"Latest audit by. Tap to list their DTVs"', 'colDashBy', 'ThisItem.Auditor', 'ThisItem.N',
-                'If(varDashMaxBy > 0, ThisItem.N / varDashMaxBy, 0)', 'C_Accent',
-                onsel='Set(varDashBy, If(varDashBy = ThisItem.Auditor, "", ThisItem.Auditor))', selexpr='varDashBy = ThisItem.Auditor', empty='No DTVs audited yet')
+# follow-up progress: compares each DTV's first audit with its latest. Is follow-up fixing things?
+pStage = listpanel('Stage', 'FOLLOW-UP PROGRESS', '"First audit vs latest. Tap to list them"', 'colDashStage', 'ThisItem.Label', 'ThisItem.N',
+                'If(varDashMaxStage > 0, ThisItem.N / varDashMaxStage, 0)', f'Switch(ThisItem.Key, "Fixed", {GREEN}, "New", C_Amber, {RED})',
+                onsel='Set(varDashStage, If(varDashStage = ThisItem.Key, "", ThisItem.Key))', selexpr='varDashStage = ThisItem.Key', empty='No failures found yet')
 
 # ------------------------------------------------------------------ audit list
 FOCUS = ('Concat(Filter(Table({ t: Switch(varDashFocus, "Follow", "Needs follow-up", "Clear", "All clear", "Found", "DTV not found", "Login", "Login failed", "PList", "Patient list failed", '
          '"Print", "Print failed", "Folder", "Folder and kit not found", "List", "No contents list", "Match", "Kit does not match", "") }, { t: varDashWhyR }, '
-         '{ t: If(IsBlank(varDashBy), "", "By " & varDashBy) }), !IsBlank(t)), t, "  ·  ")')
+         '{ t: Switch(varDashStage, "Waiting", "Failed, not re-audited", "Still", "Still failing after re-audit", "Fixed", "Fixed on re-audit", "New", "New issue on re-audit", "") }), !IsBlank(t)), t, "  ·  ")')
 ITEMS = '''SortByColumns(
     Filter(
         colDash,
@@ -158,7 +159,7 @@ ITEMS = '''SortByColumns(
             "Match", MatchRes = "No",
             true
         )
-        && (IsBlank(varDashBy) || Auditor = varDashBy)
+        && (IsBlank(varDashStage) || Stage = varDashStage)
         && (IsBlank(Trim(txtSearch_Dsh.Text)) || Lower(Trim(txtSearch_Dsh.Text)) in Lower(Dept & " " & Loc & " " & Title & " " & Auditor))
     ),
     "When",
@@ -177,13 +178,13 @@ lrow = box('conRow_Dsh', x='1', y=r(5), w=f'Parent.TemplateWidth - {r(12)}', h=r
     lbl('lblRowD_Dsh', DETAIL, x=r(22), y=r(74), w=f'Parent.Width - {r(36)}', h=r(20), size=13, color='C_Ink2'),
 ])
 galList = N('galList_Dsh', 'Gallery@2.15.0', 'Vertical', {'Height': f'Parent.Height - {r(128)}', 'Items': ITEMS, 'TemplatePadding': '0', 'TemplateSize': r(LH), 'Width': f'Parent.Width - {r(28)}', 'X': r(16), 'Y': r(118)}, [lrow])
-nf = '!IsBlank(varDashFocus) || !IsBlank(varDashWhyR) || !IsBlank(varDashBy)'
+nf = '!IsBlank(varDashFocus) || !IsBlank(varDashWhyR) || !IsBlank(varDashStage)'
 pList = panel('List', 'DTVS', [
     lbl('lblListN_Dsh', 'CountRows(galList_Dsh.AllItems) & If(CountRows(galList_Dsh.AllItems) = 1, " DTV", " DTVs") & If(' + nf + ', " match", " audited") & ", latest audit each, newest first"', x=r(20), y=r(38), w=f'Parent.Width - {r(40)}', h=r(22), size=14, color='C_Ink2', bold=True),
     box('conFocus_Dsh', x=r(20), y=r(66), w=f'If({WIDE}, Parent.Width - {r(400)}, Parent.Width - {r(40)})', h=r(40), fill='C_AccentSoft', border='C_Accent', radius=r(20), visible=nf, children=[
         lbl('lblFocus_Dsh', '"Showing: " & ' + FOCUS, x=r(16), w=f'Parent.Width - {r(130)}', h=r(40), size=14, color='C_Accent', bold=True, extra={'VerticalAlign': 'VerticalAlign.Middle'}),
         lbl('lblFocusX_Dsh', '"Clear  ✕"', x=f'Parent.Width - {r(110)}', w=r(96), h=r(40), size=14, color='C_Accent', bold=True, align='Align.Right', extra={'VerticalAlign': 'VerticalAlign.Middle'}),
-        tbtn('btnFocusX_Dsh', 'Set(varDashFocus, "");\nSet(varDashWhyR, "");\nSet(varDashBy, "")')]),
+        tbtn('btnFocusX_Dsh', 'Set(varDashFocus, "");\nSet(varDashWhyR, "");\nSet(varDashStage, "")')]),
     box('conSearch_Dsh', x=f'Parent.Width - {r(360)}', y=r(14), w=r(340), h=r(44), fill='C_White', border=LINE, radius=r(14), visible=WIDE, children=[
         ico('icoSearch_Dsh', 'Search', r(12), r(11), 22, 'C_Muted'),
         N('txtSearch_Dsh', 'Classic/TextInput@2.3.2', props={'BorderStyle': 'BorderStyle.None', 'Color': 'C_Ink', 'Default': '""', 'DelayOutput': 'true', 'Fill': 'RGBA(0, 0, 0, 0)', 'Font': 'AppFont', 'Height': 'Parent.Height', 'HintText': '"Search department, location, tag, auditor"', 'Size': r(F(14)), 'Width': f'Parent.Width - {r(44)}', 'X': r(40)})]),
@@ -200,7 +201,7 @@ bodyP.update(rad('0'))
 body = N('conBody_Dsh', 'GroupContainer@1.5.0', 'AutoLayout', bodyP, [
     filters, loading, kpi,
     row('A', [(pChecks, 0.58, 470), (pWhy, 0.42, 470)]),
-    row('B', [(pCov, 1 / 3, 360), (pEdu, 1 / 3, 360), (pBy, 1 / 3, 360)]),
+    row('B', [(pCov, 1 / 3, 360), (pEdu, 1 / 3, 360), (pStage, 1 / 3, 360)]),
     pList, endS])
 
 # ------------------------------------------------------------------ wrap gallery rows
@@ -210,7 +211,7 @@ def wrap(g, rowname):
             k.props[pk] = str(pv).replace('Parent.TemplateWidth', 'Parent.Width')
     g.children = [box(rowname, x='0', y='0', w='Parent.TemplateWidth', h='Parent.TemplateHeight', children=g.children)]
 wrap(galChk, 'conChkRow_Dsh'); wrap(galWhy, 'conWhyRow_Dsh')
-for pnl, nm in ((pCov, 'Cov'), (pEdu, 'Edu'), (pBy, 'By')):
+for pnl, nm in ((pCov, 'Cov'), (pEdu, 'Edu'), (pStage, 'Stage')):
     wrap(next(c for c in pnl.children if c.name == f'gal{nm}_Dsh'), f'con{nm}Row_Dsh')
 
 # ------------------------------------------------------------------ hidden logic buttons
@@ -230,7 +231,11 @@ ClearCollect(
     ForAll(
         Distinct(colDashSrc, Title) As u,
         With(
-            {{ a: LookUp(colDashSrc, Title = u.Value), cnt: CountIf(colDashSrc, Title = u.Value) }},
+            {{
+                a: LookUp(colDashSrc, Title = u.Value),
+                f: Last(Filter(colDashSrc, Title = u.Value)),
+                cnt: CountIf(colDashSrc, Title = u.Value)
+            }},
         With(
             {{
                 d: LookUp(colDashReg, Title = a.Title),
@@ -282,7 +287,19 @@ ClearCollect(
                 ReAudit: !IsBlank(a.ReAudit),
                 Fails: fails,
                 Follow: !IsBlank(fails),
-                AuditN: cnt
+                AuditN: cnt,
+                // first audit vs latest: Waiting = failed, no re-audit yet; Still = failed both; Fixed = failed then clear; New = clear then failed
+                Stage: With(
+                    {{
+                        firstFail: f.DTVFound.Value = "No" || f.LoginWorked.Value = "No" || f.PatientListWorked.Value = "No" || f.PrintWorked.Value = "No"
+                            || f.FolderFound.Value = "No" || f.ContentsListInFolder.Value = "No" || f.KitMatched.Value = "No"
+                    }},
+                    If(
+                        cnt > 1,
+                        If(firstFail, If(IsBlank(fails), "Fixed", "Still"), If(IsBlank(fails), "Clear", "New")),
+                        If(IsBlank(fails), "Clear", "Waiting")
+                    )
+                )
             }}
         )
         )
@@ -345,14 +362,20 @@ ClearCollect(
 Set(varDashMaxPrint, Max(Filter(colDashWhy, Kind = "Print"), N));
 Set(varDashMaxLogin, Max(Filter(colDashWhy, Kind = "Login"), N));
 ClearCollect(colDashEdu, ForAll(Table({edurows}) As e, {{ Item: e.V, N: CountIf(colDash, e.V in Edu) }}));
-ClearCollect(colDashBy, FirstN(SortByColumns(AddColumns(GroupBy(colDash, Auditor, Rows), N, CountRows(Rows)), "N", SortOrder.Descending), 5));
-Set(varDashMaxBy, Max(colDashBy, N))'''
+ClearCollect(
+    colDashStage,
+    {{ Key: "Waiting", Label: "Failed, not re-audited yet", N: CountIf(colDash, Stage = "Waiting") }},
+    {{ Key: "Still", Label: "Still failing after re-audit", N: CountIf(colDash, Stage = "Still") }},
+    {{ Key: "Fixed", Label: "Fixed on re-audit", N: CountIf(colDash, Stage = "Fixed") }},
+    {{ Key: "New", Label: "New issue on re-audit", N: CountIf(colDash, Stage = "New") }}
+);
+Set(varDashMaxStage, Max(colDashStage, N))'''
 
 # ---- email: branded summary + CSV of every audit in the period and stream
 def q(expr):
     return f'Char(34) & Substitute(Substitute(Substitute(Coalesce({expr}, ""), Char(34), Char(34) & Char(34)), Char(13), " "), Char(10), " ") & Char(34)'
 CSV_COLS = [('Audit Date', 'Text(When, "yyyy-mm-dd hh:mm")'), ('Asset Tag', 'Title'), ('Department', 'Dept'), ('Location', 'Loc'), ('Stream', 'Stream'), ('Auditor', 'Auditor'),
-            ('Audits Done', 'Text(AuditN)'), ('Latest Was Re-audit', 'If(ReAudit, "Yes", "No")'), ('Result', 'If(Follow, "Needs follow-up", "All clear")'), ('Issues Summary', 'Fails'),
+            ('Audits Done', 'Text(AuditN)'), ('Follow-up Status', 'Switch(Stage, "Waiting", "Failed, not re-audited yet", "Still", "Still failing after re-audit", "Fixed", "Fixed on re-audit", "New", "New issue on re-audit", "Clear")'), ('Latest Was Re-audit', 'If(ReAudit, "Yes", "No")'), ('Result', 'If(Follow, "Needs follow-up", "All clear")'), ('Issues Summary', 'Fails'),
             ('DTV Found', 'FoundRes'), ('Login Worked', 'LoginRes'), ('Login Fail Reason', 'LoginWhy'), ('Login Notes', 'LoginNotes'), ('Patient List Worked', 'PListRes'),
             ('Print Worked', 'PrintRes'), ('Print Fail Reason', 'PrintWhy'), ('Print Notes', 'PrintNotes'), ('Folder and Kit Found', 'FolderRes'), ('Contents List In Folder', 'ListRes'),
             ('Kit Matched', 'MatchRes'), ('Missing Items', 'Missing'), ('Extra Items', 'Extra'), ('Spoke To', 'Spoke'), ('Education Given', 'Edu'), ('Issues Raised', 'Issues'), ('Notes', 'Notes')]
@@ -454,6 +477,23 @@ If(
             ""
         ) &
 
+        // follow-up progress
+        If(
+            varDashMaxStage > 0,
+            "<tr><td style='{SEC}'>FOLLOW-UP PROGRESS</td></tr>" &
+            "<tr><td style='padding:6px 32px 8px 32px;'>" &
+            "{TBL}" &
+                Concat(
+                    colDashStage,
+                    "<tr>" &
+                        "<td style='{TD_}font-weight:600;color:#0E1C2A;'>" & Label & "</td>" &
+                        "<td align='right' style='{TD_}font-weight:700;color:" & Switch(Key, "Fixed", "#1E7A50", "New", "#B26900", "#B03428") & ";' width='60'>" & N & "</td>" &
+                    "</tr>"
+                ) &
+            "</table></td></tr>",
+            ""
+        ) &
+
         // coverage by stream
         "<tr><td style='{SEC}'>COVERAGE BY STREAM</td></tr>" &
         "<tr><td style='padding:6px 32px 8px 32px;'>" &
@@ -519,7 +559,7 @@ ONV = f'''If(IsBlank(varDashStream), Set(varDashStream, "ALL"));
 If(IsBlank(varDashWhyKind), Set(varDashWhyKind, "Print"));
 Set(varDashFocus, "");
 Set(varDashWhyR, "");
-Set(varDashBy, "");
+Set(varDashStage, "");
 Set(varSaving, false);
 Reset(txtSearch_Dsh);
 // stream pills: All, then one per stream (short name = text before the first "&" or ",")

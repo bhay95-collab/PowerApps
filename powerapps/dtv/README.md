@@ -50,3 +50,4 @@ Control names are shared by the whole app, so delete the old screen first or Stu
 - Needs: App > Formulas lines `C_Teal`, `DashW`, `DashX`, `DashWide`, `DashGap` (end of `App_Formulas_additions.txt`); Settings → General → Data row limit **2000** ("All Time" reads up to that many audits).
 - Final state only: each DTV counted once, using its latest audit in the period. Default period: All Time.
 - Email button: branded summary (KPI tiles, results by check, why it failed, coverage by stream, newest 30 follow-ups) + `DTV_Audits_<date>.csv` with one row per DTV (latest audit, plus how many audits it has had) in the chosen period and stream. Sent to the signed-in user only.
+- **Follow-up Progress** panel (replaced Auditors): compares each DTV's first audit with its latest: Failed, not re-audited yet · Still failing after re-audit · Fixed on re-audit · New issue on re-audit. Also in the email and as a CSV column.
