@@ -1611,11 +1611,11 @@ Screens:
                       Control: GroupContainer@1.5.0
                       Variant: ManualLayout
                       Properties:
-                        BorderColor: =If(wdSelID = ThisItem.ID, RGBA(26, 90, 153, 1), If(!IsBlank(Trim(ThisItem.Patient)), If(ThisItem.Contact = true, RGBA(245, 176, 0, 1), RGBA(14, 42, 70, 0.12)), RGBA(140, 155, 174, 0.55)))
+                        BorderColor: =If(wdSelID = ThisItem.ID, RGBA(26, 90, 153, 1), If(!IsBlank(Trim(ThisItem.Patient)), RGBA(14, 42, 70, 0.12), RGBA(140, 155, 174, 0.55)))
                         BorderStyle: =If(!IsBlank(Trim(ThisItem.Patient)), BorderStyle.Solid, BorderStyle.Dashed)
-                        BorderThickness: =If(wdSelID = ThisItem.ID || (!IsBlank(Trim(ThisItem.Patient)) && ThisItem.Contact = true), 2, 1)
+                        BorderThickness: =If(wdSelID = ThisItem.ID, 2, 1)
                         DropShadow: =If(!IsBlank(Trim(ThisItem.Patient)), DropShadow.Light, DropShadow.None)
-                        Fill: =If(!IsBlank(Trim(ThisItem.Patient)), If(ThisItem.'Falls Risk' = true, RGBA(204, 234, 230, 1), RGBA(255, 255, 255, 1)), RGBA(244, 249, 252, 1))
+                        Fill: =If(!IsBlank(Trim(ThisItem.Patient)), RGBA(255, 255, 255, 1), RGBA(244, 249, 252, 1))
                         Height: =54 * SY
                         RadiusBottomLeft: =14 * SR
                         RadiusBottomRight: =14 * SR
