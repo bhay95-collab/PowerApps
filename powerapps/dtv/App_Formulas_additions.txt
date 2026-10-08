@@ -1,0 +1,27 @@
+// =====================================================================
+// DTV Audit app > App > Formulas
+// Add ONLY the lines that are missing. A red error on a name means it is missing.
+// These are the same names and values as the equipment app and the dashboard.
+// =====================================================================
+
+// ---- colours used by the new screens
+C_Ink = RGBA(14, 28, 42, 1);
+C_Ink2 = RGBA(58, 80, 104, 1);
+C_Muted = RGBA(140, 155, 174, 1);
+C_Bg = RGBA(235, 242, 248, 1);
+C_Line = RGBA(14, 42, 70, 0.12);
+C_White = RGBA(255, 255, 255, 1);
+C_Accent = RGBA(26, 90, 153, 1);
+C_AccentSoft = RGBA(26, 90, 153, 0.10);
+C_Amber = RGBA(178, 105, 0, 1);
+C_AmberBg = RGBA(255, 246, 229, 1);
+
+AppFont = Font.'Segoe UI';
+
+// ---- header art: the teal gradient strip used at the top of every screen
+HeaderImage = "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' width='400' height='80' viewBox='0 0 400 80' preserveAspectRatio='none'><defs><linearGradient id='a' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='#001D46'/><stop offset='0.48' stop-color='#075F73'/><stop offset='1' stop-color='#00838A'/></linearGradient></defs><rect width='400' height='80' fill='url(#a)'/></svg>");
+
+// ---- screen size (phones and tablets, portrait or landscape)
+UI = Max(0.9, Min(1.25, Min(App.Width, App.Height * 0.55) / 390));
+PageW = Min(App.Width, 720);
+Gutter = (App.Width - PageW) / 2;

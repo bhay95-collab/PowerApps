@@ -1,0 +1,1577 @@
+Screens:
+  Servicing:
+    Properties:
+      Fill: =C_Bg
+      OnVisible: |-
+        =Set(svItem, If(IsBlank(varServiceItemID), Blank(), LookUp(Equipment_Inventory_SharePoint, ID = varServiceItemID)));
+        Set(varServiceItemID, Blank());
+        Set(svShowSend, false);
+        Set(svShowReturn, false);
+        Reset(txtCode_Sv);
+        ClearCollect(colSvOpen, Filter(Service_Log, ServiceStatus.Value = "In Service"));
+        ClearCollect(colSvDue, Filter(Equipment_Inventory_SharePoint, Status.Value = "Available" && TotalDaysSignedOut > 100))
+    Children:
+      - conRoot_Sv:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =C_Bg
+            Height: =Parent.Height
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Width: =Parent.Width
+          Children:
+            - conHdr_Sv:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(7, 95, 115, 1)
+                  FillPortions: =0
+                  Height: =Round(95 * UI, 0)
+                  LayoutMinHeight: =Round(95 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                  - imgHdr_Sv:
+                      Control: Image@2.2.3
+                      Properties:
+                        Height: =Parent.Height
+                        Image: =HeaderImage
+                        ImagePosition: =ImagePosition.Fill
+                        Width: =Parent.Width
+                  - btnBack_Sv:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        Appearance: =ButtonAppearance.Transparent
+                        Color: =C_White
+                        FontWeight: =""
+                        Height: =Round(60 * UI, 0)
+                        Icon: ="ChevronLeft"
+                        OnSelect: =Back(ScreenTransition.UnCoverRight)
+                        PaddingBottom: =5
+                        PaddingLeft: =12
+                        PaddingRight: =12
+                        PaddingTop: =5
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =Round(32 * UI, 0)
+                        Text: =""
+                        VerticalAlign: =VerticalAlign.Middle
+                        Width: =Round(60 * UI, 0)
+                        X: =Gutter + Round(5 * UI, 0)
+                        Y: =Round(18 * UI, 0)
+                  - lblHdrT_Sv:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_White
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(42 * UI, 0)
+                        Size: =Round(24 * UI, 0)
+                        Text: ="Servicing"
+                        Width: =PageW - Round(85 * UI, 0)
+                        Wrap: =false
+                        X: =Gutter + Round(65 * UI, 0)
+                        Y: =Round(12 * UI, 0)
+                  - lblHdrS_Sv:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 0.85)
+                        Font: =AppFont
+                        Height: =Round(25 * UI, 0)
+                        Size: =Round(15 * UI, 0)
+                        Text: ="Send for service or take back"
+                        Width: =PageW - Round(85 * UI, 0)
+                        Wrap: =false
+                        X: =Gutter + Round(65 * UI, 0)
+                        Y: =Round(53 * UI, 0)
+            - conBody_Sv:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  DropShadow: =DropShadow.None
+                  LayoutAlignItems: =LayoutAlignItems.Stretch
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =Round(13 * UI, 0)
+                  LayoutMinHeight: =Round(250 * UI, 0)
+                  LayoutOverflowY: =LayoutOverflow.Scroll
+                  PaddingBottom: =Round(20 * UI, 0)
+                  PaddingLeft: =Gutter + Round(20 * UI, 0)
+                  PaddingRight: =Gutter + Round(20 * UI, 0)
+                  PaddingTop: =Round(15 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                  - lblStep1_Sv:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_Accent
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(28 * UI, 0)
+                        LayoutMinHeight: =Round(28 * UI, 0)
+                        Size: =Round(15 * UI, 0)
+                        Text: ="1   FIND THE ITEM"
+                        VerticalAlign: =VerticalAlign.Bottom
+                        Width: =PageW - Round(40 * UI, 0)
+                        Wrap: =false
+                  - conScan_Sv:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        DropShadow: =DropShadow.None
+                        Fill: =C_Accent
+                        FillPortions: =0
+                        Height: =Round(65 * UI, 0)
+                        LayoutMinHeight: =Round(65 * UI, 0)
+                        RadiusBottomLeft: =Round(33 * UI, 0)
+                        RadiusBottomRight: =Round(33 * UI, 0)
+                        RadiusTopLeft: =Round(33 * UI, 0)
+                        RadiusTopRight: =Round(33 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - icoScan_Sv:
+                            Control: ModernIcon@1.1.1
+                            Properties:
+                              Height: =Round(30 * UI, 0)
+                              Icon: ="Camera"
+                              IconColor: =C_White
+                              Width: =Round(30 * UI, 0)
+                              X: =Round(23 * UI, 0)
+                              Y: =Round(18 * UI, 0)
+                        - lblScan_Sv:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_White
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Parent.Height
+                              Size: =Round(19 * UI, 0)
+                              Text: ="Scan barcode"
+                              Width: =Parent.Width - Round(75 * UI, 0)
+                              Wrap: =false
+                              X: =Round(65 * UI, 0)
+                        - scnSv_Sv:
+                            Control: BarcodeReader@1.0.25
+                            Properties:
+                              BorderStyle: =BorderStyle.None
+                              FillColor: =RGBA(0, 0, 0, 0)
+                              FontSize: =1
+                              Height: =Parent.Height
+                              HoverFillColor: =RGBA(255, 255, 255, 0.08)
+                              OnScan: |-
+                                =With(
+                                    { it: LookUp(Equipment_Inventory_SharePoint, Title = Trim(First(scnSv_Sv.Barcodes).Value)) },
+                                    If(
+                                        IsBlank(it),
+                                        Notify("Equipment not found. Check the barcode.", NotificationType.Error),
+                                        Set(svItem, it)
+                                    )
+                                )
+                              ScanningMode: ='BarcodeReader.ScanningMode'.SelectToScan
+                              Text: =""
+                              Width: =Parent.Width
+                  - conCode_Sv:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =RGBA(14, 42, 70, 0.22)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round(60 * UI, 0)
+                        LayoutMinHeight: =Round(60 * UI, 0)
+                        RadiusBottomLeft: =Round(15 * UI, 0)
+                        RadiusBottomRight: =Round(15 * UI, 0)
+                        RadiusTopLeft: =Round(15 * UI, 0)
+                        RadiusTopRight: =Round(15 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - icoCode_Sv:
+                            Control: ModernIcon@1.1.1
+                            Properties:
+                              Height: =Round(30 * UI, 0)
+                              Icon: ="Search"
+                              IconColor: =C_Muted
+                              Width: =Round(30 * UI, 0)
+                              X: =Round(15 * UI, 0)
+                              Y: =Round(15 * UI, 0)
+                        - txtCode_Sv:
+                            Control: Classic/TextInput@2.3.2
+                            Properties:
+                              BorderStyle: =BorderStyle.None
+                              Color: =C_Ink
+                              Default: =""
+                              DelayOutput: =true
+                              Fill: =RGBA(0, 0, 0, 0)
+                              Font: =AppFont
+                              Height: =Parent.Height
+                              HintText: ="...or type the barcode"
+                              Size: =Round(18 * UI, 0)
+                              Width: =Parent.Width - Round(55 * UI, 0)
+                              X: =Round(50 * UI, 0)
+                  - galSug_Sv:
+                      Control: Gallery@2.15.0
+                      Variant: Vertical
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        FillPortions: =0
+                        Height: =Round(200 * UI, 0)
+                        Items: =FirstN(SortByColumns(Filter(Equipment_Inventory_SharePoint, StartsWith(Title, Trim(txtCode_Sv.Text))), "Title", SortOrder.Ascending), 20)
+                        LayoutMinHeight: =Round(200 * UI, 0)
+                        TemplatePadding: =0
+                        TemplateSize: =Round(65 * UI, 0)
+                        Visible: =!IsBlank(Trim(txtCode_Sv.Text))
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - conSug_Sv:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =C_Line
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =C_Bg2
+                              Height: =Round(58 * UI, 0)
+                              RadiusBottomLeft: =Round(18 * UI, 0)
+                              RadiusBottomRight: =Round(18 * UI, 0)
+                              RadiusTopLeft: =Round(18 * UI, 0)
+                              RadiusTopRight: =Round(18 * UI, 0)
+                              Width: =Parent.TemplateWidth - Round(5 * UI, 0)
+                              X: =Round(3 * UI, 0)
+                              Y: =Round(5 * UI, 0)
+                            Children:
+                              - lblSugT_Sv:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(28 * UI, 0)
+                                    Size: =Round(17 * UI, 0)
+                                    Text: =ThisItem.Title
+                                    Width: =Parent.Width - Round(35 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(18 * UI, 0)
+                                    Y: =Round(5 * UI, 0)
+                              - lblSugS_Sv:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    Height: =Round(23 * UI, 0)
+                                    Size: =Round(15 * UI, 0)
+                                    Text: =Coalesce(Trim(ThisItem.Brand & " " & ThisItem.Model), "") & "  ·  " & Coalesce(ThisItem.Status.Value, "")
+                                    Width: =Parent.Width - Round(35 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(18 * UI, 0)
+                                    Y: =Round(30 * UI, 0)
+                              - btnSug_Sv:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    BorderStyle: =BorderStyle.None
+                                    FontWeight: =""
+                                    Height: =Parent.Height
+                                    OnSelect: |-
+                                      =Set(svItem, ThisItem);
+                                      Reset(txtCode_Sv)
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =4
+                                    RadiusBottomRight: =4
+                                    RadiusTopLeft: =4
+                                    RadiusTopRight: =4
+                                    Size: =0
+                                    Text: =""
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                  - conItem_Sv:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =C_Line
+                        BorderThickness: =1
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round(220 * UI, 0)
+                        LayoutMinHeight: =Round(220 * UI, 0)
+                        RadiusBottomLeft: =Round(23 * UI, 0)
+                        RadiusBottomRight: =Round(23 * UI, 0)
+                        RadiusTopLeft: =Round(23 * UI, 0)
+                        RadiusTopRight: =Round(23 * UI, 0)
+                        Visible: =!IsBlank(svItem)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - lblName_Sv:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(33 * UI, 0)
+                              Size: =Round(20 * UI, 0)
+                              Text: =svItem.Title & "  ·  " & Coalesce(Trim(svItem.Brand & " " & svItem.Model), "")
+                              Width: =Parent.Width - Round(188 * UI, 0)
+                              Wrap: =false
+                              X: =Round(20 * UI, 0)
+                              Y: =Round(18 * UI, 0)
+                        - conSt_Sv:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =Switch(Coalesce(svItem.Status.Value, ""), "Available", C_GoodBg, "Allocated", C_AccentSoft, "In Service", C_AmberBg, C_DangerBg)
+                              Height: =Round(33 * UI, 0)
+                              RadiusBottomLeft: =Round(16 * UI, 0)
+                              RadiusBottomRight: =Round(16 * UI, 0)
+                              RadiusTopLeft: =Round(16 * UI, 0)
+                              RadiusTopRight: =Round(16 * UI, 0)
+                              Width: =Round(140 * UI, 0)
+                              X: =Parent.Width - Round(160 * UI, 0)
+                              Y: =Round(18 * UI, 0)
+                            Children:
+                              - lblSt_Sv:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Align: =Align.Center
+                                    Color: =Switch(Coalesce(svItem.Status.Value, ""), "Available", C_Good, "Allocated", C_Accent, "In Service", C_Amber, C_Danger)
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Parent.Height
+                                    Size: =Round(15 * UI, 0)
+                                    Text: =Coalesce(svItem.Status.Value, "Unknown")
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                        - lblCat_Sv:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink2
+                              Font: =AppFont
+                              Height: =Round(25 * UI, 0)
+                              Size: =Round(16 * UI, 0)
+                              Text: =Coalesce(svItem.Category.Value, "") & If(IsBlank(svItem.Width.Value), "", "  ·  W " & svItem.Width.Value) & If(IsBlank(svItem.Depth.Value), "", "  ·  D " & svItem.Depth.Value)
+                              Width: =Parent.Width - Round(40 * UI, 0)
+                              Wrap: =false
+                              X: =Round(20 * UI, 0)
+                              Y: =Round(58 * UI, 0)
+                        - capDays_Sv:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Muted
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(23 * UI, 0)
+                              Size: =Round(14 * UI, 0)
+                              Text: ="DAYS IN USE"
+                              Width: =Round(200 * UI, 0)
+                              Wrap: =false
+                              X: =Round(20 * UI, 0)
+                              Y: =Round(100 * UI, 0)
+                        - lblDays_Sv:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =If(Coalesce(svItem.TotalDaysSignedOut, 0) > 100, C_Danger, C_Ink)
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(43 * UI, 0)
+                              Size: =Round(32 * UI, 0)
+                              Text: =Coalesce(svItem.TotalDaysSignedOut, 0)
+                              Width: =Round(200 * UI, 0)
+                              X: =Round(20 * UI, 0)
+                              Y: =Round(123 * UI, 0)
+                        - capLast_Sv:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Muted
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(23 * UI, 0)
+                              Size: =Round(14 * UI, 0)
+                              Text: ="LAST SERVICED"
+                              Width: =Round(250 * UI, 0)
+                              Wrap: =false
+                              X: =Parent.Width / 2 + Round(5 * UI, 0)
+                              Y: =Round(100 * UI, 0)
+                        - lblLast_Sv:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink2
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(30 * UI, 0)
+                              Size: =Round(18 * UI, 0)
+                              Text: =If(IsBlank(svItem.LastServiceDate), "Never recorded", Text(svItem.LastServiceDate, "d mmm yyyy"))
+                              Width: =Parent.Width / 2 - Round(25 * UI, 0)
+                              Wrap: =false
+                              X: =Parent.Width / 2 + Round(5 * UI, 0)
+                              Y: =Round(123 * UI, 0)
+                        - lblHint_Sv:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Danger
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(35 * UI, 0)
+                              Size: =Round(15 * UI, 0)
+                              Text: |-
+                                =If(Coalesce(svItem.TotalDaysSignedOut, 0) > 100, "Over 100 days: a Full service is due.", Coalesce(svItem.Status.Value, "") = "Allocated", "Signed out to " & Coalesce(svItem.'Patient Name', "a patient") & ". Return and clean it first.", "")
+                              Width: =Parent.Width - Round(40 * UI, 0)
+                              X: =Round(20 * UI, 0)
+                              Y: =Round(175 * UI, 0)
+                  - capOpen_Sv:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_Muted
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(23 * UI, 0)
+                        LayoutMinHeight: =Round(23 * UI, 0)
+                        Size: =Round(14 * UI, 0)
+                        Text: ="AT SERVICE NOW"
+                        Width: =PageW - Round(40 * UI, 0)
+                        Wrap: =false
+                  - galOpen_Sv:
+                      Control: Gallery@2.15.0
+                      Variant: Vertical
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        FillPortions: =0
+                        Height: =Round(238 * UI, 0)
+                        Items: =colSvOpen
+                        LayoutMinHeight: =Round(238 * UI, 0)
+                        TemplatePadding: =0
+                        TemplateSize: =Round(78 * UI, 0)
+                        Visible: =!IsEmpty(colSvOpen)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - conOpen_Sv:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =C_Line
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =C_White
+                              Height: =Round(70 * UI, 0)
+                              RadiusBottomLeft: =Round(18 * UI, 0)
+                              RadiusBottomRight: =Round(18 * UI, 0)
+                              RadiusTopLeft: =Round(18 * UI, 0)
+                              RadiusTopRight: =Round(18 * UI, 0)
+                              Width: =Parent.TemplateWidth - Round(5 * UI, 0)
+                              X: =Round(3 * UI, 0)
+                              Y: =Round(5 * UI, 0)
+                            Children:
+                              - lblOpenT_Sv:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(28 * UI, 0)
+                                    Size: =Round(17 * UI, 0)
+                                    Text: =ThisItem.Title & "  ·  " & Coalesce(ThisItem.Brand & " " & ThisItem.Model, "")
+                                    Width: =Parent.Width - Round(125 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(18 * UI, 0)
+                                    Y: =Round(8 * UI, 0)
+                              - lblOpenS_Sv:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    Height: =Round(23 * UI, 0)
+                                    Size: =Round(15 * UI, 0)
+                                    Text: =Coalesce(ThisItem.ServiceType.Value, "") & "  ·  sent " & Text(ThisItem.SentDateTime, "d mmm")
+                                    Width: =Parent.Width - Round(125 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(18 * UI, 0)
+                                    Y: =Round(35 * UI, 0)
+                              - conOpenD_Sv:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =C_AmberBg
+                                    Height: =Round(33 * UI, 0)
+                                    RadiusBottomLeft: =Round(16 * UI, 0)
+                                    RadiusBottomRight: =Round(16 * UI, 0)
+                                    RadiusTopLeft: =Round(16 * UI, 0)
+                                    RadiusTopRight: =Round(16 * UI, 0)
+                                    Width: =Round(80 * UI, 0)
+                                    X: =Parent.Width - Round(98 * UI, 0)
+                                    Y: =Round(18 * UI, 0)
+                                  Children:
+                                    - lblOpenD_Sv:
+                                        Control: Label@2.5.1
+                                        Properties:
+                                          Align: =Align.Center
+                                          Color: =C_Amber
+                                          Font: =AppFont
+                                          FontWeight: =FontWeight.Bold
+                                          Height: =Parent.Height
+                                          Size: =Round(15 * UI, 0)
+                                          Text: =DateDiff(ThisItem.SentDateTime, Now(), TimeUnit.Days) & " d"
+                                          Width: =Parent.Width
+                                          Wrap: =false
+                              - btnOpen_Sv:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    BorderStyle: =BorderStyle.None
+                                    FontWeight: =""
+                                    Height: =Parent.Height
+                                    OnSelect: =Set(svItem, LookUp(Equipment_Inventory_SharePoint, ID = ThisItem.EquipmentItemID))
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =4
+                                    RadiusBottomRight: =4
+                                    RadiusTopLeft: =4
+                                    RadiusTopRight: =4
+                                    Size: =0
+                                    Text: =""
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                  - capDue_Sv:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_Muted
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(23 * UI, 0)
+                        LayoutMinHeight: =Round(23 * UI, 0)
+                        Size: =Round(14 * UI, 0)
+                        Text: ="DUE FOR SERVICE (OVER 100 DAYS, IN STOCK)"
+                        Width: =PageW - Round(40 * UI, 0)
+                        Wrap: =false
+                  - galDue_Sv:
+                      Control: Gallery@2.15.0
+                      Variant: Vertical
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        FillPortions: =0
+                        Height: =Round(238 * UI, 0)
+                        Items: =SortByColumns(colSvDue, "TotalDaysSignedOut", SortOrder.Descending)
+                        LayoutMinHeight: =Round(238 * UI, 0)
+                        TemplatePadding: =0
+                        TemplateSize: =Round(78 * UI, 0)
+                        Visible: =!IsEmpty(colSvDue)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - conDue_Sv:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =C_Line
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =C_White
+                              Height: =Round(70 * UI, 0)
+                              RadiusBottomLeft: =Round(18 * UI, 0)
+                              RadiusBottomRight: =Round(18 * UI, 0)
+                              RadiusTopLeft: =Round(18 * UI, 0)
+                              RadiusTopRight: =Round(18 * UI, 0)
+                              Width: =Parent.TemplateWidth - Round(5 * UI, 0)
+                              X: =1
+                              Y: =Round(5 * UI, 0)
+                            Children:
+                              - lblDueT_Sv:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(28 * UI, 0)
+                                    Size: =Round(17 * UI, 0)
+                                    Text: =ThisItem.Title & "  ·  " & Coalesce(ThisItem.Brand & " " & ThisItem.Model, "")
+                                    Width: =Parent.Width - Round(125 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(18 * UI, 0)
+                                    Y: =Round(8 * UI, 0)
+                              - lblDueS_Sv:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    Height: =Round(23 * UI, 0)
+                                    Size: =Round(15 * UI, 0)
+                                    Text: =Coalesce(ThisItem.Category.Value, "") & "  ·  " & Coalesce(ThisItem.Location.Value, "")
+                                    Width: =Parent.Width - Round(125 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(18 * UI, 0)
+                                    Y: =Round(35 * UI, 0)
+                              - conDueD_Sv:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =C_DangerBg
+                                    Height: =Round(33 * UI, 0)
+                                    RadiusBottomLeft: =Round(16 * UI, 0)
+                                    RadiusBottomRight: =Round(16 * UI, 0)
+                                    RadiusTopLeft: =Round(16 * UI, 0)
+                                    RadiusTopRight: =Round(16 * UI, 0)
+                                    Width: =Round(80 * UI, 0)
+                                    X: =Parent.Width - Round(98 * UI, 0)
+                                    Y: =Round(18 * UI, 0)
+                                  Children:
+                                    - lblDueD_Sv:
+                                        Control: Label@2.5.1
+                                        Properties:
+                                          Align: =Align.Center
+                                          Color: =C_Danger
+                                          Font: =AppFont
+                                          FontWeight: =FontWeight.Bold
+                                          Height: =Parent.Height
+                                          Size: =Round(15 * UI, 0)
+                                          Text: =Coalesce(ThisItem.TotalDaysSignedOut, 0) & " d"
+                                          Width: =Parent.Width
+                                          Wrap: =false
+                              - btnDue_Sv:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    BorderStyle: =BorderStyle.None
+                                    FontWeight: =""
+                                    Height: =Parent.Height
+                                    OnSelect: =Set(svItem, ThisItem)
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =4
+                                    RadiusBottomRight: =4
+                                    RadiusTopLeft: =4
+                                    RadiusTopRight: =4
+                                    Size: =0
+                                    Text: =""
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+            - conFoot_Sv:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  BorderColor: =C_Line
+                  BorderThickness: =1
+                  DropShadow: =DropShadow.None
+                  Fill: =C_White
+                  FillPortions: =0
+                  Height: =Round(100 * UI, 0)
+                  LayoutMinHeight: =Round(100 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                  - conMain_Sv:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        BorderColor: =If(!IsBlank(svItem) && (Coalesce(svItem.Status.Value, "") = "Available" || Coalesce(svItem.Status.Value, "") = "In Service"), C_Accent, C_Muted)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =If(!IsBlank(svItem) && (Coalesce(svItem.Status.Value, "") = "Available" || Coalesce(svItem.Status.Value, "") = "In Service"), C_Accent, C_Muted)
+                        Height: =Round(60 * UI, 0)
+                        RadiusBottomLeft: =Round(30 * UI, 0)
+                        RadiusBottomRight: =Round(30 * UI, 0)
+                        RadiusTopLeft: =Round(30 * UI, 0)
+                        RadiusTopRight: =Round(30 * UI, 0)
+                        Visible: =!IsBlank(svItem)
+                        Width: =PageW - Round(40 * UI, 0)
+                        X: =Gutter + Round(20 * UI, 0)
+                        Y: =Round(20 * UI, 0)
+                      Children:
+                        - btnMain_Sv:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              Color: =C_White
+                              DisplayMode: =If(!IsBlank(svItem) && (Coalesce(svItem.Status.Value, "") = "Available" || Coalesce(svItem.Status.Value, "") = "In Service"), DisplayMode.Edit, DisplayMode.Disabled)
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =FontWeight.Bold
+                              Height: =Parent.Height
+                              OnSelect: =If(Coalesce(svItem.Status.Value, "") = "Available", Set(svShowSend, true), Set(svShowReturn, true))
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =Round(30 * UI, 0)
+                              RadiusBottomRight: =Round(30 * UI, 0)
+                              RadiusTopLeft: =Round(30 * UI, 0)
+                              RadiusTopRight: =Round(30 * UI, 0)
+                              Size: =Round(19 * UI, 0)
+                              Text: |-
+                                =If(Coalesce(svItem.Status.Value, "") = "Available", "Send for service", Coalesce(svItem.Status.Value, "") = "In Service", "Return from service", Coalesce(svItem.Status.Value, "") = "Allocated", "Signed out: return and clean first", "Not available  ·  " & Coalesce(svItem.Status.Value, ""))
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+      - conOverlay_SvS:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =RGBA(14, 28, 42, 0.45)
+            Height: =Parent.Height
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Visible: =svShowSend
+            Width: =Parent.Width
+          Children:
+            - btnScrim_SvS:
+                Control: ModernButton@1.0.0
+                Properties:
+                  Align: =Align.Center
+                  Appearance: =ButtonAppearance.Transparent
+                  BorderStyle: =BorderStyle.None
+                  FontWeight: =""
+                  Height: =Parent.Height
+                  OnSelect: =Set(svShowSend, false)
+                  PaddingBottom: =5
+                  PaddingLeft: =12
+                  PaddingRight: =12
+                  PaddingTop: =5
+                  RadiusBottomLeft: =4
+                  RadiusBottomRight: =4
+                  RadiusTopLeft: =4
+                  RadiusTopRight: =4
+                  Size: =0
+                  Text: =""
+                  VerticalAlign: =VerticalAlign.Middle
+                  Width: =Parent.Width
+            - conSheet_SvS:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =C_White
+                  Height: =Min(Parent.Height - Round(50 * UI, 0), Round(488 * UI, 0))
+                  RadiusBottomLeft: =If(App.Width >= 720, 22, 0)
+                  RadiusBottomRight: =If(App.Width >= 720, 22, 0)
+                  RadiusTopLeft: =Round(28 * UI, 0)
+                  RadiusTopRight: =Round(28 * UI, 0)
+                  Width: =Min(Parent.Width, SheetW)
+                  X: =(Parent.Width - Min(Parent.Width, SheetW)) / 2
+                  Y: =If(App.Width >= 720, (Parent.Height - Self.Height) / 2, Parent.Height - Self.Height)
+                Children:
+                  - conHandle_SvS:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(14, 42, 70, 0.18)
+                        Height: =Round(6 * UI, 0)
+                        RadiusBottomLeft: =Round(4 * UI, 0)
+                        RadiusBottomRight: =Round(4 * UI, 0)
+                        RadiusTopLeft: =Round(4 * UI, 0)
+                        RadiusTopRight: =Round(4 * UI, 0)
+                        Width: =Round(50 * UI, 0)
+                        X: =(Parent.Width - Round(50 * UI, 0)) / 2
+                        Y: =Round(10 * UI, 0)
+                  - lblSheetT_SvS:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_Ink
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(38 * UI, 0)
+                        Size: =Round(22 * UI, 0)
+                        Text: ="Send " & svItem.Title & " for service"
+                        Width: =Parent.Width - Round(50 * UI, 0)
+                        Wrap: =false
+                        X: =Round(25 * UI, 0)
+                        Y: =Round(25 * UI, 0)
+                  - conSheetBody_SvS:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Height: =Parent.Height - Round(65 * UI, 0) - Round(95 * UI, 0)
+                        LayoutAlignItems: =LayoutAlignItems.Stretch
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =Round(13 * UI, 0)
+                        LayoutOverflowY: =LayoutOverflow.Scroll
+                        PaddingBottom: =Round(15 * UI, 0)
+                        PaddingLeft: =Round(25 * UI, 0)
+                        PaddingRight: =Round(25 * UI, 0)
+                        PaddingTop: =Round(5 * UI, 0)
+                        RadiusBottomLeft: =0
+                        RadiusBottomRight: =0
+                        RadiusTopLeft: =0
+                        RadiusTopRight: =0
+                        Width: =Parent.Width
+                        Y: =Round(65 * UI, 0)
+                      Children:
+                        - fldType_Sv:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =Round(80 * UI, 0)
+                              LayoutMinHeight: =Round(80 * UI, 0)
+                              RadiusBottomLeft: =0
+                              RadiusBottomRight: =0
+                              RadiusTopLeft: =0
+                              RadiusTopRight: =0
+                              Width: =SheetW - Round(50 * UI, 0)
+                            Children:
+                              - capType_Sv:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(23 * UI, 0)
+                                    Size: =Round(14 * UI, 0)
+                                    Text: ="TYPE OF SERVICE"
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - boxType_Sv:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    BorderColor: =RGBA(14, 42, 70, 0.22)
+                                    BorderThickness: =1
+                                    DropShadow: =DropShadow.None
+                                    Fill: =C_White
+                                    Height: =Round(55 * UI, 0)
+                                    RadiusBottomLeft: =Round(13 * UI, 0)
+                                    RadiusBottomRight: =Round(13 * UI, 0)
+                                    RadiusTopLeft: =Round(13 * UI, 0)
+                                    RadiusTopRight: =Round(13 * UI, 0)
+                                    Width: =Parent.Width
+                                    Y: =Round(25 * UI, 0)
+                                  Children:
+                                    - ddType_Sv:
+                                        Control: Classic/DropDown@2.3.1
+                                        Properties:
+                                          BorderStyle: =BorderStyle.None
+                                          ChevronBackground: =C_Accent
+                                          ChevronFill: =C_White
+                                          Color: =C_Ink
+                                          Default: ="Full service"
+                                          Font: =AppFont
+                                          Height: =Parent.Height
+                                          Items: =Choices(Service_Log.ServiceType)
+                                          Items.Value: =Value
+                                          Size: =Round(18 * UI, 0)
+                                          Width: =Parent.Width
+                        - fldNotesSend_Sv:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =Round(145 * UI, 0)
+                              LayoutMinHeight: =Round(145 * UI, 0)
+                              RadiusBottomLeft: =0
+                              RadiusBottomRight: =0
+                              RadiusTopLeft: =0
+                              RadiusTopRight: =0
+                              Width: =SheetW - Round(50 * UI, 0)
+                            Children:
+                              - capNotesSend_Sv:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(23 * UI, 0)
+                                    Size: =Round(14 * UI, 0)
+                                    Text: ="NOTES (OPTIONAL)"
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - boxNotesSend_Sv:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    BorderColor: =RGBA(14, 42, 70, 0.22)
+                                    BorderThickness: =1
+                                    DropShadow: =DropShadow.None
+                                    Fill: =C_White
+                                    Height: =Round(120 * UI, 0)
+                                    RadiusBottomLeft: =Round(13 * UI, 0)
+                                    RadiusBottomRight: =Round(13 * UI, 0)
+                                    RadiusTopLeft: =Round(13 * UI, 0)
+                                    RadiusTopRight: =Round(13 * UI, 0)
+                                    Width: =Parent.Width
+                                    Y: =Round(25 * UI, 0)
+                                  Children:
+                                    - txtSendNotes_Sv:
+                                        Control: Classic/TextInput@2.3.2
+                                        Properties:
+                                          BorderStyle: =BorderStyle.None
+                                          Color: =C_Ink
+                                          Default: =""
+                                          Fill: =RGBA(0, 0, 0, 0)
+                                          Font: =AppFont
+                                          Height: =Parent.Height
+                                          HintText: ="What needs doing?"
+                                          Mode: =TextMode.MultiLine
+                                          Size: =Round(17 * UI, 0)
+                                          Width: =Parent.Width - Round(10 * UI, 0)
+                                          X: =Round(5 * UI, 0)
+                        - lblSendBody_Sv:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink2
+                              Font: =AppFont
+                              Height: =Round(45 * UI, 0)
+                              LayoutMinHeight: =Round(45 * UI, 0)
+                              Size: =Round(16 * UI, 0)
+                              Text: ="The item will be taken out of stock (status In Service) until you return it from service."
+                              Width: =SheetW - Round(50 * UI, 0)
+                  - conSheetFoot_SvS:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        Height: =Round(95 * UI, 0)
+                        RadiusBottomLeft: =0
+                        RadiusBottomRight: =0
+                        RadiusTopLeft: =0
+                        RadiusTopRight: =0
+                        Width: =Parent.Width
+                        Y: =Parent.Height - Round(95 * UI, 0)
+                      Children:
+                        - lineFoot_SvS:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =C_Line
+                              Height: =1
+                              RadiusBottomLeft: =0
+                              RadiusBottomRight: =0
+                              RadiusTopLeft: =0
+                              RadiusTopRight: =0
+                              Width: =Parent.Width
+                        - conSendBtns_Sv:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Height: =Round(60 * UI, 0)
+                              RadiusBottomLeft: =0
+                              RadiusBottomRight: =0
+                              RadiusTopLeft: =0
+                              RadiusTopRight: =0
+                              Width: =SheetW - Round(50 * UI, 0)
+                              X: =Round(25 * UI, 0)
+                              Y: =Round(18 * UI, 0)
+                            Children:
+                              - conSendNo_Sv:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    BorderColor: =C_Line
+                                    BorderThickness: =1
+                                    DropShadow: =DropShadow.None
+                                    Fill: =C_White
+                                    Height: =Round(60 * UI, 0)
+                                    RadiusBottomLeft: =Round(30 * UI, 0)
+                                    RadiusBottomRight: =Round(30 * UI, 0)
+                                    RadiusTopLeft: =Round(30 * UI, 0)
+                                    RadiusTopRight: =Round(30 * UI, 0)
+                                    Width: =(SheetW - Round(65 * UI, 0)) / 2
+                                  Children:
+                                    - btnSendNo_Sv:
+                                        Control: ModernButton@1.0.0
+                                        Properties:
+                                          Align: =Align.Center
+                                          Appearance: =ButtonAppearance.Transparent
+                                          Color: =C_Ink2
+                                          Font: =Font.'Segoe UI'
+                                          FontWeight: =FontWeight.Bold
+                                          Height: =Parent.Height
+                                          OnSelect: =Set(svShowSend, false)
+                                          PaddingBottom: =5
+                                          PaddingLeft: =12
+                                          PaddingRight: =12
+                                          PaddingTop: =5
+                                          RadiusBottomLeft: =Round(30 * UI, 0)
+                                          RadiusBottomRight: =Round(30 * UI, 0)
+                                          RadiusTopLeft: =Round(30 * UI, 0)
+                                          RadiusTopRight: =Round(30 * UI, 0)
+                                          Size: =Round(18 * UI, 0)
+                                          Text: ="Cancel"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                              - conSendGo_Sv:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    BorderColor: =C_Accent
+                                    BorderThickness: =1
+                                    DropShadow: =DropShadow.None
+                                    Fill: =C_Accent
+                                    Height: =Round(60 * UI, 0)
+                                    RadiusBottomLeft: =Round(30 * UI, 0)
+                                    RadiusBottomRight: =Round(30 * UI, 0)
+                                    RadiusTopLeft: =Round(30 * UI, 0)
+                                    RadiusTopRight: =Round(30 * UI, 0)
+                                    Width: =(SheetW - Round(65 * UI, 0)) / 2
+                                    X: =(SheetW - Round(65 * UI, 0)) / 2 + Round(15 * UI, 0)
+                                  Children:
+                                    - btnSendGo_Sv:
+                                        Control: ModernButton@1.0.0
+                                        Properties:
+                                          Align: =Align.Center
+                                          Appearance: =ButtonAppearance.Transparent
+                                          Color: =C_White
+                                          Font: =Font.'Segoe UI'
+                                          FontWeight: =FontWeight.Bold
+                                          Height: =Parent.Height
+                                          OnSelect: |-
+                                            =With(
+                                                { it: LookUp(Equipment_Inventory_SharePoint, ID = svItem.ID) },
+                                                If(
+                                                    Coalesce(it.Status.Value, "") <> "Available",
+                                                    Notify("This item is no longer Available. Its status is " & Coalesce(it.Status.Value, "unknown") & ".", NotificationType.Error),
+                                                    Patch(Equipment_Inventory_SharePoint, it, { Status: { Value: "In Service" } });
+                                                    If(
+                                                        !IsEmpty(Errors(Equipment_Inventory_SharePoint)),
+                                                        Notify("Could not update the item. Please try again.", NotificationType.Error),
+                                                        Patch(
+                                                            Service_Log,
+                                                            Defaults(Service_Log),
+                                                            {
+                                                                Title: it.Title,
+                                                                EquipmentItemID: it.ID,
+                                                                Category: Coalesce(it.Category.Value, ""),
+                                                                Brand: Coalesce(it.Brand, ""),
+                                                                Model: Coalesce(it.Model, ""),
+                                                                Width: Coalesce(it.Width.Value, ""),
+                                                                Depth: Coalesce(it.Depth.Value, ""),
+                                                                Height: Coalesce(it.Height.Value, ""),
+                                                                WheelchairType: Coalesce(it.'Wheelchair Type'.Value, ""),
+                                                                ServiceType: { Value: ddType_Sv.Selected.Value },
+                                                                ServiceStatus: { Value: "In Service" },
+                                                                SentDateTime: Now(),
+                                                                SentByName: MeName,
+                                                                SentByEmail: User().Email,
+                                                                DaysInUseAtSend: Coalesce(it.TotalDaysSignedOut, 0),
+                                                                SendNotes: Trim(txtSendNotes_Sv.Text),
+                                                                SourceApp: { Value: "Mobile" }
+                                                            }
+                                                        );
+                                                        Set(svShowSend, false);
+                                                        Notify(it.Title & " sent for service.", NotificationType.Success);
+                                                        Set(svItem, LookUp(Equipment_Inventory_SharePoint, ID = it.ID));
+                                                        ClearCollect(colSvOpen, Filter(Service_Log, ServiceStatus.Value = "In Service"));
+                                                        ClearCollect(colSvDue, Filter(Equipment_Inventory_SharePoint, Status.Value = "Available" && TotalDaysSignedOut > 100));
+                                                        Reset(txtSendNotes_Sv)
+                                                    )
+                                                )
+                                            )
+                                          PaddingBottom: =5
+                                          PaddingLeft: =12
+                                          PaddingRight: =12
+                                          PaddingTop: =5
+                                          RadiusBottomLeft: =Round(30 * UI, 0)
+                                          RadiusBottomRight: =Round(30 * UI, 0)
+                                          RadiusTopLeft: =Round(30 * UI, 0)
+                                          RadiusTopRight: =Round(30 * UI, 0)
+                                          Size: =Round(18 * UI, 0)
+                                          Text: ="Send"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+      - conOverlay_SvR:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =RGBA(14, 28, 42, 0.45)
+            Height: =Parent.Height
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Visible: =svShowReturn
+            Width: =Parent.Width
+          Children:
+            - btnScrim_SvR:
+                Control: ModernButton@1.0.0
+                Properties:
+                  Align: =Align.Center
+                  Appearance: =ButtonAppearance.Transparent
+                  BorderStyle: =BorderStyle.None
+                  FontWeight: =""
+                  Height: =Parent.Height
+                  OnSelect: =Set(svShowReturn, false)
+                  PaddingBottom: =5
+                  PaddingLeft: =12
+                  PaddingRight: =12
+                  PaddingTop: =5
+                  RadiusBottomLeft: =4
+                  RadiusBottomRight: =4
+                  RadiusTopLeft: =4
+                  RadiusTopRight: =4
+                  Size: =0
+                  Text: =""
+                  VerticalAlign: =VerticalAlign.Middle
+                  Width: =Parent.Width
+            - conSheet_SvR:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =C_White
+                  Height: =Min(Parent.Height - Round(50 * UI, 0), Round(525 * UI, 0))
+                  RadiusBottomLeft: =If(App.Width >= 720, 22, 0)
+                  RadiusBottomRight: =If(App.Width >= 720, 22, 0)
+                  RadiusTopLeft: =Round(28 * UI, 0)
+                  RadiusTopRight: =Round(28 * UI, 0)
+                  Width: =Min(Parent.Width, SheetW)
+                  X: =(Parent.Width - Min(Parent.Width, SheetW)) / 2
+                  Y: =If(App.Width >= 720, (Parent.Height - Self.Height) / 2, Parent.Height - Self.Height)
+                Children:
+                  - conHandle_SvR:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(14, 42, 70, 0.18)
+                        Height: =Round(6 * UI, 0)
+                        RadiusBottomLeft: =Round(4 * UI, 0)
+                        RadiusBottomRight: =Round(4 * UI, 0)
+                        RadiusTopLeft: =Round(4 * UI, 0)
+                        RadiusTopRight: =Round(4 * UI, 0)
+                        Width: =Round(50 * UI, 0)
+                        X: =(Parent.Width - Round(50 * UI, 0)) / 2
+                        Y: =Round(10 * UI, 0)
+                  - lblSheetT_SvR:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_Ink
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(38 * UI, 0)
+                        Size: =Round(22 * UI, 0)
+                        Text: ="Return " & svItem.Title & " from service"
+                        Width: =Parent.Width - Round(50 * UI, 0)
+                        Wrap: =false
+                        X: =Round(25 * UI, 0)
+                        Y: =Round(25 * UI, 0)
+                  - conSheetBody_SvR:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Height: =Parent.Height - Round(65 * UI, 0) - Round(95 * UI, 0)
+                        LayoutAlignItems: =LayoutAlignItems.Stretch
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =Round(13 * UI, 0)
+                        LayoutOverflowY: =LayoutOverflow.Scroll
+                        PaddingBottom: =Round(15 * UI, 0)
+                        PaddingLeft: =Round(25 * UI, 0)
+                        PaddingRight: =Round(25 * UI, 0)
+                        PaddingTop: =Round(5 * UI, 0)
+                        RadiusBottomLeft: =0
+                        RadiusBottomRight: =0
+                        RadiusTopLeft: =0
+                        RadiusTopRight: =0
+                        Width: =Parent.Width
+                        Y: =Round(65 * UI, 0)
+                      Children:
+                        - fldOutcome_Sv:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =Round(80 * UI, 0)
+                              LayoutMinHeight: =Round(80 * UI, 0)
+                              RadiusBottomLeft: =0
+                              RadiusBottomRight: =0
+                              RadiusTopLeft: =0
+                              RadiusTopRight: =0
+                              Width: =SheetW - Round(50 * UI, 0)
+                            Children:
+                              - capOutcome_Sv:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(23 * UI, 0)
+                                    Size: =Round(14 * UI, 0)
+                                    Text: ="OUTCOME"
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - boxOutcome_Sv:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    BorderColor: =RGBA(14, 42, 70, 0.22)
+                                    BorderThickness: =1
+                                    DropShadow: =DropShadow.None
+                                    Fill: =C_White
+                                    Height: =Round(55 * UI, 0)
+                                    RadiusBottomLeft: =Round(13 * UI, 0)
+                                    RadiusBottomRight: =Round(13 * UI, 0)
+                                    RadiusTopLeft: =Round(13 * UI, 0)
+                                    RadiusTopRight: =Round(13 * UI, 0)
+                                    Width: =Parent.Width
+                                    Y: =Round(25 * UI, 0)
+                                  Children:
+                                    - ddOutcome_Sv:
+                                        Control: Classic/DropDown@2.3.1
+                                        Properties:
+                                          BorderStyle: =BorderStyle.None
+                                          ChevronBackground: =C_Accent
+                                          ChevronFill: =C_White
+                                          Color: =C_Ink
+                                          Default: ="Serviced and returned to stock"
+                                          Font: =AppFont
+                                          Height: =Parent.Height
+                                          Items: =Choices(Service_Log.Outcome)
+                                          Items.Value: =Value
+                                          Size: =Round(18 * UI, 0)
+                                          Width: =Parent.Width
+                        - fldLoc_Sv:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =Round(80 * UI, 0)
+                              LayoutMinHeight: =Round(80 * UI, 0)
+                              RadiusBottomLeft: =0
+                              RadiusBottomRight: =0
+                              RadiusTopLeft: =0
+                              RadiusTopRight: =0
+                              Width: =SheetW - Round(50 * UI, 0)
+                            Children:
+                              - capLoc_Sv:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(23 * UI, 0)
+                                    Size: =Round(14 * UI, 0)
+                                    Text: ="WHERE IS IT GOING?"
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - boxLoc_Sv:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    BorderColor: =RGBA(14, 42, 70, 0.22)
+                                    BorderThickness: =1
+                                    DropShadow: =DropShadow.None
+                                    Fill: =C_White
+                                    Height: =Round(55 * UI, 0)
+                                    RadiusBottomLeft: =Round(13 * UI, 0)
+                                    RadiusBottomRight: =Round(13 * UI, 0)
+                                    RadiusTopLeft: =Round(13 * UI, 0)
+                                    RadiusTopRight: =Round(13 * UI, 0)
+                                    Width: =Parent.Width
+                                    Y: =Round(25 * UI, 0)
+                                  Children:
+                                    - ddLoc_Sv:
+                                        Control: Classic/DropDown@2.3.1
+                                        Properties:
+                                          BorderStyle: =BorderStyle.None
+                                          ChevronBackground: =C_Accent
+                                          ChevronFill: =C_White
+                                          Color: =C_Ink
+                                          Default: =Coalesce(svItem.Location.Value, "")
+                                          Font: =AppFont
+                                          Height: =Parent.Height
+                                          Items: =Choices(Equipment_Inventory_SharePoint.Location)
+                                          Items.Value: =Value
+                                          Size: =Round(18 * UI, 0)
+                                          Width: =Parent.Width
+                        - fldNotesRet_Sv:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =Round(145 * UI, 0)
+                              LayoutMinHeight: =Round(145 * UI, 0)
+                              RadiusBottomLeft: =0
+                              RadiusBottomRight: =0
+                              RadiusTopLeft: =0
+                              RadiusTopRight: =0
+                              Width: =SheetW - Round(50 * UI, 0)
+                            Children:
+                              - capNotesRet_Sv:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(23 * UI, 0)
+                                    Size: =Round(14 * UI, 0)
+                                    Text: ="NOTES (OPTIONAL)"
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - boxNotesRet_Sv:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    BorderColor: =RGBA(14, 42, 70, 0.22)
+                                    BorderThickness: =1
+                                    DropShadow: =DropShadow.None
+                                    Fill: =C_White
+                                    Height: =Round(120 * UI, 0)
+                                    RadiusBottomLeft: =Round(13 * UI, 0)
+                                    RadiusBottomRight: =Round(13 * UI, 0)
+                                    RadiusTopLeft: =Round(13 * UI, 0)
+                                    RadiusTopRight: =Round(13 * UI, 0)
+                                    Width: =Parent.Width
+                                    Y: =Round(25 * UI, 0)
+                                  Children:
+                                    - txtRetNotes_Sv:
+                                        Control: Classic/TextInput@2.3.2
+                                        Properties:
+                                          BorderStyle: =BorderStyle.None
+                                          Color: =C_Ink
+                                          Default: =""
+                                          Fill: =RGBA(0, 0, 0, 0)
+                                          Font: =AppFont
+                                          Height: =Parent.Height
+                                          HintText: ="What was done?"
+                                          Mode: =TextMode.MultiLine
+                                          Size: =Round(17 * UI, 0)
+                                          Width: =Parent.Width - Round(10 * UI, 0)
+                                          X: =Round(5 * UI, 0)
+                  - conSheetFoot_SvR:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        Height: =Round(95 * UI, 0)
+                        RadiusBottomLeft: =0
+                        RadiusBottomRight: =0
+                        RadiusTopLeft: =0
+                        RadiusTopRight: =0
+                        Width: =Parent.Width
+                        Y: =Parent.Height - Round(95 * UI, 0)
+                      Children:
+                        - lineFoot_SvR:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =C_Line
+                              Height: =1
+                              RadiusBottomLeft: =0
+                              RadiusBottomRight: =0
+                              RadiusTopLeft: =0
+                              RadiusTopRight: =0
+                              Width: =Parent.Width
+                        - conRetBtns_Sv:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Height: =Round(60 * UI, 0)
+                              RadiusBottomLeft: =0
+                              RadiusBottomRight: =0
+                              RadiusTopLeft: =0
+                              RadiusTopRight: =0
+                              Width: =SheetW - Round(50 * UI, 0)
+                              X: =Round(25 * UI, 0)
+                              Y: =Round(18 * UI, 0)
+                            Children:
+                              - conRetNo_Sv:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    BorderColor: =C_Line
+                                    BorderThickness: =1
+                                    DropShadow: =DropShadow.None
+                                    Fill: =C_White
+                                    Height: =Round(60 * UI, 0)
+                                    RadiusBottomLeft: =Round(30 * UI, 0)
+                                    RadiusBottomRight: =Round(30 * UI, 0)
+                                    RadiusTopLeft: =Round(30 * UI, 0)
+                                    RadiusTopRight: =Round(30 * UI, 0)
+                                    Width: =(SheetW - Round(65 * UI, 0)) / 2
+                                  Children:
+                                    - btnRetNo_Sv:
+                                        Control: ModernButton@1.0.0
+                                        Properties:
+                                          Align: =Align.Center
+                                          Appearance: =ButtonAppearance.Transparent
+                                          Color: =C_Ink2
+                                          Font: =Font.'Segoe UI'
+                                          FontWeight: =FontWeight.Bold
+                                          Height: =Parent.Height
+                                          OnSelect: =Set(svShowReturn, false)
+                                          PaddingBottom: =5
+                                          PaddingLeft: =12
+                                          PaddingRight: =12
+                                          PaddingTop: =5
+                                          RadiusBottomLeft: =Round(30 * UI, 0)
+                                          RadiusBottomRight: =Round(30 * UI, 0)
+                                          RadiusTopLeft: =Round(30 * UI, 0)
+                                          RadiusTopRight: =Round(30 * UI, 0)
+                                          Size: =Round(18 * UI, 0)
+                                          Text: ="Cancel"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                              - conRetGo_Sv:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    BorderColor: =C_Accent
+                                    BorderThickness: =1
+                                    DropShadow: =DropShadow.None
+                                    Fill: =C_Accent
+                                    Height: =Round(60 * UI, 0)
+                                    RadiusBottomLeft: =Round(30 * UI, 0)
+                                    RadiusBottomRight: =Round(30 * UI, 0)
+                                    RadiusTopLeft: =Round(30 * UI, 0)
+                                    RadiusTopRight: =Round(30 * UI, 0)
+                                    Width: =(SheetW - Round(65 * UI, 0)) / 2
+                                    X: =(SheetW - Round(65 * UI, 0)) / 2 + Round(15 * UI, 0)
+                                  Children:
+                                    - btnRetGo_Sv:
+                                        Control: ModernButton@1.0.0
+                                        Properties:
+                                          Align: =Align.Center
+                                          Appearance: =ButtonAppearance.Transparent
+                                          Color: =C_White
+                                          Font: =Font.'Segoe UI'
+                                          FontWeight: =FontWeight.Bold
+                                          Height: =Parent.Height
+                                          OnSelect: |-
+                                            =With(
+                                                {
+                                                    it: LookUp(Equipment_Inventory_SharePoint, ID = svItem.ID),
+                                                    row: LookUp(Service_Log, EquipmentItemID = svItem.ID && ServiceStatus.Value = "In Service"),
+                                                    outcome: ddOutcome_Sv.Selected.Value,
+                                                    newLoc: Coalesce(ddLoc_Sv.Selected.Value, svItem.Location.Value, "")
+                                                },
+                                                With(
+                                                    {
+                                                        condemned: StartsWith(outcome, "Condemned"),
+                                                        daysAway: If(IsBlank(row.SentDateTime), 0, Max(0, DateDiff(row.SentDateTime, Now(), TimeUnit.Days)))
+                                                    },
+                                                    With(
+                                                        { resetDays: !condemned && Coalesce(row.ServiceType.Value, "Full service") = "Full service" },
+
+                                                        // 1) the item
+                                                        Patch(
+                                                            Equipment_Inventory_SharePoint,
+                                                            it,
+                                                            {
+                                                                Status: { Value: If(condemned, "Out of Service", "Available") },
+                                                                OutOfService: condemned,
+                                                                IsActive: !condemned,
+                                                                TotalDaysSignedOut: If(resetDays, 0, Coalesce(it.TotalDaysSignedOut, 0)),
+                                                                LastServiceDate: Today(),
+                                                                Location: If(IsBlank(newLoc), it.Location, { Value: newLoc })
+                                                            }
+                                                        );
+
+                                                        If(
+                                                            !IsEmpty(Errors(Equipment_Inventory_SharePoint)),
+                                                            Notify("Could not update the item. Please try again.", NotificationType.Error),
+
+                                                            // 2) the service record (completed). If there is none (status set by hand), create a completed one.
+                                                            If(
+                                                                IsBlank(row),
+                                                                Patch(
+                                                                    Service_Log,
+                                                                    Defaults(Service_Log),
+                                                                    {
+                                                                        Title: it.Title,
+                                                                        EquipmentItemID: it.ID,
+                                                                        Category: Coalesce(it.Category.Value, ""),
+                                                                        Brand: Coalesce(it.Brand, ""),
+                                                                        Model: Coalesce(it.Model, ""),
+                                                                        Width: Coalesce(it.Width.Value, ""),
+                                                                        ServiceType: { Value: "Other" },
+                                                                        ServiceStatus: { Value: "Completed" },
+                                                                        ReturnedDateTime: Now(),
+                                                                        ReturnedByName: MeName,
+                                                                        ReturnedByEmail: User().Email,
+                                                                        Outcome: { Value: outcome },
+                                                                        ReturnNotes: Trim(txtRetNotes_Sv.Text),
+                                                                        SourceApp: { Value: "Mobile" }
+                                                                    }
+                                                                ),
+                                                                Patch(
+                                                                    Service_Log,
+                                                                    row,
+                                                                    {
+                                                                        ServiceStatus: { Value: "Completed" },
+                                                                        ReturnedDateTime: Now(),
+                                                                        ReturnedByName: MeName,
+                                                                        ReturnedByEmail: User().Email,
+                                                                        Outcome: { Value: outcome },
+                                                                        ReturnNotes: Trim(txtRetNotes_Sv.Text),
+                                                                        DaysAtService: daysAway
+                                                                    }
+                                                                )
+                                                            );
+                                                            Set(svShowReturn, false);
+                                                            Notify(
+                                                                If(condemned, it.Title & " recorded as condemned (out of service).", it.Title & " is back in stock." & If(resetDays, " Days in use reset to 0.", "")),
+                                                                If(condemned, NotificationType.Warning, NotificationType.Success)
+                                                            );
+                                                            Set(svItem, LookUp(Equipment_Inventory_SharePoint, ID = it.ID));
+                                                            ClearCollect(colSvOpen, Filter(Service_Log, ServiceStatus.Value = "In Service"));
+                                                            ClearCollect(colSvDue, Filter(Equipment_Inventory_SharePoint, Status.Value = "Available" && TotalDaysSignedOut > 100));
+                                                            Reset(txtRetNotes_Sv)
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                          PaddingBottom: =5
+                                          PaddingLeft: =12
+                                          PaddingRight: =12
+                                          PaddingTop: =5
+                                          RadiusBottomLeft: =Round(30 * UI, 0)
+                                          RadiusBottomRight: =Round(30 * UI, 0)
+                                          RadiusTopLeft: =Round(30 * UI, 0)
+                                          RadiusTopRight: =Round(30 * UI, 0)
+                                          Size: =Round(18 * UI, 0)
+                                          Text: ="Return to stock"
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width

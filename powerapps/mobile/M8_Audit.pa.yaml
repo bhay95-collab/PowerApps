@@ -1,0 +1,1602 @@
+Screens:
+  Audit:
+    Properties:
+      Fill: =C_Bg
+      OnVisible: |-
+        =// Patients on all four wards (one shape for every ward)
+        // loaded once and shared by Allocate and Audit; refreshed when older than 10 minutes
+        If(
+            IsEmpty(colPatients) || IsBlank(varPatientsLoaded) || DateDiff(varPatientsLoaded, Now(), TimeUnit.Minutes) >= 10,
+            ClearCollect(
+                colPatients,
+                ForAll(
+                    Filter(Ward_4A_Shared, !IsBlank(Patient)) As r,
+                    {
+                        ID: r.ID,
+                        Ward: "4A",
+                        Bed: r.Bed,
+                        Name: r.Patient,
+                        URN: r.URN,
+                        DOB: r.DOB,
+                        PT_Users: r.PT_Users,
+                        Mine: !IsBlank(LookUp(Switch(MyDiscipline, "OT", r.OT_Users, "SP", r.SP_Users, r.PT_Users), Lower(Email) = MeEmail)),
+                        DisplayText: r.Patient & "  ·  4A  ·  URN " & r.URN
+                    }
+                )
+            );
+            Collect(
+                colPatients,
+                ForAll(
+                    Filter(Ward_4B_Shared, !IsBlank(Patient)) As r,
+                    {
+                        ID: r.ID,
+                        Ward: "4B",
+                        Bed: r.Bed,
+                        Name: r.Patient,
+                        URN: r.URN,
+                        DOB: r.DOB,
+                        PT_Users: r.PT_Users,
+                        Mine: !IsBlank(LookUp(Switch(MyDiscipline, "OT", r.OT_Users, "SP", r.SP_Users, r.PT_Users), Lower(Email) = MeEmail)),
+                        DisplayText: r.Patient & "  ·  4B  ·  URN " & r.URN
+                    }
+                )
+            );
+            Collect(
+                colPatients,
+                ForAll(
+                    Filter(Ward_5A_Shared, !IsBlank(Patient)) As r,
+                    {
+                        ID: r.ID,
+                        Ward: "5A",
+                        Bed: r.Bed,
+                        Name: r.Patient,
+                        URN: r.URN,
+                        DOB: r.DOB,
+                        PT_Users: r.PT_Users,
+                        Mine: !IsBlank(LookUp(Switch(MyDiscipline, "OT", r.OT_Users, "SP", r.SP_Users, r.PT_Users), Lower(Email) = MeEmail)),
+                        DisplayText: r.Patient & "  ·  5A  ·  URN " & r.URN
+                    }
+                )
+            );
+            Collect(
+                colPatients,
+                ForAll(
+                    Filter(Ward_6A_Shared, !IsBlank(Patient)) As r,
+                    {
+                        ID: r.ID,
+                        Ward: "6A",
+                        Bed: r.Bed,
+                        Name: r.Patient,
+                        URN: r.URN,
+                        DOB: r.DOB,
+                        PT_Users: r.PT_Users,
+                        Mine: !IsBlank(LookUp(Switch(MyDiscipline, "OT", r.OT_Users, "SP", r.SP_Users, r.PT_Users), Lower(Email) = MeEmail)),
+                        DisplayText: r.Patient & "  ·  6A  ·  URN " & r.URN
+                    }
+                )
+            );
+            Set(varPatientsLoaded, Now())
+        );
+
+        // allocated items nobody has audited in the last 60 days, longest out first
+        ClearCollect(
+            colAuRecent,
+            ShowColumns(Filter(Equipment_Audits, AuditDateTime >= DateAdd(Today(), -60, TimeUnit.Days)), Barcode)
+        );
+        ClearCollect(
+            colAuNext,
+            FirstN(
+                Sort(
+                    Filter(Equipment_Inventory_SharePoint, Status.Value = "Allocated" && IsBlank(LookUp(colAuRecent, Barcode = Title))),
+                    'Date Signed Out',
+                    SortOrder.Ascending
+                ),
+                5
+            )
+        );
+
+        Set(auItem, Blank());
+        Select(btnResetChecks_Au)
+    Children:
+      - btnResetChecks_Au:
+          Control: ModernButton@1.0.0
+          Properties:
+            Align: =Align.Center
+            FontWeight: =""
+            Height: =1
+            OnSelect: |-
+              =Set(auPt, Blank());
+              Reset(txtPt_Au);
+              Reset(ddCond_Au);
+              Reset(txtComments_Au);
+              Reset(txtEquip_Au);
+              Set(auSafety, false);
+              Set(auTag, "");
+              Set(auRisk, false);
+              Set(auRemoved, false)
+            PaddingBottom: =5
+            PaddingLeft: =12
+            PaddingRight: =12
+            PaddingTop: =5
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Size: =0
+            Text: =""
+            VerticalAlign: =VerticalAlign.Middle
+            Visible: =false
+            Width: =1
+      - conRoot_Au:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =C_Bg
+            Height: =Parent.Height
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Width: =Parent.Width
+          Children:
+            - conHdr_Au:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(7, 95, 115, 1)
+                  FillPortions: =0
+                  Height: =Round(95 * UI, 0)
+                  LayoutMinHeight: =Round(95 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                  - imgHdr_Au:
+                      Control: Image@2.2.3
+                      Properties:
+                        Height: =Parent.Height
+                        Image: =HeaderImage
+                        ImagePosition: =ImagePosition.Fill
+                        Width: =Parent.Width
+                  - btnBack_Au:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        Appearance: =ButtonAppearance.Transparent
+                        Color: =C_White
+                        FontWeight: =""
+                        Height: =Round(60 * UI, 0)
+                        Icon: ="ChevronLeft"
+                        OnSelect: =Back(ScreenTransition.UnCoverRight)
+                        PaddingBottom: =5
+                        PaddingLeft: =12
+                        PaddingRight: =12
+                        PaddingTop: =5
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =Round(32 * UI, 0)
+                        Text: =""
+                        VerticalAlign: =VerticalAlign.Middle
+                        Width: =Round(60 * UI, 0)
+                        X: =Gutter + Round(5 * UI, 0)
+                        Y: =Round(18 * UI, 0)
+                  - lblHdrT_Au:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_White
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(42 * UI, 0)
+                        Size: =Round(24 * UI, 0)
+                        Text: ="Equipment Audit"
+                        Width: =PageW - Round(85 * UI, 0)
+                        Wrap: =false
+                        X: =Gutter + Round(65 * UI, 0)
+                        Y: =Round(12 * UI, 0)
+                  - lblHdrS_Au:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 0.85)
+                        Font: =AppFont
+                        Height: =Round(25 * UI, 0)
+                        Size: =Round(15 * UI, 0)
+                        Text: ="Scan, check, submit"
+                        Width: =PageW - Round(85 * UI, 0)
+                        Wrap: =false
+                        X: =Gutter + Round(65 * UI, 0)
+                        Y: =Round(53 * UI, 0)
+            - conBody_Au:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  DropShadow: =DropShadow.None
+                  LayoutAlignItems: =LayoutAlignItems.Stretch
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =Round(13 * UI, 0)
+                  LayoutMinHeight: =Round(250 * UI, 0)
+                  LayoutOverflowY: =LayoutOverflow.Scroll
+                  PaddingBottom: =Round(20 * UI, 0)
+                  PaddingLeft: =Gutter + Round(20 * UI, 0)
+                  PaddingRight: =Gutter + Round(20 * UI, 0)
+                  PaddingTop: =Round(15 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                  - lblStep1_Au:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_Accent
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(28 * UI, 0)
+                        LayoutMinHeight: =Round(28 * UI, 0)
+                        Size: =Round(15 * UI, 0)
+                        Text: ="1   EQUIPMENT"
+                        VerticalAlign: =VerticalAlign.Bottom
+                        Width: =PageW - Round(40 * UI, 0)
+                        Wrap: =false
+                  - conScan_Au:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        DropShadow: =DropShadow.None
+                        Fill: =C_Accent
+                        FillPortions: =0
+                        Height: =Round(65 * UI, 0)
+                        LayoutMinHeight: =Round(65 * UI, 0)
+                        RadiusBottomLeft: =Round(33 * UI, 0)
+                        RadiusBottomRight: =Round(33 * UI, 0)
+                        RadiusTopLeft: =Round(33 * UI, 0)
+                        RadiusTopRight: =Round(33 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - icoScan_Au:
+                            Control: ModernIcon@1.1.1
+                            Properties:
+                              Height: =Round(30 * UI, 0)
+                              Icon: ="Camera"
+                              IconColor: =C_White
+                              Width: =Round(30 * UI, 0)
+                              X: =Round(23 * UI, 0)
+                              Y: =Round(18 * UI, 0)
+                        - lblScan_Au:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_White
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Parent.Height
+                              Size: =Round(19 * UI, 0)
+                              Text: ="Scan Barcode"
+                              Width: =Parent.Width - Round(75 * UI, 0)
+                              Wrap: =false
+                              X: =Round(65 * UI, 0)
+                        - scnAudit_Au:
+                            Control: BarcodeReader@1.0.25
+                            Properties:
+                              BorderStyle: =BorderStyle.None
+                              FillColor: =RGBA(0, 0, 0, 0)
+                              FontSize: =1
+                              Height: =Parent.Height
+                              HoverFillColor: =RGBA(255, 255, 255, 0.08)
+                              OnScan: |-
+                                =With(
+                                    { it: LookUp(Equipment_Inventory_SharePoint, Title = Trim(First(scnAudit_Au.Barcodes).Value)) },
+                                    If(
+                                        IsBlank(it),
+                                        Notify("Equipment not found. Check the barcode and do not use the equipment.", NotificationType.Error),
+                                        Set(auItem, it);
+                                        Select(btnResetChecks_Au);
+                                        Notify("Loaded " & it.Title, NotificationType.Success)
+                                    )
+                                )
+                              ScanningMode: ='BarcodeReader.ScanningMode'.SelectToScan
+                              Text: =""
+                              Width: =Parent.Width
+                  - conEquip_Au:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =RGBA(14, 42, 70, 0.22)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round(60 * UI, 0)
+                        LayoutMinHeight: =Round(60 * UI, 0)
+                        RadiusBottomLeft: =Round(15 * UI, 0)
+                        RadiusBottomRight: =Round(15 * UI, 0)
+                        RadiusTopLeft: =Round(15 * UI, 0)
+                        RadiusTopRight: =Round(15 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - icoEquip_Au:
+                            Control: ModernIcon@1.1.1
+                            Properties:
+                              Height: =Round(30 * UI, 0)
+                              Icon: ="Search"
+                              IconColor: =C_Muted
+                              Width: =Round(30 * UI, 0)
+                              X: =Round(15 * UI, 0)
+                              Y: =Round(15 * UI, 0)
+                        - txtEquip_Au:
+                            Control: Classic/TextInput@2.3.2
+                            Properties:
+                              BorderStyle: =BorderStyle.None
+                              Color: =C_Ink
+                              Default: =""
+                              DelayOutput: =true
+                              Fill: =RGBA(0, 0, 0, 0)
+                              Font: =AppFont
+                              Height: =Parent.Height
+                              HintText: ="...or type the barcode"
+                              Size: =Round(18 * UI, 0)
+                              Width: =Parent.Width - Round(55 * UI, 0)
+                              X: =Round(50 * UI, 0)
+                  - galSug_Au:
+                      Control: Gallery@2.15.0
+                      Variant: Vertical
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        FillPortions: =0
+                        Height: =Round(200 * UI, 0)
+                        Items: =FirstN(SortByColumns(Filter(Equipment_Inventory_SharePoint, StartsWith(Title, Trim(txtEquip_Au.Text))), "Title", SortOrder.Ascending), 20)
+                        LayoutMinHeight: =Round(200 * UI, 0)
+                        TemplatePadding: =0
+                        TemplateSize: =Round(65 * UI, 0)
+                        Visible: =!IsBlank(Trim(txtEquip_Au.Text))
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - conSug_Au:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =C_Line
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =C_Bg2
+                              Height: =Round(58 * UI, 0)
+                              RadiusBottomLeft: =Round(18 * UI, 0)
+                              RadiusBottomRight: =Round(18 * UI, 0)
+                              RadiusTopLeft: =Round(18 * UI, 0)
+                              RadiusTopRight: =Round(18 * UI, 0)
+                              Width: =Parent.TemplateWidth - Round(5 * UI, 0)
+                              X: =1
+                              Y: =Round(5 * UI, 0)
+                            Children:
+                              - lblSugT_Au:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(28 * UI, 0)
+                                    Size: =Round(17 * UI, 0)
+                                    Text: =ThisItem.Title
+                                    Width: =Parent.Width - Round(35 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(18 * UI, 0)
+                                    Y: =Round(5 * UI, 0)
+                              - lblSugS_Au:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    Height: =Round(23 * UI, 0)
+                                    Size: =Round(15 * UI, 0)
+                                    Text: =Coalesce(Trim(ThisItem.Brand & " " & ThisItem.Model), "")
+                                    Width: =Parent.Width - Round(35 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(18 * UI, 0)
+                                    Y: =Round(30 * UI, 0)
+                              - btnSug_Au:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    BorderStyle: =BorderStyle.None
+                                    FontWeight: =""
+                                    Height: =Parent.Height
+                                    OnSelect: |-
+                                      =Set(auItem, ThisItem);
+                                      Select(btnResetChecks_Au)
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =4
+                                    RadiusBottomRight: =4
+                                    RadiusTopLeft: =4
+                                    RadiusTopRight: =4
+                                    Size: =0
+                                    Text: =""
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                  - conNextBlk_Au:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =Round(363 * UI, 0)
+                        LayoutMinHeight: =Round(363 * UI, 0)
+                        RadiusBottomLeft: =0
+                        RadiusBottomRight: =0
+                        RadiusTopLeft: =0
+                        RadiusTopRight: =0
+                        Visible: =IsBlank(auItem) && IsBlank(Trim(txtEquip_Au.Text)) && !IsEmpty(colAuNext)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - capNext_Au:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Muted
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(23 * UI, 0)
+                              Size: =Round(14 * UI, 0)
+                              Text: ="NEXT TO AUDIT"
+                              Width: =Parent.Width
+                              Wrap: =false
+                        - galNext_Au:
+                            Control: Gallery@2.15.0
+                            Variant: Vertical
+                            Properties:
+                              Height: =Parent.Height - Round(30 * UI, 0)
+                              Items: =colAuNext
+                              TemplatePadding: =0
+                              TemplateSize: =Round(65 * UI, 0)
+                              Width: =Parent.Width
+                              Y: =Round(30 * UI, 0)
+                            Children:
+                              - conNext_Au:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    BorderColor: =C_Line
+                                    BorderThickness: =1
+                                    DropShadow: =DropShadow.None
+                                    Fill: =C_Bg2
+                                    Height: =Round(58 * UI, 0)
+                                    RadiusBottomLeft: =Round(18 * UI, 0)
+                                    RadiusBottomRight: =Round(18 * UI, 0)
+                                    RadiusTopLeft: =Round(18 * UI, 0)
+                                    RadiusTopRight: =Round(18 * UI, 0)
+                                    Width: =Parent.TemplateWidth - Round(5 * UI, 0)
+                                    X: =1
+                                    Y: =Round(5 * UI, 0)
+                                  Children:
+                                    - lblNextT_Au:
+                                        Control: Label@2.5.1
+                                        Properties:
+                                          Color: =C_Ink
+                                          Font: =AppFont
+                                          FontWeight: =FontWeight.Bold
+                                          Height: =Round(28 * UI, 0)
+                                          Size: =Round(17 * UI, 0)
+                                          Text: =ThisItem.Title & "  ·  " & Coalesce(Trim(ThisItem.Brand & " " & ThisItem.Model), "")
+                                          Width: =Parent.Width - Round(35 * UI, 0)
+                                          Wrap: =false
+                                          X: =Round(18 * UI, 0)
+                                          Y: =Round(5 * UI, 0)
+                                    - lblNextS_Au:
+                                        Control: Label@2.5.1
+                                        Properties:
+                                          Color: =C_Muted
+                                          Font: =AppFont
+                                          Height: =Round(23 * UI, 0)
+                                          Size: =Round(15 * UI, 0)
+                                          Text: =If(IsBlank(ThisItem.Ward.Value), "", "Ward " & ThisItem.Ward.Value & "  ·  ") & Coalesce(ThisItem.Physiotherapist, "no physio") & "  ·  out " & If(IsBlank(ThisItem.'Date Signed Out'), "?", DateDiff(ThisItem.'Date Signed Out', Today(), TimeUnit.Days)) & " d"
+                                          Width: =Parent.Width - Round(35 * UI, 0)
+                                          Wrap: =false
+                                          X: =Round(18 * UI, 0)
+                                          Y: =Round(30 * UI, 0)
+                                    - btnNext_Au:
+                                        Control: ModernButton@1.0.0
+                                        Properties:
+                                          Align: =Align.Center
+                                          Appearance: =ButtonAppearance.Transparent
+                                          BorderStyle: =BorderStyle.None
+                                          FontWeight: =""
+                                          Height: =Parent.Height
+                                          OnSelect: |-
+                                            =Set(auItem, ThisItem);
+                                            Select(btnResetChecks_Au)
+                                          PaddingBottom: =5
+                                          PaddingLeft: =12
+                                          PaddingRight: =12
+                                          PaddingTop: =5
+                                          RadiusBottomLeft: =4
+                                          RadiusBottomRight: =4
+                                          RadiusTopLeft: =4
+                                          RadiusTopRight: =4
+                                          Size: =0
+                                          Text: =""
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                  - conEq_Au:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =C_Line
+                        BorderThickness: =1
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round(148 * UI, 0)
+                        LayoutMinHeight: =Round(148 * UI, 0)
+                        RadiusBottomLeft: =Round(20 * UI, 0)
+                        RadiusBottomRight: =Round(20 * UI, 0)
+                        RadiusTopLeft: =Round(20 * UI, 0)
+                        RadiusTopRight: =Round(20 * UI, 0)
+                        Visible: =!IsBlank(auItem)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - lblEqT_Au:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(30 * UI, 0)
+                              Size: =Round(19 * UI, 0)
+                              Text: =auItem.Title & "  ·  " & Coalesce(Trim(auItem.Brand & " " & auItem.Model), "")
+                              Width: =Parent.Width - Round(175 * UI, 0)
+                              Wrap: =false
+                              X: =Round(20 * UI, 0)
+                              Y: =Round(15 * UI, 0)
+                        - conEqSt_Au:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =If(Coalesce(auItem.Status.Value, "") = "Allocated", C_AccentSoft, C_Bg)
+                              Height: =Round(33 * UI, 0)
+                              RadiusBottomLeft: =Round(16 * UI, 0)
+                              RadiusBottomRight: =Round(16 * UI, 0)
+                              RadiusTopLeft: =Round(16 * UI, 0)
+                              RadiusTopRight: =Round(16 * UI, 0)
+                              Width: =Round(125 * UI, 0)
+                              X: =Parent.Width - Round(145 * UI, 0)
+                              Y: =Round(15 * UI, 0)
+                            Children:
+                              - lblEqSt_Au:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Align: =Align.Center
+                                    Color: =C_Ink2
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Parent.Height
+                                    Size: =Round(15 * UI, 0)
+                                    Text: =If(IsBlank(auItem.URN), "Unallocated", "Allocated")
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                        - capExp_Au:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Muted
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(23 * UI, 0)
+                              Size: =Round(14 * UI, 0)
+                              Text: ="EQUIPMENT RECORD SAYS"
+                              Width: =Parent.Width - Round(40 * UI, 0)
+                              Wrap: =false
+                              X: =Round(20 * UI, 0)
+                              Y: =Round(60 * UI, 0)
+                        - lblExp_Au:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink2
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(28 * UI, 0)
+                              Size: =Round(18 * UI, 0)
+                              Text: =Coalesce(auItem.'Patient Name', "No patient")
+                              Width: =Parent.Width - Round(40 * UI, 0)
+                              Wrap: =false
+                              X: =Round(20 * UI, 0)
+                              Y: =Round(83 * UI, 0)
+                        - lblExpS_Au:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Muted
+                              Font: =AppFont
+                              Height: =Round(23 * UI, 0)
+                              Size: =Round(15 * UI, 0)
+                              Text: ="URN " & Coalesce(auItem.URN, "—") & "  ·  Ward " & Coalesce(auItem.Ward.Value, "—")
+                              Width: =Parent.Width - Round(40 * UI, 0)
+                              Wrap: =false
+                              X: =Round(20 * UI, 0)
+                              Y: =Round(110 * UI, 0)
+                  - lblStep2_Au:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_Accent
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(28 * UI, 0)
+                        LayoutMinHeight: =Round(28 * UI, 0)
+                        Size: =Round(15 * UI, 0)
+                        Text: ="2   PATIENT USING IT"
+                        VerticalAlign: =VerticalAlign.Bottom
+                        Width: =PageW - Round(40 * UI, 0)
+                        Wrap: =false
+                  - conPtS_Au:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =RGBA(14, 42, 70, 0.22)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round(60 * UI, 0)
+                        LayoutMinHeight: =Round(60 * UI, 0)
+                        RadiusBottomLeft: =Round(15 * UI, 0)
+                        RadiusBottomRight: =Round(15 * UI, 0)
+                        RadiusTopLeft: =Round(15 * UI, 0)
+                        RadiusTopRight: =Round(15 * UI, 0)
+                        Visible: =IsBlank(auPt)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - icoPt_Au:
+                            Control: ModernIcon@1.1.1
+                            Properties:
+                              Height: =Round(30 * UI, 0)
+                              Icon: ="Search"
+                              IconColor: =C_Muted
+                              Width: =Round(30 * UI, 0)
+                              X: =Round(15 * UI, 0)
+                              Y: =Round(15 * UI, 0)
+                        - txtPt_Au:
+                            Control: Classic/TextInput@2.3.2
+                            Properties:
+                              BorderStyle: =BorderStyle.None
+                              Color: =C_Ink
+                              Default: =""
+                              DelayOutput: =true
+                              Fill: =RGBA(0, 0, 0, 0)
+                              Font: =AppFont
+                              Height: =Parent.Height
+                              HintText: ="Search name or URN"
+                              Size: =Round(18 * UI, 0)
+                              Width: =Parent.Width - Round(55 * UI, 0)
+                              X: =Round(50 * UI, 0)
+                  - lblPtCount_Au:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_Muted
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(25 * UI, 0)
+                        LayoutMinHeight: =Round(25 * UI, 0)
+                        Size: =Round(15 * UI, 0)
+                        Text: =CountRows(FirstN(Filter(colPatients, Lower(Trim(txtPt_Au.Text)) in Lower(Name) || Lower(Trim(txtPt_Au.Text)) in Lower(Coalesce(URN, ""))), 6)) & If(CountRows(FirstN(Filter(colPatients, Lower(Trim(txtPt_Au.Text)) in Lower(Name) || Lower(Trim(txtPt_Au.Text)) in Lower(Coalesce(URN, ""))), 6)) = 1, " patient found. Tap to choose.", " patients found. Tap one to choose.")
+                        Visible: =IsBlank(auPt) && !IsBlank(Trim(txtPt_Au.Text)) && !IsEmpty(FirstN(Filter(colPatients, Lower(Trim(txtPt_Au.Text)) in Lower(Name) || Lower(Trim(txtPt_Au.Text)) in Lower(Coalesce(URN, ""))), 6))
+                        Width: =PageW - Round(40 * UI, 0)
+                        X: =Round(5 * UI, 0)
+                  - galPt_Au:
+                      Control: Gallery@2.15.0
+                      Variant: Vertical
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        FillPortions: =0
+                        Height: =CountRows(FirstN(Filter(colPatients, Lower(Trim(txtPt_Au.Text)) in Lower(Name) || Lower(Trim(txtPt_Au.Text)) in Lower(Coalesce(URN, ""))), 6)) * Round(65 * UI, 0)
+                        Items: =FirstN(Filter(colPatients, Lower(Trim(txtPt_Au.Text)) in Lower(Name) || Lower(Trim(txtPt_Au.Text)) in Lower(Coalesce(URN, ""))), 6)
+                        LayoutMinHeight: =0
+                        ShowScrollbar: =false
+                        TemplatePadding: =0
+                        TemplateSize: =Round(65 * UI, 0)
+                        Visible: =IsBlank(auPt) && !IsBlank(Trim(txtPt_Au.Text)) && !IsEmpty(FirstN(Filter(colPatients, Lower(Trim(txtPt_Au.Text)) in Lower(Name) || Lower(Trim(txtPt_Au.Text)) in Lower(Coalesce(URN, ""))), 6))
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - conPtR_Au:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =C_Line
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =C_White
+                              Height: =Round(58 * UI, 0)
+                              RadiusBottomLeft: =Round(18 * UI, 0)
+                              RadiusBottomRight: =Round(18 * UI, 0)
+                              RadiusTopLeft: =Round(18 * UI, 0)
+                              RadiusTopRight: =Round(18 * UI, 0)
+                              Width: =Parent.TemplateWidth - Round(5 * UI, 0)
+                              X: =1
+                              Y: =Round(5 * UI, 0)
+                            Children:
+                              - lblPtN_Au:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(28 * UI, 0)
+                                    Size: =Round(17 * UI, 0)
+                                    Text: =ThisItem.Name
+                                    Width: =Parent.Width - Round(35 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(18 * UI, 0)
+                                    Y: =Round(5 * UI, 0)
+                              - lblPtS_Au:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    Height: =Round(23 * UI, 0)
+                                    Size: =Round(15 * UI, 0)
+                                    Text: ="URN " & Coalesce(ThisItem.URN, "—") & "  ·  Ward " & ThisItem.Ward & "  ·  Bed " & If(IsBlank(ThisItem.Bed), "—", Text(ThisItem.Bed))
+                                    Width: =Parent.Width - Round(35 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(18 * UI, 0)
+                                    Y: =Round(30 * UI, 0)
+                              - btnPtR_Au:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    BorderStyle: =BorderStyle.None
+                                    FontWeight: =""
+                                    Height: =Parent.Height
+                                    OnSelect: |-
+                                      =Set(auPt, ThisItem);
+                                      Reset(txtPt_Au)
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =4
+                                    RadiusBottomRight: =4
+                                    RadiusTopLeft: =4
+                                    RadiusTopRight: =4
+                                    Size: =0
+                                    Text: =""
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                  - lblPtNone_Au:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_Muted
+                        Font: =AppFont
+                        Height: =Round(30 * UI, 0)
+                        LayoutMinHeight: =Round(30 * UI, 0)
+                        Size: =Round(16 * UI, 0)
+                        Text: ="No matching patient. Check the name or URN."
+                        Visible: =IsBlank(auPt) && !IsBlank(Trim(txtPt_Au.Text)) && IsEmpty(FirstN(Filter(colPatients, Lower(Trim(txtPt_Au.Text)) in Lower(Name) || Lower(Trim(txtPt_Au.Text)) in Lower(Coalesce(URN, ""))), 6))
+                        Width: =PageW - Round(40 * UI, 0)
+                        X: =Round(5 * UI, 0)
+                  - conPtSel_Au:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =C_Accent
+                        BorderThickness: =2
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round(85 * UI, 0)
+                        LayoutMinHeight: =Round(85 * UI, 0)
+                        RadiusBottomLeft: =Round(18 * UI, 0)
+                        RadiusBottomRight: =Round(18 * UI, 0)
+                        RadiusTopLeft: =Round(18 * UI, 0)
+                        RadiusTopRight: =Round(18 * UI, 0)
+                        Visible: =!IsBlank(auPt)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - lblPtSelN_Au:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(30 * UI, 0)
+                              Size: =Round(19 * UI, 0)
+                              Text: =auPt.Name
+                              Width: =Parent.Width - Round(138 * UI, 0)
+                              Wrap: =false
+                              X: =Round(20 * UI, 0)
+                              Y: =Round(10 * UI, 0)
+                        - lblPtSelS_Au:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Muted
+                              Font: =AppFont
+                              Height: =Round(25 * UI, 0)
+                              Size: =Round(15 * UI, 0)
+                              Text: ="URN " & Coalesce(auPt.URN, "—") & "  ·  Ward " & auPt.Ward & "  ·  Bed " & If(IsBlank(auPt.Bed), "—", Text(auPt.Bed))
+                              Width: =Parent.Width - Round(138 * UI, 0)
+                              Wrap: =false
+                              X: =Round(20 * UI, 0)
+                              Y: =Round(43 * UI, 0)
+                        - conPtChg_Au:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =C_AccentSoft
+                              Height: =Round(45 * UI, 0)
+                              RadiusBottomLeft: =Round(23 * UI, 0)
+                              RadiusBottomRight: =Round(23 * UI, 0)
+                              RadiusTopLeft: =Round(23 * UI, 0)
+                              RadiusTopRight: =Round(23 * UI, 0)
+                              Width: =Round(100 * UI, 0)
+                              X: =Parent.Width - Round(115 * UI, 0)
+                              Y: =Round(20 * UI, 0)
+                            Children:
+                              - lblPtChg_Au:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Align: =Align.Center
+                                    Color: =C_Accent
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Parent.Height
+                                    Size: =Round(16 * UI, 0)
+                                    Text: ="Change"
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                        - btnPtChg_Au:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              BorderStyle: =BorderStyle.None
+                              FontWeight: =""
+                              Height: =Parent.Height
+                              OnSelect: |-
+                                =Set(auPt, Blank());
+                                Reset(txtPt_Au)
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =4
+                              RadiusBottomRight: =4
+                              RadiusTopLeft: =4
+                              RadiusTopRight: =4
+                              Size: =0
+                              Text: =""
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+                  - conMatch_Au:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        DropShadow: =DropShadow.None
+                        Fill: =If((!IsBlank(Trim(Coalesce(auItem.URN, ""))) && Trim(Coalesce(auItem.URN, "")) = Trim(Coalesce(auPt.URN, ""))), C_GoodBg, C_DangerBg)
+                        FillPortions: =0
+                        Height: =Round(55 * UI, 0)
+                        LayoutMinHeight: =Round(55 * UI, 0)
+                        RadiusBottomLeft: =Round(15 * UI, 0)
+                        RadiusBottomRight: =Round(15 * UI, 0)
+                        RadiusTopLeft: =Round(15 * UI, 0)
+                        RadiusTopRight: =Round(15 * UI, 0)
+                        Visible: =!IsBlank(auItem) && !IsBlank(auPt)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - lblMatch_Au:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =If((!IsBlank(Trim(Coalesce(auItem.URN, ""))) && Trim(Coalesce(auItem.URN, "")) = Trim(Coalesce(auPt.URN, ""))), C_Good, C_Danger)
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Parent.Height
+                              Size: =Round(17 * UI, 0)
+                              Text: =If((!IsBlank(Trim(Coalesce(auItem.URN, ""))) && Trim(Coalesce(auItem.URN, "")) = Trim(Coalesce(auPt.URN, ""))), "✓  Matches the equipment record", "⚠  Does not match the equipment record")
+                              Width: =Parent.Width - Round(35 * UI, 0)
+                              Wrap: =false
+                              X: =Round(18 * UI, 0)
+                  - lblStep3_Au:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_Accent
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(28 * UI, 0)
+                        LayoutMinHeight: =Round(28 * UI, 0)
+                        Size: =Round(15 * UI, 0)
+                        Text: ="3   CHECKS"
+                        VerticalAlign: =VerticalAlign.Bottom
+                        Width: =PageW - Round(40 * UI, 0)
+                        Wrap: =false
+                  - conTgSafe_Au:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =If(auSafety, C_Good, C_Line)
+                        BorderThickness: =If(auSafety, 2, 1)
+                        DropShadow: =DropShadow.None
+                        Fill: =If(auSafety, C_GoodBg, C_White)
+                        FillPortions: =0
+                        Height: =Round(60 * UI, 0)
+                        LayoutMinHeight: =Round(60 * UI, 0)
+                        RadiusBottomLeft: =Round(15 * UI, 0)
+                        RadiusBottomRight: =Round(15 * UI, 0)
+                        RadiusTopLeft: =Round(15 * UI, 0)
+                        RadiusTopRight: =Round(15 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - lblTgSafe_Au:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =If(auSafety, C_Good, C_Ink2)
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Parent.Height
+                              Size: =Round(18 * UI, 0)
+                              Text: ="Safety check completed"
+                              Width: =Parent.Width - Round(75 * UI, 0)
+                              Wrap: =false
+                              X: =Round(20 * UI, 0)
+                        - lblTgCSafe_Au:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Right
+                              Color: =C_Good
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Parent.Height
+                              Size: =Round(21 * UI, 0)
+                              Text: =If(auSafety, "✓", "")
+                              Width: =Round(35 * UI, 0)
+                              X: =Parent.Width - Round(55 * UI, 0)
+                        - btnTgSafe_Au:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              BorderStyle: =BorderStyle.None
+                              FontWeight: =""
+                              Height: =Parent.Height
+                              OnSelect: =Set(auSafety, !auSafety)
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =4
+                              RadiusBottomRight: =4
+                              RadiusTopLeft: =4
+                              RadiusTopRight: =4
+                              Size: =0
+                              Text: =""
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+                  - conTgRisk_Au:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =If(auRisk, C_Danger, C_Line)
+                        BorderThickness: =If(auRisk, 2, 1)
+                        DropShadow: =DropShadow.None
+                        Fill: =If(auRisk, C_DangerBg, C_White)
+                        FillPortions: =0
+                        Height: =Round(60 * UI, 0)
+                        LayoutMinHeight: =Round(60 * UI, 0)
+                        RadiusBottomLeft: =Round(15 * UI, 0)
+                        RadiusBottomRight: =Round(15 * UI, 0)
+                        RadiusTopLeft: =Round(15 * UI, 0)
+                        RadiusTopRight: =Round(15 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - lblTgRisk_Au:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =If(auRisk, C_Danger, C_Ink2)
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Parent.Height
+                              Size: =Round(18 * UI, 0)
+                              Text: ="Immediate risk identified"
+                              Width: =Parent.Width - Round(75 * UI, 0)
+                              Wrap: =false
+                              X: =Round(20 * UI, 0)
+                        - lblTgCRisk_Au:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Right
+                              Color: =C_Danger
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Parent.Height
+                              Size: =Round(21 * UI, 0)
+                              Text: =If(auRisk, "✓", "")
+                              Width: =Round(35 * UI, 0)
+                              X: =Parent.Width - Round(55 * UI, 0)
+                        - btnTgRisk_Au:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              BorderStyle: =BorderStyle.None
+                              FontWeight: =""
+                              Height: =Parent.Height
+                              OnSelect: |-
+                                =Set(auRisk, !auRisk);
+                                Reset(ddCond_Au)
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =4
+                              RadiusBottomRight: =4
+                              RadiusTopLeft: =4
+                              RadiusTopRight: =4
+                              Size: =0
+                              Text: =""
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+                  - conTgRem_Au:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =If(auRemoved, C_Danger, C_Line)
+                        BorderThickness: =If(auRemoved, 2, 1)
+                        DropShadow: =DropShadow.None
+                        Fill: =If(auRemoved, C_DangerBg, C_White)
+                        FillPortions: =0
+                        Height: =Round(60 * UI, 0)
+                        LayoutMinHeight: =Round(60 * UI, 0)
+                        RadiusBottomLeft: =Round(15 * UI, 0)
+                        RadiusBottomRight: =Round(15 * UI, 0)
+                        RadiusTopLeft: =Round(15 * UI, 0)
+                        RadiusTopRight: =Round(15 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - lblTgRem_Au:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =If(auRemoved, C_Danger, C_Ink2)
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Parent.Height
+                              Size: =Round(18 * UI, 0)
+                              Text: ="Removed from use"
+                              Width: =Parent.Width - Round(75 * UI, 0)
+                              Wrap: =false
+                              X: =Round(20 * UI, 0)
+                        - lblTgCRem_Au:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Right
+                              Color: =C_Danger
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Parent.Height
+                              Size: =Round(21 * UI, 0)
+                              Text: =If(auRemoved, "✓", "")
+                              Width: =Round(35 * UI, 0)
+                              X: =Parent.Width - Round(55 * UI, 0)
+                        - btnTgRem_Au:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              BorderStyle: =BorderStyle.None
+                              FontWeight: =""
+                              Height: =Parent.Height
+                              OnSelect: =Set(auRemoved, !auRemoved)
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =4
+                              RadiusBottomRight: =4
+                              RadiusTopLeft: =4
+                              RadiusTopRight: =4
+                              Size: =0
+                              Text: =""
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+                  - capTag_Au:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_Muted
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(23 * UI, 0)
+                        LayoutMinHeight: =Round(23 * UI, 0)
+                        Size: =Round(14 * UI, 0)
+                        Text: ="TAG RESULT"
+                        Width: =PageW - Round(40 * UI, 0)
+                        Wrap: =false
+                  - conSegTag_Au:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =Round(50 * UI, 0)
+                        LayoutMinHeight: =Round(50 * UI, 0)
+                        RadiusBottomLeft: =0
+                        RadiusBottomRight: =0
+                        RadiusTopLeft: =0
+                        RadiusTopRight: =0
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - conSegTagOK_Au:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =If(auTag = "OK", C_Accent, C_Line)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =If(auTag = "OK", C_Accent, C_White)
+                              Height: =Round(50 * UI, 0)
+                              RadiusBottomLeft: =Round(25 * UI, 0)
+                              RadiusBottomRight: =Round(25 * UI, 0)
+                              RadiusTopLeft: =Round(25 * UI, 0)
+                              RadiusTopRight: =Round(25 * UI, 0)
+                              Width: =(PageW - Round(40 * UI, 0) - Round(30 * UI, 0)) / 4
+                              X: =0 * ((PageW - Round(40 * UI, 0) - Round(30 * UI, 0)) / 4 + Round(10 * UI, 0))
+                            Children:
+                              - btnSegTagOK_Au:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =If(auTag = "OK", C_White, C_Ink2)
+                                    Font: =Font.'Segoe UI'
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =63
+                                    OnSelect: =Set(auTag, "OK")
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(25 * UI, 0)
+                                    RadiusBottomRight: =Round(25 * UI, 0)
+                                    RadiusTopLeft: =Round(25 * UI, 0)
+                                    RadiusTopRight: =Round(25 * UI, 0)
+                                    Size: =Round(16 * UI, 0)
+                                    Text: ="OK"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =138
+                        - conSegTagMissing_Au:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =If(auTag = "Missing", C_Accent, C_Line)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =If(auTag = "Missing", C_Accent, C_White)
+                              Height: =Round(50 * UI, 0)
+                              RadiusBottomLeft: =Round(25 * UI, 0)
+                              RadiusBottomRight: =Round(25 * UI, 0)
+                              RadiusTopLeft: =Round(25 * UI, 0)
+                              RadiusTopRight: =Round(25 * UI, 0)
+                              Width: =(PageW - Round(40 * UI, 0) - Round(30 * UI, 0)) / 4
+                              X: =1 * ((PageW - Round(40 * UI, 0) - Round(30 * UI, 0)) / 4 + Round(10 * UI, 0))
+                            Children:
+                              - btnSegTagMissing_Au:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =If(auTag = "Missing", C_White, C_Ink2)
+                                    Font: =Font.'Segoe UI'
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =63
+                                    OnSelect: =Set(auTag, "Missing")
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(25 * UI, 0)
+                                    RadiusBottomRight: =Round(25 * UI, 0)
+                                    RadiusTopLeft: =Round(25 * UI, 0)
+                                    RadiusTopRight: =Round(25 * UI, 0)
+                                    Size: =Round(16 * UI, 0)
+                                    Text: ="Missing"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =138
+                        - conSegTagIncorrect_Au:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =If(auTag = "Incorrect", C_Accent, C_Line)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =If(auTag = "Incorrect", C_Accent, C_White)
+                              Height: =Round(50 * UI, 0)
+                              RadiusBottomLeft: =Round(25 * UI, 0)
+                              RadiusBottomRight: =Round(25 * UI, 0)
+                              RadiusTopLeft: =Round(25 * UI, 0)
+                              RadiusTopRight: =Round(25 * UI, 0)
+                              Width: =(PageW - Round(40 * UI, 0) - Round(30 * UI, 0)) / 4
+                              X: =2 * ((PageW - Round(40 * UI, 0) - Round(30 * UI, 0)) / 4 + Round(10 * UI, 0))
+                            Children:
+                              - btnSegTagIncorrect_Au:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =If(auTag = "Incorrect", C_White, C_Ink2)
+                                    Font: =Font.'Segoe UI'
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =63
+                                    OnSelect: =Set(auTag, "Incorrect")
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(25 * UI, 0)
+                                    RadiusBottomRight: =Round(25 * UI, 0)
+                                    RadiusTopLeft: =Round(25 * UI, 0)
+                                    RadiusTopRight: =Round(25 * UI, 0)
+                                    Size: =Round(16 * UI, 0)
+                                    Text: ="Incorrect"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =138
+                        - conSegTagUnreadableDamaged_Au:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =If(auTag = "Unreadable/Damaged", C_Accent, C_Line)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =If(auTag = "Unreadable/Damaged", C_Accent, C_White)
+                              Height: =Round(50 * UI, 0)
+                              RadiusBottomLeft: =Round(25 * UI, 0)
+                              RadiusBottomRight: =Round(25 * UI, 0)
+                              RadiusTopLeft: =Round(25 * UI, 0)
+                              RadiusTopRight: =Round(25 * UI, 0)
+                              Width: =(PageW - Round(40 * UI, 0) - Round(30 * UI, 0)) / 4
+                              X: =3 * ((PageW - Round(40 * UI, 0) - Round(30 * UI, 0)) / 4 + Round(10 * UI, 0))
+                            Children:
+                              - btnSegTagUnreadableDamaged_Au:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =If(auTag = "Unreadable/Damaged", C_White, C_Ink2)
+                                    Font: =Font.'Segoe UI'
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =63
+                                    OnSelect: =Set(auTag, "Unreadable/Damaged")
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(25 * UI, 0)
+                                    RadiusBottomRight: =Round(25 * UI, 0)
+                                    RadiusTopLeft: =Round(25 * UI, 0)
+                                    RadiusTopRight: =Round(25 * UI, 0)
+                                    Size: =Round(16 * UI, 0)
+                                    Text: ="Damaged"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =138
+                  - fldCond_Au:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =Round(80 * UI, 0)
+                        LayoutMinHeight: =Round(80 * UI, 0)
+                        RadiusBottomLeft: =0
+                        RadiusBottomRight: =0
+                        RadiusTopLeft: =0
+                        RadiusTopRight: =0
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - capCond_Au:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Muted
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(23 * UI, 0)
+                              Size: =Round(14 * UI, 0)
+                              Text: ="CONDITION"
+                              Width: =Parent.Width
+                              Wrap: =false
+                        - boxCond_Au:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =RGBA(14, 42, 70, 0.22)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =C_White
+                              Height: =Round(55 * UI, 0)
+                              RadiusBottomLeft: =Round(13 * UI, 0)
+                              RadiusBottomRight: =Round(13 * UI, 0)
+                              RadiusTopLeft: =Round(13 * UI, 0)
+                              RadiusTopRight: =Round(13 * UI, 0)
+                              Width: =Parent.Width
+                              Y: =Round(25 * UI, 0)
+                            Children:
+                              - ddCond_Au:
+                                  Control: Classic/DropDown@2.3.1
+                                  Properties:
+                                    BorderStyle: =BorderStyle.None
+                                    ChevronBackground: =C_Accent
+                                    ChevronFill: =C_White
+                                    Color: =C_Ink
+                                    Default: =If(auRisk, "Unsafe – remove from use", "Good")
+                                    DisplayMode: =If(auRisk, DisplayMode.Disabled, DisplayMode.Edit)
+                                    Font: =AppFont
+                                    Height: =Parent.Height
+                                    Items: =Choices(Equipment_Audits.EquipmentCondition)
+                                    Items.Value: =Value
+                                    Size: =Round(17 * UI, 0)
+                                    Width: =Parent.Width
+                  - lblStep4_Au:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_Accent
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(28 * UI, 0)
+                        LayoutMinHeight: =Round(28 * UI, 0)
+                        Size: =Round(15 * UI, 0)
+                        Text: ="4   COMMENTS"
+                        VerticalAlign: =VerticalAlign.Bottom
+                        Width: =PageW - Round(40 * UI, 0)
+                        Wrap: =false
+                  - conCom_Au:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =RGBA(14, 42, 70, 0.22)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round(138 * UI, 0)
+                        LayoutMinHeight: =Round(138 * UI, 0)
+                        RadiusBottomLeft: =Round(15 * UI, 0)
+                        RadiusBottomRight: =Round(15 * UI, 0)
+                        RadiusTopLeft: =Round(15 * UI, 0)
+                        RadiusTopRight: =Round(15 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - txtComments_Au:
+                            Control: Classic/TextInput@2.3.2
+                            Properties:
+                              BorderStyle: =BorderStyle.None
+                              Color: =C_Ink
+                              Default: =""
+                              Fill: =RGBA(0, 0, 0, 0)
+                              Font: =AppFont
+                              Height: =Parent.Height
+                              HintText: ="Notes (required if the audit fails)"
+                              Mode: =TextMode.MultiLine
+                              Size: =Round(17 * UI, 0)
+                              Width: =Parent.Width - Round(10 * UI, 0)
+                              X: =Round(5 * UI, 0)
+            - conFoot_Au:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  BorderColor: =C_Line
+                  BorderThickness: =1
+                  DropShadow: =DropShadow.None
+                  Fill: =C_White
+                  FillPortions: =0
+                  Height: =Round(140 * UI, 0)
+                  LayoutMinHeight: =Round(140 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                  - lblMsg_Au:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =If(!(!IsBlank(auItem) && !IsBlank(auPt) && auSafety && auTag <> "" && !IsBlank(If(auRisk, "Unsafe – remove from use", ddCond_Au.Selected.Value)) && !((!(!IsBlank(Trim(Coalesce(auItem.URN, ""))) && Trim(Coalesce(auItem.URN, "")) = Trim(Coalesce(auPt.URN, ""))) || auRisk || auRemoved || If(auRisk, "Unsafe – remove from use", ddCond_Au.Selected.Value) = "Unsafe – remove from use" || (auTag <> "" && auTag <> "OK")) && IsBlank(Trim(txtComments_Au.Text)))), C_Muted, (!(!IsBlank(Trim(Coalesce(auItem.URN, ""))) && Trim(Coalesce(auItem.URN, "")) = Trim(Coalesce(auPt.URN, ""))) || auRisk || auRemoved || If(auRisk, "Unsafe – remove from use", ddCond_Au.Selected.Value) = "Unsafe – remove from use" || (auTag <> "" && auTag <> "OK")), C_Danger, C_Good)
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(45 * UI, 0)
+                        Size: =Round(16 * UI, 0)
+                        Text: |-
+                          =If(IsBlank(auItem), "Scan or search for the equipment first.", IsBlank(auPt), "Select the patient using it.", !auSafety, "Tick Safety check completed.", auTag = "", "Choose the tag result.", (!(!IsBlank(Trim(Coalesce(auItem.URN, ""))) && Trim(Coalesce(auItem.URN, "")) = Trim(Coalesce(auPt.URN, ""))) || auRisk || auRemoved || If(auRisk, "Unsafe – remove from use", ddCond_Au.Selected.Value) = "Unsafe – remove from use" || (auTag <> "" && auTag <> "OK")) && IsBlank(Trim(txtComments_Au.Text)), "Add a comment: this audit will fail and be escalated.", (!(!IsBlank(Trim(Coalesce(auItem.URN, ""))) && Trim(Coalesce(auItem.URN, "")) = Trim(Coalesce(auPt.URN, ""))) || auRisk || auRemoved || If(auRisk, "Unsafe – remove from use", ddCond_Au.Selected.Value) = "Unsafe – remove from use" || (auTag <> "" && auTag <> "OK")), "This audit will FAIL and be escalated to the treating physio.", "Ready to submit: PASS")
+                        Width: =PageW - Round(40 * UI, 0)
+                        X: =Gutter + Round(20 * UI, 0)
+                        Y: =Round(10 * UI, 0)
+                  - conSubmit_Au:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        BorderColor: =If((!IsBlank(auItem) && !IsBlank(auPt) && auSafety && auTag <> "" && !IsBlank(If(auRisk, "Unsafe – remove from use", ddCond_Au.Selected.Value)) && !((!(!IsBlank(Trim(Coalesce(auItem.URN, ""))) && Trim(Coalesce(auItem.URN, "")) = Trim(Coalesce(auPt.URN, ""))) || auRisk || auRemoved || If(auRisk, "Unsafe – remove from use", ddCond_Au.Selected.Value) = "Unsafe – remove from use" || (auTag <> "" && auTag <> "OK")) && IsBlank(Trim(txtComments_Au.Text)))), C_Accent, C_Muted)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =If((!IsBlank(auItem) && !IsBlank(auPt) && auSafety && auTag <> "" && !IsBlank(If(auRisk, "Unsafe – remove from use", ddCond_Au.Selected.Value)) && !((!(!IsBlank(Trim(Coalesce(auItem.URN, ""))) && Trim(Coalesce(auItem.URN, "")) = Trim(Coalesce(auPt.URN, ""))) || auRisk || auRemoved || If(auRisk, "Unsafe – remove from use", ddCond_Au.Selected.Value) = "Unsafe – remove from use" || (auTag <> "" && auTag <> "OK")) && IsBlank(Trim(txtComments_Au.Text)))), C_Accent, C_Muted)
+                        Height: =Round(60 * UI, 0)
+                        RadiusBottomLeft: =Round(30 * UI, 0)
+                        RadiusBottomRight: =Round(30 * UI, 0)
+                        RadiusTopLeft: =Round(30 * UI, 0)
+                        RadiusTopRight: =Round(30 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                        X: =Gutter + Round(20 * UI, 0)
+                        Y: =Round(60 * UI, 0)
+                      Children:
+                        - btnSubmit_Au:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              Color: =C_White
+                              DisplayMode: =If((!IsBlank(auItem) && !IsBlank(auPt) && auSafety && auTag <> "" && !IsBlank(If(auRisk, "Unsafe – remove from use", ddCond_Au.Selected.Value)) && !((!(!IsBlank(Trim(Coalesce(auItem.URN, ""))) && Trim(Coalesce(auItem.URN, "")) = Trim(Coalesce(auPt.URN, ""))) || auRisk || auRemoved || If(auRisk, "Unsafe – remove from use", ddCond_Au.Selected.Value) = "Unsafe – remove from use" || (auTag <> "" && auTag <> "OK")) && IsBlank(Trim(txtComments_Au.Text)))), DisplayMode.Edit, DisplayMode.Disabled)
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =FontWeight.Bold
+                              Height: =Parent.Height
+                              OnSelect: |-
+                                =With(
+                                    {
+                                        eq: auItem,
+                                        pt: auPt,
+                                        cond: If(auRisk, "Unsafe – remove from use", ddCond_Au.Selected.Value),
+                                        comments: Trim(txtComments_Au.Text)
+                                    },
+                                    With(
+                                        { match: !IsBlank(Trim(Coalesce(eq.URN, ""))) && Trim(Coalesce(eq.URN, "")) = Trim(Coalesce(pt.URN, "")) },
+                                        With(
+                                            {
+                                                reasons: Filter(
+                                                    Table(
+                                                        { Reason: "Allocation Mismatch", Hit: !match },
+                                                        { Reason: "Failed Safety Check", Hit: !auSafety },
+                                                        { Reason: "Tag issue: " & auTag, Hit: auTag <> "OK" },
+                                                        { Reason: "Equipment Unsafe", Hit: cond = "Unsafe – remove from use" },
+                                                        { Reason: "Immediate Risk Identified", Hit: auRisk },
+                                                        { Reason: "Removed From Use", Hit: auRemoved }
+                                                    ),
+                                                    Hit
+                                                ),
+                                                // treating physios on the ward list = who gets the escalation
+                                                pts: ForAll(
+                                                    pt.PT_Users As p,
+                                                    With(
+                                                        { fromClaims: Lower(Coalesce(Last(Split(Coalesce(Text(p.Claims), ""), "|")).Value, "")) },
+                                                        {
+                                                            '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+                                                            Claims: Coalesce(p.Claims, If(!IsBlank(p.Email), "i:0#.f|membership|" & Lower(p.Email))),
+                                                            DisplayName: Coalesce(p.DisplayName, p.Email, fromClaims),
+                                                            Email: Lower(Coalesce(p.Email, fromClaims)),
+                                                            Department: Coalesce(p.Department, ""),
+                                                            JobTitle: Coalesce(p.JobTitle, ""),
+                                                            Picture: Coalesce(p.Picture, "")
+                                                        }
+                                                    )
+                                                )
+                                            },
+                                            With(
+                                                {
+                                                    outcome: If(
+                                                        CountRows(reasons) = 0, "Pass",
+                                                        CountRows(reasons) > 1, "Fail - Multiple",
+                                                        !match, "Fail - Allocation",
+                                                        !auSafety || cond = "Unsafe – remove from use" || auRisk || auRemoved, "Fail - Safety",
+                                                        auTag <> "OK", "Fail - Tag",
+                                                        "Fail - Multiple"
+                                                    ),
+                                                    unsafe: cond = "Unsafe – remove from use" || auRisk || auRemoved,
+                                                    toEmails: Concat(Distinct(Filter(pts, !IsBlank(Email)), Lower(Email)), Value, ";")
+                                                },
+                                                If(
+                                                    outcome <> "Pass" && IsBlank(comments),
+                                                    Notify("Comments are required when an audit fails.", NotificationType.Error),
+
+                                                    Set(
+                                                        auRow,
+                                                        Patch(
+                                                            Equipment_Audits,
+                                                            Defaults(Equipment_Audits),
+                                                            {
+                                                                Title: eq.Title & " - " & Text(Now(), "yyyy-mm-dd hh:mm"),
+                                                                Equipment: { Id: eq.ID, Value: eq.Title },
+                                                                Barcode: eq.Title,
+                                                                AuditDateTime: Now(),
+                                                                AuditedBy: {
+                                                                    '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+                                                                    Claims: "i:0#.f|membership|" & MeEmail,
+                                                                    DisplayName: MeName,
+                                                                    Email: MeEmail,
+                                                                    Department: "",
+                                                                    JobTitle: "",
+                                                                    Picture: ""
+                                                                },
+                                                                ExpectedPatientName: Coalesce(eq.'Patient Name', ""),
+                                                                ExpectedURN: Coalesce(eq.URN, ""),
+                                                                ExpectedWard: If(IsBlank(eq.Ward.Value), Blank(), { Value: eq.Ward.Value }),
+                                                                ActualPatientName: pt.Name,
+                                                                ActualURN: pt.URN,
+                                                                ActualWard: { Value: pt.Ward },
+                                                                AllocationMatch: match,
+                                                                SafetyCheckCompleted: auSafety,
+                                                                TagChecked: true,
+                                                                TagResult: { Value: auTag },
+                                                                EquipmentCondition: { Value: cond },
+                                                                ImmediateRisk: auRisk,
+                                                                RemovedFromUse: auRemoved,
+                                                                Comments: comments,
+                                                                TreatingPTs: pts,
+                                                                TreatingPTEmails: Concat(pts, Email, ";"),
+                                                                TreatingPTNames: Concat(pts, DisplayName, "; "),
+                                                                EscalationRequired: outcome <> "Pass",
+                                                                EscalationSent: false,
+                                                                AuditOutcome: { Value: outcome }
+                                                            }
+                                                        )
+                                                    );
+
+                                                    If(
+                                                        !IsEmpty(Errors(Equipment_Audits)),
+                                                        Notify("Could not save the audit. Please try again.", NotificationType.Error),
+
+                                                        If(
+                                                            outcome = "Pass",
+                                                            Notify("Audit saved: PASS. Scan the next item.", NotificationType.Success),
+
+                                                            IsBlank(toEmails),
+                                                            Notify("Audit saved (" & outcome & "). No treating physio email is recorded, so no escalation was sent.", NotificationType.Warning),
+
+                                                            Office365Outlook.SendEmailV2(
+                                                                toEmails,
+                                                                If(unsafe, "URGENT: Equipment audit FAIL – safety risk (" & outcome & ")", "Equipment audit FAIL – action required (" & outcome & ")"),
+                                                                Substitute(Substitute(EmailHead, "{{TITLE}}", "Equipment Audit FAILED"), "{{SUB}}", eq.Title & "&nbsp;&nbsp;|&nbsp;&nbsp;" & outcome) &
+                                                                "<tr><td bgcolor='#B41A1A' style='background-color:#B41A1A;padding:13px 32px;font-size:14px;font-weight:700;letter-spacing:0.5px;color:#FFFFFF;'>" & If(unsafe, "URGENT: SAFETY RISK. DO NOT USE THIS EQUIPMENT.", "ACTION REQUIRED") & "</td></tr>" &
+                                                                "<tr><td style='padding:24px 32px 0 32px;font-size:15px;line-height:22px;color:#3A5068;'>An equipment audit has failed and needs your review.</td></tr>" &
+                                                                "<tr><td style='padding:20px 32px 0 32px;'><div style='font-size:11px;font-weight:700;letter-spacing:1px;color:#8C9BAE;padding:0 0 8px 2px;'>SUMMARY</div><table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' style='border-collapse:separate;border-spacing:0;width:100%;border:1px solid #E3EAF1;border-radius:14px;overflow:hidden;'>" & "<tr><td style='width:190px;padding:10px 14px;background-color:#F7FAFC;font-size:11px;font-weight:600;letter-spacing:1px;color:#8C9BAE;'>AUDIT OUTCOME</td><td style='padding:10px 14px;font-size:14px;color:#0E1C2A;'>" & "<span style='display:inline-block;padding:3px 12px;border-radius:12px;font-size:12px;font-weight:700;background-color:#FDECEC;color:#B41A1A;'>" & outcome & "</span>" & "</td></tr>" & "<tr><td style='width:190px;padding:10px 14px;background-color:#F7FAFC;font-size:11px;font-weight:600;letter-spacing:1px;color:#8C9BAE;border-top:1px solid #E3EAF1;'>ESCALATION REASON</td><td style='padding:10px 14px;font-size:14px;color:#0E1C2A;border-top:1px solid #E3EAF1;'>" & If(unsafe, "Equipment Unsafe", "Audit failure") & "</td></tr>" & "<tr><td style='width:190px;padding:10px 14px;background-color:#F7FAFC;font-size:11px;font-weight:600;letter-spacing:1px;color:#8C9BAE;border-top:1px solid #E3EAF1;'>FAIL REASONS</td><td style='padding:10px 14px;font-size:14px;color:#0E1C2A;border-top:1px solid #E3EAF1;'>" & Concat(reasons, Reason, "; ") & "</td></tr>" & "<tr><td style='width:190px;padding:10px 14px;background-color:#F7FAFC;font-size:11px;font-weight:600;letter-spacing:1px;color:#8C9BAE;border-top:1px solid #E3EAF1;'>CONDITION</td><td style='padding:10px 14px;font-size:14px;color:#0E1C2A;border-top:1px solid #E3EAF1;'>" & Coalesce(cond, "—") & "</td></tr>" & "<tr><td style='width:190px;padding:10px 14px;background-color:#F7FAFC;font-size:11px;font-weight:600;letter-spacing:1px;color:#8C9BAE;border-top:1px solid #E3EAF1;'>IMMEDIATE RISK</td><td style='padding:10px 14px;font-size:14px;color:#0E1C2A;border-top:1px solid #E3EAF1;'>" & If(auRisk, "<b style='color:#B41A1A;'>" & "Yes" & "</b>", "No") & "</td></tr>" & "<tr><td style='width:190px;padding:10px 14px;background-color:#F7FAFC;font-size:11px;font-weight:600;letter-spacing:1px;color:#8C9BAE;border-top:1px solid #E3EAF1;'>REMOVED FROM USE</td><td style='padding:10px 14px;font-size:14px;color:#0E1C2A;border-top:1px solid #E3EAF1;'>" & If(auRemoved, "<b style='color:#B41A1A;'>" & "Yes" & "</b>", "No") & "</td></tr>" & "</table></td></tr>" &
+                                                                "<tr><td style='padding:20px 32px 0 32px;'><div style='font-size:11px;font-weight:700;letter-spacing:1px;color:#8C9BAE;padding:0 0 8px 2px;'>PATIENT</div><table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' style='border-collapse:separate;border-spacing:0;width:100%;border:1px solid #E3EAF1;border-radius:14px;overflow:hidden;'>" & "<tr><td style='width:190px;padding:10px 14px;background-color:#F7FAFC;font-size:11px;font-weight:600;letter-spacing:1px;color:#8C9BAE;'>NAME</td><td style='padding:10px 14px;font-size:14px;color:#0E1C2A;'>" & Coalesce(pt.Name, "—") & "</td></tr>" & "<tr><td style='width:190px;padding:10px 14px;background-color:#F7FAFC;font-size:11px;font-weight:600;letter-spacing:1px;color:#8C9BAE;border-top:1px solid #E3EAF1;'>URN</td><td style='padding:10px 14px;font-size:14px;color:#0E1C2A;border-top:1px solid #E3EAF1;'>" & Coalesce(pt.URN, "—") & "</td></tr>" & "<tr><td style='width:190px;padding:10px 14px;background-color:#F7FAFC;font-size:11px;font-weight:600;letter-spacing:1px;color:#8C9BAE;border-top:1px solid #E3EAF1;'>DOB</td><td style='padding:10px 14px;font-size:14px;color:#0E1C2A;border-top:1px solid #E3EAF1;'>" & If(IsBlank(pt.DOB), "—", Text(pt.DOB, "dd/mm/yyyy")) & "</td></tr>" & "<tr><td style='width:190px;padding:10px 14px;background-color:#F7FAFC;font-size:11px;font-weight:600;letter-spacing:1px;color:#8C9BAE;border-top:1px solid #E3EAF1;'>WARD</td><td style='padding:10px 14px;font-size:14px;color:#0E1C2A;border-top:1px solid #E3EAF1;'>" & Coalesce(pt.Ward, "—") & "</td></tr>" & "</table></td></tr>" &
+                                                                "<tr><td style='padding:20px 32px 0 32px;'><div style='font-size:11px;font-weight:700;letter-spacing:1px;color:#8C9BAE;padding:0 0 8px 2px;'>EQUIPMENT</div><table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' style='border-collapse:separate;border-spacing:0;width:100%;border:1px solid #E3EAF1;border-radius:14px;overflow:hidden;'>" & "<tr><td style='width:190px;padding:10px 14px;background-color:#F7FAFC;font-size:11px;font-weight:600;letter-spacing:1px;color:#8C9BAE;'>BARCODE</td><td style='padding:10px 14px;font-size:14px;color:#0E1C2A;'>" & eq.Title & "</td></tr>" & "<tr><td style='width:190px;padding:10px 14px;background-color:#F7FAFC;font-size:11px;font-weight:600;letter-spacing:1px;color:#8C9BAE;border-top:1px solid #E3EAF1;'>ITEM</td><td style='padding:10px 14px;font-size:14px;color:#0E1C2A;border-top:1px solid #E3EAF1;'>" & Coalesce(Trim(eq.Brand & " " & eq.Model), "—") & "</td></tr>" & "<tr><td style='width:190px;padding:10px 14px;background-color:#F7FAFC;font-size:11px;font-weight:600;letter-spacing:1px;color:#8C9BAE;border-top:1px solid #E3EAF1;'>EXPECTED PATIENT</td><td style='padding:10px 14px;font-size:14px;color:#0E1C2A;border-top:1px solid #E3EAF1;'>" & Coalesce(eq.'Patient Name', "—") & " (URN " & Coalesce(eq.URN, "—") & ")" & "</td></tr>" & "</table></td></tr>" &
+                                                                "<tr><td style='padding:20px 32px 0 32px;'><div style='font-size:11px;font-weight:700;letter-spacing:1px;color:#8C9BAE;padding:0 0 8px 2px;'>COMMENTS</div><table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' style='border-collapse:separate;border-spacing:0;'><tr><td bgcolor='#F7FAFC' style='background-color:#F7FAFC;border:1px solid #E3EAF1;border-radius:14px;padding:14px 16px;font-size:14px;line-height:21px;color:#0E1C2A;'>" & Coalesce(Substitute(comments, Char(10), "<br/>"), "—") & "</td></tr></table></td></tr>" &
+                                                                "<tr><td style='padding:24px 32px 28px 32px;font-size:15px;line-height:22px;color:#3A5068;'>Please review this equipment as soon as possible.<br><br>Thanks,<br><b style='color:#0E1C2A;'>" & MeName & "</b></td></tr>" &
+                                                                Substitute(EmailFoot, "{{NOTE}}", "This email contains patient information. Please handle it in line with your privacy policy."),
+                                                                { IsHtml: true }
+                                                            );
+                                                            Patch(Equipment_Audits, auRow, { EscalatedTo: pts, EscalationSent: true, EscalationSentDate: Now() });
+                                                            Notify("Audit saved (" & outcome & ") and escalated to the treating physio.", NotificationType.Warning)
+                                                        );
+                                                        Set(auItem, Blank());
+                                                        Select(btnResetChecks_Au)
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =Round(30 * UI, 0)
+                              RadiusBottomRight: =Round(30 * UI, 0)
+                              RadiusTopLeft: =Round(30 * UI, 0)
+                              RadiusTopRight: =Round(30 * UI, 0)
+                              Size: =Round(19 * UI, 0)
+                              Text: ="Submit Audit"
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width

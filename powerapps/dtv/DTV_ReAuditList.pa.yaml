@@ -1,0 +1,448 @@
+Screens:
+  ReAuditList:
+    Properties:
+      Fill: =C_Bg
+      OnVisible: |-
+        =// latest audit of each DTV in the last month (re-audits included)
+        Refresh(Audit_Results);
+        ClearCollect(
+            colMonthAudits,
+            SortByColumns(Filter(Audit_Results, Created >= DateAdd(Now(), -1, TimeUnit.Months)), "Created", SortOrder.Descending)
+        );
+        ClearCollect(colReg, DTV_Register);
+        ClearCollect(
+            colReaudit,
+            ForAll(
+                Distinct(colMonthAudits, Title) As t,
+                With(
+                    {
+                        a: LookUp(colMonthAudits, Title = t.Value),
+                        d: LookUp(colReg, Title = t.Value)
+                    },
+                    With(
+                        {
+                            issue: If(
+                                a.DTVFound.Value = "No",
+                                "DTV not found",
+                                Concat(
+                                    Filter(
+                                        Table(
+                                            { p: If(a.LoginWorked.Value = "No", "Login", "") },
+                                            { p: If(a.PatientListWorked.Value = "No", "Patient list", "") },
+                                            { p: If(a.PrintWorked.Value = "No", "Print", "") },
+                                            { p: If(a.FolderFound.Value = "No", "Kit not found", "") },
+                                            { p: If(a.ContentsListInFolder.Value = "No", "No contents list", "") },
+                                            { p: If(a.KitMatched.Value = "No", "Kit mismatch", "") }
+                                        ),
+                                        p <> ""
+                                    ),
+                                    p,
+                                    " · "
+                                )
+                            )
+                        },
+                        {
+                            Title: t.Value,
+                            Department: Coalesce(d.Department, a.DisplayName),
+                            DTVLocation: Coalesce(d.DTVLocation, ""),
+                            LastDate: a.Created,
+                            LastBy: a.'Created By'.DisplayName,
+                            Issue: issue,
+                            NeedsFollowUp: !IsBlank(issue),
+                            WasReaudit: !IsBlank(a.ReAudit)
+                        }
+                    )
+                )
+            )
+        );
+        Set(varReAll, false);
+        Reset(txtSearch_Re)
+    Children:
+      - conRoot_Re:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =C_Bg
+            Height: =Parent.Height
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Width: =Parent.Width
+          Children:
+            - conHdr_Re:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(7, 95, 115, 1)
+                  FillPortions: =0
+                  Height: =Round(95 * UI, 0)
+                  LayoutMinHeight: =Round(95 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                  - imgHdr_Re:
+                      Control: Image@2.2.3
+                      Properties:
+                        Height: =Parent.Height
+                        Image: =HeaderImage
+                        ImagePosition: =ImagePosition.Fill
+                        Width: =Parent.Width
+                  - btnBack_Re:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        Appearance: =ButtonAppearance.Transparent
+                        Color: =C_White
+                        FontWeight: =""
+                        Height: =Round(60 * UI, 0)
+                        Icon: ="ChevronLeft"
+                        OnSelect: =Navigate(Home, ScreenTransition.UnCoverRight)
+                        PaddingBottom: =5
+                        PaddingLeft: =12
+                        PaddingRight: =12
+                        PaddingTop: =5
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =Round(24 * UI, 0)
+                        Text: =""
+                        VerticalAlign: =VerticalAlign.Middle
+                        Width: =Round(60 * UI, 0)
+                        X: =Gutter + Round(5 * UI, 0)
+                        Y: =Round(18 * UI, 0)
+                  - lblHdrT_Re:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_White
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(42 * UI, 0)
+                        Size: =Round(19 * UI, 0)
+                        Text: ="Re-audit"
+                        Width: =PageW - Round(85 * UI, 0)
+                        Wrap: =false
+                        X: =Gutter + Round(65 * UI, 0)
+                        Y: =Round(12 * UI, 0)
+                  - lblHdrS_Re:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 0.85)
+                        Font: =AppFont
+                        Height: =Round(25 * UI, 0)
+                        Size: =Round(12 * UI, 0)
+                        Text: ="Pick a DTV audited in the last month"
+                        Width: =PageW - Round(85 * UI, 0)
+                        Wrap: =false
+                        X: =Gutter + Round(65 * UI, 0)
+                        Y: =Round(53 * UI, 0)
+            - conBody_Re:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  DropShadow: =DropShadow.None
+                  LayoutAlignItems: =LayoutAlignItems.Stretch
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =Round(12 * UI, 0)
+                  LayoutMinHeight: =Round(250 * UI, 0)
+                  PaddingBottom: =Round(10 * UI, 0)
+                  PaddingLeft: =Gutter + Round(20 * UI, 0)
+                  PaddingRight: =Gutter + Round(20 * UI, 0)
+                  PaddingTop: =Round(15 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                  - conSearch_Re:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =RGBA(14, 42, 70, 0.22)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round(50 * UI, 0)
+                        LayoutMinHeight: =Round(50 * UI, 0)
+                        RadiusBottomLeft: =Round(15 * UI, 0)
+                        RadiusBottomRight: =Round(15 * UI, 0)
+                        RadiusTopLeft: =Round(15 * UI, 0)
+                        RadiusTopRight: =Round(15 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - icoSearch_Re:
+                            Control: ModernIcon@1.1.1
+                            Properties:
+                              Height: =Round(24 * UI, 0)
+                              Icon: ="Search"
+                              IconColor: =C_Muted
+                              Width: =Round(24 * UI, 0)
+                              X: =Round(16 * UI, 0)
+                              Y: =Round(13 * UI, 0)
+                        - txtSearch_Re:
+                            Control: Classic/TextInput@2.3.2
+                            Properties:
+                              BorderStyle: =BorderStyle.None
+                              Color: =C_Ink
+                              Default: =""
+                              DelayOutput: =true
+                              Fill: =RGBA(0, 0, 0, 0)
+                              Font: =AppFont
+                              Height: =Parent.Height
+                              HintText: ="Search DTVs"
+                              Size: =Round(13 * UI, 0)
+                              Width: =Parent.Width - Round(54 * UI, 0)
+                              X: =Round(46 * UI, 0)
+                  - conSeg_Re:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =Round(50 * UI, 0)
+                        LayoutMinHeight: =Round(50 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - conFollow_Re:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =If(!varReAll, C_Accent, C_Line)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =If(!varReAll, C_Accent, C_White)
+                              Height: =Round(50 * UI, 0)
+                              RadiusBottomLeft: =Round(25 * UI, 0)
+                              RadiusBottomRight: =Round(25 * UI, 0)
+                              RadiusTopLeft: =Round(25 * UI, 0)
+                              RadiusTopRight: =Round(25 * UI, 0)
+                              Width: =(PageW - Round(40 * UI, 0) - Round(10 * UI, 0)) / 2
+                              X: =0
+                            Children:
+                              - btnFollow_Re:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =If(!varReAll, C_White, C_Ink2)
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Parent.Height
+                                    OnSelect: =Set(varReAll, false)
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(25 * UI, 0)
+                                    RadiusBottomRight: =Round(25 * UI, 0)
+                                    RadiusTopLeft: =Round(25 * UI, 0)
+                                    RadiusTopRight: =Round(25 * UI, 0)
+                                    Size: =Round(13 * UI, 0)
+                                    Text: ="Needs Follow-up"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                        - conAllRe_Re:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =If(varReAll, C_Accent, C_Line)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =If(varReAll, C_Accent, C_White)
+                              Height: =Round(50 * UI, 0)
+                              RadiusBottomLeft: =Round(25 * UI, 0)
+                              RadiusBottomRight: =Round(25 * UI, 0)
+                              RadiusTopLeft: =Round(25 * UI, 0)
+                              RadiusTopRight: =Round(25 * UI, 0)
+                              Width: =(PageW - Round(40 * UI, 0) - Round(10 * UI, 0)) / 2
+                              X: =(PageW - Round(40 * UI, 0) - Round(10 * UI, 0)) / 2 + Round(10 * UI, 0)
+                            Children:
+                              - btnAllRe_Re:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =If(varReAll, C_White, C_Ink2)
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Parent.Height
+                                    OnSelect: =Set(varReAll, true)
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(25 * UI, 0)
+                                    RadiusBottomRight: =Round(25 * UI, 0)
+                                    RadiusTopLeft: =Round(25 * UI, 0)
+                                    RadiusTopRight: =Round(25 * UI, 0)
+                                    Size: =Round(13 * UI, 0)
+                                    Text: ="All Audited"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                  - lblCount_Re:
+                      Control: Label@2.5.1
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        Color: =C_Muted
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(22 * UI, 0)
+                        LayoutMinHeight: =Round(22 * UI, 0)
+                        Size: =Round(11 * UI, 0)
+                        Text: =CountRows(galRe_Re.AllItems) & If(CountRows(galRe_Re.AllItems) = 1, " DTV", " DTVs") & If(varReAll, " audited in the last month", " need follow-up")
+                        Width: =PageW - Round(40 * UI, 0)
+                        Wrap: =false
+                  - lblEmpty_Re:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        Color: =C_Muted
+                        Font: =AppFont
+                        Height: =Round(50 * UI, 0)
+                        LayoutMinHeight: =Round(50 * UI, 0)
+                        Size: =Round(12 * UI, 0)
+                        Text: =If(!IsBlank(Trim(txtSearch_Re.Text)), "No DTVs match your search", If(varReAll, "No DTVs have been audited in the last month", "Nothing needs follow-up. Every audited DTV passed."))
+                        Visible: =CountRows(galRe_Re.AllItems) = 0
+                        Width: =PageW - Round(40 * UI, 0)
+                  - galRe_Re:
+                      Control: Gallery@2.15.0
+                      Variant: Vertical
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        Items: |-
+                          =SortByColumns(
+                              Filter(
+                                  colReaudit,
+                                  (varReAll || NeedsFollowUp)
+                                  && (
+                                      IsBlank(Trim(txtSearch_Re.Text))
+                                      || Lower(Trim(txtSearch_Re.Text)) in Lower(Department)
+                                      || Lower(Trim(txtSearch_Re.Text)) in Lower(DTVLocation)
+                                      || Lower(Trim(txtSearch_Re.Text)) in Lower(Title)
+                                  )
+                              ),
+                              "NeedsFollowUp", SortOrder.Descending,
+                              "LastDate", SortOrder.Descending
+                          )
+                        LayoutMinHeight: =Round(150 * UI, 0)
+                        TemplatePadding: =0
+                        TemplateSize: =Round(94 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - conRow_Re:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =C_Line
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =C_White
+                              Height: =Round(84 * UI, 0)
+                              RadiusBottomLeft: =Round(18 * UI, 0)
+                              RadiusBottomRight: =Round(18 * UI, 0)
+                              RadiusTopLeft: =Round(18 * UI, 0)
+                              RadiusTopRight: =Round(18 * UI, 0)
+                              Width: =Parent.TemplateWidth - Round(10 * UI, 0)
+                              X: =1
+                              Y: =Round(5 * UI, 0)
+                            Children:
+                              - conBar_Re:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =If(ThisItem.NeedsFollowUp, RGBA(176, 52, 40, 1), RGBA(30, 122, 80, 1))
+                                    Height: =Parent.Height
+                                    RadiusBottomLeft: =Round(18 * UI, 0)
+                                    RadiusBottomRight: =0
+                                    RadiusTopLeft: =Round(18 * UI, 0)
+                                    RadiusTopRight: =0
+                                    Width: =Round(8 * UI, 0)
+                              - lblDept_Re:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(24 * UI, 0)
+                                    Size: =Round(14 * UI, 0)
+                                    Text: =ThisItem.Department
+                                    Width: =Parent.Width - Round(62 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(22 * UI, 0)
+                                    Y: =Round(10 * UI, 0)
+                              - lblLoc_Re:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink2
+                                    Font: =AppFont
+                                    Height: =Round(20 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: =ThisItem.DTVLocation & "  ·  " & ThisItem.Title
+                                    Width: =Parent.Width - Round(62 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(22 * UI, 0)
+                                    Y: =Round(35 * UI, 0)
+                              - lblIssue_Re:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =If(ThisItem.NeedsFollowUp, RGBA(176, 52, 40, 1), RGBA(30, 122, 80, 1))
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(20 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: =If(ThisItem.NeedsFollowUp, ThisItem.Issue, "All clear") & "  ·  " & Text(ThisItem.LastDate, "d mmm") & If(ThisItem.WasReaudit, "  ·  re-audit", "")
+                                    Width: =Parent.Width - Round(62 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(22 * UI, 0)
+                                    Y: =Round(56 * UI, 0)
+                              - icoGo_Re:
+                                  Control: ModernIcon@1.1.1
+                                  Properties:
+                                    Height: =Round(24 * UI, 0)
+                                    Icon: ="ChevronRight"
+                                    IconColor: =C_Muted
+                                    Width: =Round(24 * UI, 0)
+                                    X: =Parent.Width - Round(36 * UI, 0)
+                                    Y: =Round(30 * UI, 0)
+                              - btnRow_Re:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    BorderStyle: =BorderStyle.None
+                                    FontWeight: =""
+                                    Height: =Parent.Height
+                                    OnSelect: |-
+                                      =Set(varReaudit, true);
+                                      Set(varPrevIssue, ThisItem.Issue);
+                                      Set(varPrevDate, ThisItem.LastDate);
+                                      Set(varPrevBy, ThisItem.LastBy);
+                                      Set(varDTV, LookUp(DTV_Register, Title = ThisItem.Title));
+                                      Navigate(Audit, ScreenTransition.Cover)
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =4
+                                    RadiusBottomRight: =4
+                                    RadiusTopLeft: =4
+                                    RadiusTopRight: =4
+                                    Text: =""
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width

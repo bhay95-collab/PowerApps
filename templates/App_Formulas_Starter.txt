@@ -1,0 +1,72 @@
+// =====================================================================
+// STARTER App > Formulas for any new STARS app (phone-first).
+// Paste the whole file into App > Formulas. Same names and values as every other STARS app.
+// Templates (templates/*.pa.yaml) and every recipe in docs/04 rely on these names.
+// =====================================================================
+// ---- colours (same as the desktop app)
+C_Ink = RGBA(14, 28, 42, 1);
+C_Ink2 = RGBA(58, 80, 104, 1);
+C_Muted = RGBA(140, 155, 174, 1);
+C_Bg = RGBA(235, 242, 248, 1);
+C_Bg2 = RGBA(244, 249, 252, 1);
+C_Line = RGBA(14, 42, 70, 0.12);
+C_White = RGBA(255, 255, 255, 1);
+C_Accent = RGBA(26, 90, 153, 1);
+C_AccentDark = RGBA(18, 64, 112, 1);
+C_AccentSoft = RGBA(26, 90, 153, 0.10);
+C_Good = RGBA(12, 122, 82, 1);
+C_GoodBg = RGBA(232, 246, 240, 1);
+C_Danger = RGBA(180, 26, 26, 1);
+C_DangerBg = RGBA(254, 242, 242, 1);
+C_Amber = RGBA(178, 105, 0, 1);
+C_AmberBg = RGBA(255, 246, 229, 1);
+C_Teal = RGBA(0, 144, 153, 1);
+C_HeaderFill = RGBA(7, 95, 115, 1);
+C_Yes = RGBA(30, 122, 80, 1);
+C_No = RGBA(176, 52, 40, 1);
+C_Disabled = RGBA(160, 174, 180, 1);
+
+// ---- font and header art
+AppFont = Font.'Segoe UI';
+HeaderImage = "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' width='400' height='80' viewBox='0 0 400 80' preserveAspectRatio='none'><defs><linearGradient id='a' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='#001D46'/><stop offset='0.48' stop-color='#075F73'/><stop offset='1' stop-color='#00838A'/></linearGradient></defs><rect width='400' height='80' fill='url(#a)'/></svg>");
+
+// ---- screen size (phones and tablets, portrait or landscape)
+// UI scales every text size, button, row and gap with the screen (0.9 to 1.25).
+UI = Max(0.9, Min(1.25, Min(App.Width, App.Height * 0.55) / 390));
+// PageW is the width of the content column (it stops growing on tablets); Gutter is the empty space either side.
+PageW = Min(App.Width, 720);
+Gutter = (App.Width - PageW) / 2;
+// SheetW is the width of pop-up sheets.
+SheetW = Min(App.Width, 600);
+
+// ---- who is using the app
+MeEmail = Lower(User().Email);
+MeName = User().FullName;
+// Needs the ClinicianDirectory list connected. Delete these two lines if the app doesn't use it.
+MeDirectory = LookUp(ClinicianDirectory, Lower(Person.Email) = MeEmail);
+MyDiscipline = Coalesce(MeDirectory.Discipline.Value, "Physio");
+// Manager tools: Director, Team Leader, CA4 (change the list to suit the app)
+IsManager = Coalesce(MeDirectory.Access.Value, "") in ["Director", "Team Leader", "CA4"];
+
+// ---- Email look (shared by every email the app sends)
+EmailHead =
+    "<html><body style='margin:0;padding:0;background-color:#EBF2F8;'>" &
+    "<table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' bgcolor='#EBF2F8' style='background-color:#EBF2F8;'><tr><td align='center' style='padding:24px 12px;'>" &
+    "<table role='presentation' width='680' cellpadding='0' cellspacing='0' border='0' bgcolor='#FFFFFF' style='width:680px;max-width:100%;background-color:#FFFFFF;border:1px solid #D6E0EA;border-radius:18px;border-collapse:separate;border-spacing:0;overflow:hidden;font-family:Segoe UI,Arial,sans-serif;color:#0E1C2A;'>" &
+    "<tr><td style='padding:0;font-size:0;line-height:0;border-radius:18px 18px 0 0;overflow:hidden;'>" &
+    "<table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' style='width:100%;border-collapse:collapse;'><tr>" &
+    Concat(
+        ["#001F47","#01234A","#01284D","#022C50","#023053","#033556","#033959","#033D5C","#04425F","#044662","#054A65","#054E68","#06536B","#06576E","#075B70","#075F73","#076175","#066476","#066677","#056879","#056A7A","#046C7B","#046E7D","#04717E","#037380","#037581","#027782","#027984","#017B85","#017E87","#018088","#008289"],
+        "<td width='3.125%' height='14' bgcolor='" & Value & "' style='background-color:" & Value & ";height:14px;font-size:0;line-height:0;'>&nbsp;</td>"
+    ) &
+    "</tr></table></td></tr>" &
+    "<tr><td bgcolor='#075F73' style='background-color:#075F73;padding:24px 32px 26px 32px;'>" &
+    "<div style='font-size:11px;letter-spacing:2px;font-weight:600;color:#BFE3E8;'>STARS PHYSIOTHERAPY</div>" &
+    "<div style='font-size:26px;font-weight:700;color:#FFFFFF;padding-top:6px;'>{{TITLE}}</div>" &
+    "<div style='font-size:14px;color:#DCEFF2;padding-top:4px;'>{{SUB}}</div>" &
+    "</td></tr>";
+
+EmailFoot =
+    "<tr><td bgcolor='#F4F9FC' style='background-color:#F4F9FC;padding:16px 32px;border-top:1px solid #E3EAF1;border-radius:0 0 18px 18px;font-size:12px;line-height:18px;color:#8C9BAE;'>" &
+    "Sent from the STARS Physiotherapy app by " & User().FullName & ".<br>{{NOTE}}" &
+    "</td></tr></table></td></tr></table></body></html>";

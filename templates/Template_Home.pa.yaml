@@ -1,0 +1,494 @@
+Screens:
+  TemplateHome:
+    Properties:
+      Fill: =C_Bg
+      OnVisible: |-
+        =// demo numbers: replace with real counts (work ratios out once, never divide by a blank)
+        Set(varTotal_Hom, 10);
+        Set(varDone_Hom, 4);
+        Set(varPct_Hom, If(varTotal_Hom > 0, varDone_Hom / varTotal_Hom, 0))
+    Children:
+      - conRoot_Hom:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =C_Bg
+            Height: =Parent.Height
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Width: =Parent.Width
+          Children:
+            - conHdr_Hom:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(7, 95, 115, 1)
+                  FillPortions: =0
+                  Height: =Round(165 * UI, 0)
+                  LayoutMinHeight: =Round(165 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                  - imgHdr_Hom:
+                      Control: Image@2.2.3
+                      Properties:
+                        Height: =Parent.Height
+                        Image: =HeaderImage
+                        ImagePosition: =ImagePosition.Fill
+                        Width: =Parent.Width
+                  - lblKicker_Hom:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 0.8)
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(23 * UI, 0)
+                        Size: =Round(11 * UI, 0)
+                        Text: ="STARS PHYSIOTHERAPY"
+                        Width: =PageW - Round(50 * UI, 0)
+                        Wrap: =false
+                        X: =Gutter + Round(25 * UI, 0)
+                        Y: =Round(33 * UI, 0)
+                  - lblTitle_Hom:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_White
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(70 * UI, 0)
+                        Size: =Round(28 * UI, 0)
+                        Text: ="App Title"
+                        Width: =PageW - Round(50 * UI, 0)
+                        Wrap: =false
+                        X: =Gutter + Round(25 * UI, 0)
+                        Y: =Round(45 * UI, 0)
+                  - lblHello_Hom:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 0.9)
+                        Font: =AppFont
+                        Height: =Round(28 * UI, 0)
+                        Size: =Round(13 * UI, 0)
+                        Text: |-
+                          ="Hi " & With({ n: User().FullName }, If("," in n, Trim(Last(Split(n, ",")).Value), First(Split(n, " ")).Value)) & "  ·  " & Text(Today(), "dddd d mmmm")
+                        Width: =PageW - Round(50 * UI, 0)
+                        Wrap: =false
+                        X: =Gutter + Round(25 * UI, 0)
+                        Y: =Round(110 * UI, 0)
+            - conBody_Hom:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  DropShadow: =DropShadow.None
+                  LayoutAlignItems: =LayoutAlignItems.Stretch
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =Round(15 * UI, 0)
+                  LayoutMinHeight: =Round(250 * UI, 0)
+                  LayoutOverflowY: =LayoutOverflow.Scroll
+                  PaddingBottom: =Round(30 * UI, 0)
+                  PaddingLeft: =Gutter + Round(20 * UI, 0)
+                  PaddingRight: =Gutter + Round(20 * UI, 0)
+                  PaddingTop: =Round(20 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                  - conHero_Hom:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        DropShadow: =DropShadow.None
+                        Fill: =C_Accent
+                        FillPortions: =0
+                        Height: =Round(120 * UI, 0)
+                        LayoutMinHeight: =Round(120 * UI, 0)
+                        RadiusBottomLeft: =Round(25 * UI, 0)
+                        RadiusBottomRight: =Round(25 * UI, 0)
+                        RadiusTopLeft: =Round(25 * UI, 0)
+                        RadiusTopRight: =Round(25 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - conHeroIc_Hom:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =RGBA(255, 255, 255, 0.16)
+                              Height: =Round(56 * UI, 0)
+                              RadiusBottomLeft: =Round(28 * UI, 0)
+                              RadiusBottomRight: =Round(28 * UI, 0)
+                              RadiusTopLeft: =Round(28 * UI, 0)
+                              RadiusTopRight: =Round(28 * UI, 0)
+                              Width: =Round(56 * UI, 0)
+                              X: =Round(20 * UI, 0)
+                              Y: =Round(32 * UI, 0)
+                            Children:
+                              - icoHero_Hom:
+                                  Control: ModernIcon@1.1.1
+                                  Properties:
+                                    Height: =Round(34 * UI, 0)
+                                    Icon: ="CheckmarkCircle"
+                                    IconColor: =C_White
+                                    IconStyle: =IconStyle.Filled
+                                    Width: =Round(34 * UI, 0)
+                                    X: =Round(11 * UI, 0)
+                                    Y: =Round(11 * UI, 0)
+                        - lblHeroT_Hom:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_White
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(32 * UI, 0)
+                              Size: =Round(19 * UI, 0)
+                              Text: ="Main Action"
+                              Width: =Parent.Width - Round(108 * UI, 0)
+                              Wrap: =false
+                              X: =Round(92 * UI, 0)
+                              Y: =Round(32 * UI, 0)
+                        - lblHeroS_Hom:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =RGBA(255, 255, 255, 0.85)
+                              Font: =AppFont
+                              Height: =Round(22 * UI, 0)
+                              Size: =Round(12 * UI, 0)
+                              Text: ="One line saying what it does"
+                              Width: =Parent.Width - Round(108 * UI, 0)
+                              Wrap: =false
+                              X: =Round(92 * UI, 0)
+                              Y: =Round(66 * UI, 0)
+                        - btnHero_Hom:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              BorderStyle: =BorderStyle.None
+                              FontWeight: =""
+                              Height: =Parent.Height
+                              OnSelect: =Navigate(TemplateList, ScreenTransition.Cover)
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =4
+                              RadiusBottomRight: =4
+                              RadiusTopLeft: =4
+                              RadiusTopRight: =4
+                              Text: =""
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+                  - conProg_Hom:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =C_Line
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round(112 * UI, 0)
+                        LayoutMinHeight: =Round(112 * UI, 0)
+                        RadiusBottomLeft: =Round(20 * UI, 0)
+                        RadiusBottomRight: =Round(20 * UI, 0)
+                        RadiusTopLeft: =Round(20 * UI, 0)
+                        RadiusTopRight: =Round(20 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - lblProgCap_Hom:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Muted
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(18 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="PROGRESS"
+                              Width: =Parent.Width - Round(40 * UI, 0)
+                              Wrap: =false
+                              X: =Round(20 * UI, 0)
+                              Y: =Round(12 * UI, 0)
+                        - lblProgT_Hom:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(28 * UI, 0)
+                              Size: =Round(15 * UI, 0)
+                              Text: ="Card Title"
+                              Width: =Parent.Width - Round(40 * UI, 0)
+                              Wrap: =false
+                              X: =Round(20 * UI, 0)
+                              Y: =Round(32 * UI, 0)
+                        - lblProgS_Hom:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink2
+                              Font: =AppFont
+                              Height: =Round(20 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: =varDone_Hom & " of " & varTotal_Hom & " done"
+                              Width: =Parent.Width - Round(40 * UI, 0)
+                              Wrap: =false
+                              X: =Round(20 * UI, 0)
+                              Y: =Round(62 * UI, 0)
+                        - conBarBg_Hom:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =C_Line
+                              Height: =Round(8 * UI, 0)
+                              RadiusBottomLeft: =Round(4 * UI, 0)
+                              RadiusBottomRight: =Round(4 * UI, 0)
+                              RadiusTopLeft: =Round(4 * UI, 0)
+                              RadiusTopRight: =Round(4 * UI, 0)
+                              Width: =Parent.Width - Round(40 * UI, 0)
+                              X: =Round(20 * UI, 0)
+                              Y: =Round(88 * UI, 0)
+                            Children:
+                              - conBarFg_Hom:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =If(Coalesce(varPct_Hom, 0) >= 1, RGBA(30, 122, 80, 1), C_Accent)
+                                    Height: =Parent.Height
+                                    RadiusBottomLeft: =Round(4 * UI, 0)
+                                    RadiusBottomRight: =Round(4 * UI, 0)
+                                    RadiusTopLeft: =Round(4 * UI, 0)
+                                    RadiusTopRight: =Round(4 * UI, 0)
+                                    Width: =Parent.Width * Coalesce(varPct_Hom, 0)
+                  - capOther_Hom:
+                      Control: Label@2.5.1
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        Color: =C_Muted
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(23 * UI, 0)
+                        LayoutMinHeight: =Round(23 * UI, 0)
+                        Size: =Round(11 * UI, 0)
+                        Text: ="OTHER OPTIONS"
+                        Width: =PageW - Round(40 * UI, 0)
+                        Wrap: =false
+                  - conTile1_Hom:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =C_Line
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round(90 * UI, 0)
+                        LayoutMinHeight: =Round(90 * UI, 0)
+                        RadiusBottomLeft: =Round(20 * UI, 0)
+                        RadiusBottomRight: =Round(20 * UI, 0)
+                        RadiusTopLeft: =Round(20 * UI, 0)
+                        RadiusTopRight: =Round(20 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - conTileIc1_Hom:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =C_AccentSoft
+                              Height: =Round(55 * UI, 0)
+                              RadiusBottomLeft: =Round(28 * UI, 0)
+                              RadiusBottomRight: =Round(28 * UI, 0)
+                              RadiusTopLeft: =Round(28 * UI, 0)
+                              RadiusTopRight: =Round(28 * UI, 0)
+                              Width: =Round(55 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(18 * UI, 0)
+                            Children:
+                              - icoTile1_Hom:
+                                  Control: ModernIcon@1.1.1
+                                  Properties:
+                                    Height: =Round(30 * UI, 0)
+                                    Icon: ="AppsList"
+                                    IconColor: =C_Accent
+                                    IconStyle: =IconStyle.Filled
+                                    Width: =Round(30 * UI, 0)
+                                    X: =Round(13 * UI, 0)
+                                    Y: =Round(13 * UI, 0)
+                        - lblTileT1_Hom:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(26 * UI, 0)
+                              Size: =Round(15 * UI, 0)
+                              Text: ="List Screen"
+                              Width: =Parent.Width - Round(130 * UI, 0)
+                              Wrap: =false
+                              X: =Round(88 * UI, 0)
+                              Y: =Round(18 * UI, 0)
+                        - lblTileS1_Hom:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Muted
+                              Font: =AppFont
+                              Height: =Round(22 * UI, 0)
+                              Size: =Round(12 * UI, 0)
+                              Text: ="Search, filter pills, rows"
+                              Width: =Parent.Width - Round(130 * UI, 0)
+                              Wrap: =false
+                              X: =Round(88 * UI, 0)
+                              Y: =Round(46 * UI, 0)
+                        - icoTileGo1_Hom:
+                            Control: ModernIcon@1.1.1
+                            Properties:
+                              Height: =Round(24 * UI, 0)
+                              Icon: ="ChevronRight"
+                              IconColor: =C_Muted
+                              Width: =Round(24 * UI, 0)
+                              X: =Parent.Width - Round(38 * UI, 0)
+                              Y: =Round(33 * UI, 0)
+                        - btnTile1_Hom:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              BorderStyle: =BorderStyle.None
+                              FontWeight: =""
+                              Height: =Parent.Height
+                              OnSelect: =Navigate(TemplateList, ScreenTransition.Cover)
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =4
+                              RadiusBottomRight: =4
+                              RadiusTopLeft: =4
+                              RadiusTopRight: =4
+                              Text: =""
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+                  - conTile2_Hom:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =C_Line
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round(90 * UI, 0)
+                        LayoutMinHeight: =Round(90 * UI, 0)
+                        RadiusBottomLeft: =Round(20 * UI, 0)
+                        RadiusBottomRight: =Round(20 * UI, 0)
+                        RadiusTopLeft: =Round(20 * UI, 0)
+                        RadiusTopRight: =Round(20 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - conTileIc2_Hom:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =C_AmberBg
+                              Height: =Round(55 * UI, 0)
+                              RadiusBottomLeft: =Round(28 * UI, 0)
+                              RadiusBottomRight: =Round(28 * UI, 0)
+                              RadiusTopLeft: =Round(28 * UI, 0)
+                              RadiusTopRight: =Round(28 * UI, 0)
+                              Width: =Round(55 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(18 * UI, 0)
+                            Children:
+                              - icoTile2_Hom:
+                                  Control: ModernIcon@1.1.1
+                                  Properties:
+                                    Height: =Round(30 * UI, 0)
+                                    Icon: ="Edit"
+                                    IconColor: =C_Amber
+                                    IconStyle: =IconStyle.Filled
+                                    Width: =Round(30 * UI, 0)
+                                    X: =Round(13 * UI, 0)
+                                    Y: =Round(13 * UI, 0)
+                        - lblTileT2_Hom:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(26 * UI, 0)
+                              Size: =Round(15 * UI, 0)
+                              Text: ="Form Screen"
+                              Width: =Parent.Width - Round(130 * UI, 0)
+                              Wrap: =false
+                              X: =Round(88 * UI, 0)
+                              Y: =Round(18 * UI, 0)
+                        - lblTileS2_Hom:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Muted
+                              Font: =AppFont
+                              Height: =Round(22 * UI, 0)
+                              Size: =Round(12 * UI, 0)
+                              Text: ="Questions and sticky submit"
+                              Width: =Parent.Width - Round(130 * UI, 0)
+                              Wrap: =false
+                              X: =Round(88 * UI, 0)
+                              Y: =Round(46 * UI, 0)
+                        - icoTileGo2_Hom:
+                            Control: ModernIcon@1.1.1
+                            Properties:
+                              Height: =Round(24 * UI, 0)
+                              Icon: ="ChevronRight"
+                              IconColor: =C_Muted
+                              Width: =Round(24 * UI, 0)
+                              X: =Parent.Width - Round(38 * UI, 0)
+                              Y: =Round(33 * UI, 0)
+                        - btnTile2_Hom:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              BorderStyle: =BorderStyle.None
+                              FontWeight: =""
+                              Height: =Parent.Height
+                              OnSelect: =Navigate(TemplateForm, ScreenTransition.Cover)
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =4
+                              RadiusBottomRight: =4
+                              RadiusTopLeft: =4
+                              RadiusTopRight: =4
+                              Text: =""
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+                  - conEnd_Hom:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =Round(16 * UI, 0)
+                        LayoutMinHeight: =Round(16 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)

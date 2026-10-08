@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+# never commit data exports (staff / patient data)
+*.xlsx
+*.xls
+*.csv
