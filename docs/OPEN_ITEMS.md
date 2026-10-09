@@ -13,6 +13,7 @@ Update this file whenever something is finished, decided or added.
 | 7 | **Verify Data Cleanup flow** on the other lists; turn off old Usage Log Cleanup | To do | Ben (in Power Automate) |
 | 8 | **Desktop App.OnStart** old-equipment filter matches `Physiotherapist = User().FullName` — if Physiotherapist is a Person column, match email instead | Question | Ben: column type |
 | 10 | **DTV Dashboard** — built, not yet pasted in Studio. Email now goes through flow `DTVDashboardEmail` (Studio rejected text as an attachment). Verify: flow imports, CSV attachment opens in Excel, numbers match a manual count | To verify | Ben: paste + test |
+| 11 | **DTV kit barcode scanning (next audit round)** — scan kit label → kit-specific master list (kits are mostly generic but small variations matter, so each kit gets its own list); scan each form once (presence only, no counts); non-barcoded items as Present/Missing pills; wrong form version = fail; auto-fill Missing/Extra. Lists planned: `Kit_Register`, `Kit_Contents`, `Audit_KitItems`. Step 1: **Kit Scan Test** screen (`DTV_ScanTest.pa.yaml`) to see what form barcodes contain (form number? version?) | Testing | Ben: scan real forms, email results; who maintains the master list (TBD) |
 | 9 | **Templates** (`templates/Template_*.pa.yaml`) generated from proven helpers but **not yet pasted in Studio** — first real use: confirm they paste clean, then remove this line | To verify | First new build |
 
 ## Day 1 DTV results (7 Oct 2026, 21 DTVs, 6 auditors) — context for item 1

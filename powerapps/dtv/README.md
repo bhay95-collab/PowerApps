@@ -52,3 +52,8 @@ Control names are shared by the whole app, so delete the old screen first or Stu
 - Email button: branded summary (KPI tiles, results by check, why it failed, coverage by stream, newest 30 follow-ups) + `DTV_Audits_<date>.csv` with one row per DTV (latest audit, plus how many audits it has had) in the chosen period and stream. Sent to the signed-in user only.
 - **Follow-up Progress** panel (replaced Auditors): compares each DTV's first audit with its latest: Failed, not re-audited yet · Still failing after re-audit · Fixed on re-audit · New issue on re-audit. Also in the email and as a CSV column.
 - **Audit drill-in**: tap any DTV in the list to open its full audit in a pop-up: when / who / first audit or re-audit / login account, every answer (Yes / No / Skipped), every reason and comment, the photo, and every audit of that DTV (tap one to view it). Reads the full SharePoint record (`colDashSrc`, kept after load).
+
+## Kit Scan Test (trial, Oct 2026)
+- Screen `ScanTest` (`DTV_ScanTest.pa.yaml`, built by `tools/dtv_generator/scantestbuild.py`), Home tile **Kit Scan Test**.
+- Scan any barcode: shows the raw value, barcode type, length, repeat scans and multiple codes read at once. Optional label per scan. **Email Me Results** sends the list + CSV through the `DTVDashboardEmail` flow.
+- Purpose: find out what form barcodes encode (form number, version?) before designing kit scanning for the next audit round. Remove the tile when done.

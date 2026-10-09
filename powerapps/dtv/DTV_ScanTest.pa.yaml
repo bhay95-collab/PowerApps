@@ -1,0 +1,563 @@
+Screens:
+  ScanTest:
+    Properties:
+      Fill: =C_Bg
+      OnVisible: |-
+        =Set(varSaving, false);
+        Set(varScanClearAsk, false)
+    Children:
+      - conRoot_Sct:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =C_Bg
+            Height: =Parent.Height
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Width: =Parent.Width
+          Children:
+            - conHdr_Sct:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(7, 95, 115, 1)
+                  FillPortions: =0
+                  Height: =Round(95 * UI, 0)
+                  LayoutMinHeight: =Round(95 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                  - imgHdr_Sct:
+                      Control: Image@2.2.3
+                      Properties:
+                        Height: =Parent.Height
+                        Image: =HeaderImage
+                        ImagePosition: =ImagePosition.Fill
+                        Width: =Parent.Width
+                  - btnBack_Sct:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        Appearance: =ButtonAppearance.Transparent
+                        Color: =C_White
+                        FontWeight: =""
+                        Height: =Round(60 * UI, 0)
+                        Icon: ="ChevronLeft"
+                        OnSelect: =Navigate(Home, ScreenTransition.UnCoverRight)
+                        PaddingBottom: =5
+                        PaddingLeft: =12
+                        PaddingRight: =12
+                        PaddingTop: =5
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =Round(24 * UI, 0)
+                        Text: =""
+                        VerticalAlign: =VerticalAlign.Middle
+                        Width: =Round(60 * UI, 0)
+                        X: =Gutter + Round(5 * UI, 0)
+                        Y: =Round(18 * UI, 0)
+                  - lblHdrT_Sct:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_White
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(42 * UI, 0)
+                        Size: =Round(19 * UI, 0)
+                        Text: ="Kit Scan Test"
+                        Width: =PageW - Round(85 * UI, 0)
+                        Wrap: =false
+                        X: =Gutter + Round(65 * UI, 0)
+                        Y: =Round(12 * UI, 0)
+                  - lblHdrS_Sct:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 0.85)
+                        Font: =AppFont
+                        Height: =Round(25 * UI, 0)
+                        Size: =Round(12 * UI, 0)
+                        Text: |-
+                          ="Trial: see what each barcode contains"
+                        Width: =PageW - Round(85 * UI, 0)
+                        Wrap: =false
+                        X: =Gutter + Round(65 * UI, 0)
+                        Y: =Round(53 * UI, 0)
+            - conBody_Sct:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  DropShadow: =DropShadow.None
+                  LayoutAlignItems: =LayoutAlignItems.Stretch
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =Round(12 * UI, 0)
+                  LayoutMinHeight: =Round(250 * UI, 0)
+                  PaddingBottom: =Round(10 * UI, 0)
+                  PaddingLeft: =Gutter + Round(20 * UI, 0)
+                  PaddingRight: =Gutter + Round(20 * UI, 0)
+                  PaddingTop: =Round(15 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                  - conNote_Sct:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =C_Line
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round(108 * UI, 0)
+                        LayoutMinHeight: =Round(108 * UI, 0)
+                        RadiusBottomLeft: =Round(20 * UI, 0)
+                        RadiusBottomRight: =Round(20 * UI, 0)
+                        RadiusTopLeft: =Round(20 * UI, 0)
+                        RadiusTopRight: =Round(20 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - capNote_Sct:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Muted
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(22 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="WHAT ARE YOU SCANNING? (OPTIONAL)"
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              Wrap: =false
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(14 * UI, 0)
+                        - txtNote_Sct:
+                            Control: Classic/TextInput@2.3.2
+                            Properties:
+                              BorderColor: =RGBA(14, 42, 70, 0.22)
+                              BorderThickness: =1
+                              Color: =C_Ink
+                              Default: =""
+                              FocusedBorderColor: =C_Accent
+                              FocusedBorderThickness: =2
+                              Font: =AppFont
+                              Height: =Round(48 * UI, 0)
+                              HintText: ="e.g. Fluid Balance Chart v2.00 / kit label"
+                              RadiusBottomLeft: =Round(12 * UI, 0)
+                              RadiusBottomRight: =Round(12 * UI, 0)
+                              RadiusTopLeft: =Round(12 * UI, 0)
+                              RadiusTopRight: =Round(12 * UI, 0)
+                              Size: =Round(12 * UI, 0)
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(44 * UI, 0)
+                  - conScan_Sct:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        DropShadow: =DropShadow.None
+                        Fill: =C_Accent
+                        FillPortions: =0
+                        Height: =Round(110 * UI, 0)
+                        LayoutMinHeight: =Round(110 * UI, 0)
+                        RadiusBottomLeft: =Round(25 * UI, 0)
+                        RadiusBottomRight: =Round(25 * UI, 0)
+                        RadiusTopLeft: =Round(25 * UI, 0)
+                        RadiusTopRight: =Round(25 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - conScanIc_Sct:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =RGBA(255, 255, 255, 0.16)
+                              Height: =Round(56 * UI, 0)
+                              RadiusBottomLeft: =Round(28 * UI, 0)
+                              RadiusBottomRight: =Round(28 * UI, 0)
+                              RadiusTopLeft: =Round(28 * UI, 0)
+                              RadiusTopRight: =Round(28 * UI, 0)
+                              Width: =Round(56 * UI, 0)
+                              X: =Round(20 * UI, 0)
+                              Y: =Round(27 * UI, 0)
+                            Children:
+                              - icoScan_Sct:
+                                  Control: ModernIcon@1.1.1
+                                  Properties:
+                                    Height: =Round(30 * UI, 0)
+                                    Icon: ="Camera"
+                                    IconColor: =C_White
+                                    IconStyle: =IconStyle.Filled
+                                    Width: =Round(30 * UI, 0)
+                                    X: =Round(13 * UI, 0)
+                                    Y: =Round(13 * UI, 0)
+                        - lblScanT_Sct:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_White
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(32 * UI, 0)
+                              Size: =Round(19 * UI, 0)
+                              Text: ="Scan a Barcode"
+                              Width: =Parent.Width - Round(108 * UI, 0)
+                              Wrap: =false
+                              X: =Round(92 * UI, 0)
+                              Y: =Round(28 * UI, 0)
+                        - lblScanS_Sct:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =RGBA(255, 255, 255, 0.85)
+                              Font: =AppFont
+                              Height: =Round(22 * UI, 0)
+                              Size: =Round(12 * UI, 0)
+                              Text: ="Form, kit label or anything else"
+                              Width: =Parent.Width - Round(108 * UI, 0)
+                              Wrap: =false
+                              X: =Round(92 * UI, 0)
+                              Y: =Round(62 * UI, 0)
+                        - scnTest_Sct:
+                            Control: BarcodeReader@1.0.25
+                            Properties:
+                              BorderStyle: =BorderStyle.None
+                              FillColor: =RGBA(0, 0, 0, 0)
+                              FontSize: =1
+                              Height: =Parent.Height
+                              HoverFillColor: =RGBA(255, 255, 255, 0.08)
+                              OnScan: |-
+                                =// every barcode the camera read in this scan (some phones read more than one at once)
+                                ForAll(
+                                    scnTest_Sct.Barcodes As b,
+                                    Collect(
+                                        colScanTest,
+                                        {
+                                            Seq: CountRows(colScanTest) + 1,
+                                            Value: b.Value,
+                                            Kind: b.Type,
+                                            InScan: CountRows(scnTest_Sct.Barcodes),
+                                            When: Now(),
+                                            Note: Trim(txtNote_Sct.Text)
+                                        }
+                                    )
+                                );
+                                Reset(txtNote_Sct);
+                                If(
+                                    IsEmpty(scnTest_Sct.Barcodes),
+                                    Notify("Nothing was read. Try again, a bit further away and in good light.", NotificationType.Warning),
+                                    Notify("Read: " & Concat(scnTest_Sct.Barcodes, Value, "  |  "), NotificationType.Success)
+                                )
+                              ScanningMode: ='BarcodeReader.ScanningMode'.SelectToScan
+                              Text: =""
+                              Width: =Parent.Width
+                  - lblCount_Sct:
+                      Control: Label@2.5.1
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        Color: =C_Muted
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(22 * UI, 0)
+                        LayoutMinHeight: =Round(22 * UI, 0)
+                        Size: =Round(11 * UI, 0)
+                        Text: =CountRows(colScanTest) & If(CountRows(colScanTest) = 1, " scan", " scans") & "  ·  " & CountRows(Distinct(colScanTest, Value)) & " different codes  ·  newest first"
+                        Width: =PageW - Round(40 * UI, 0)
+                        Wrap: =false
+                  - lblEmpty_Sct:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        Color: =C_Muted
+                        Font: =AppFont
+                        Height: =Round(60 * UI, 0)
+                        LayoutMinHeight: =Round(60 * UI, 0)
+                        Size: =Round(12 * UI, 0)
+                        Text: ="Scan a few forms and a kit label. Each one appears here with exactly what the barcode contains."
+                        Visible: =IsEmpty(colScanTest)
+                        Width: =PageW - Round(40 * UI, 0)
+                  - galScans_Sct:
+                      Control: Gallery@2.15.0
+                      Variant: Vertical
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        Items: =SortByColumns(colScanTest, "Seq", SortOrder.Descending)
+                        LayoutMinHeight: =Round(150 * UI, 0)
+                        TemplatePadding: =0
+                        TemplateSize: =Round(110 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - conRow_Sct:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =C_Line
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =C_White
+                              Height: =Round(100 * UI, 0)
+                              RadiusBottomLeft: =Round(18 * UI, 0)
+                              RadiusBottomRight: =Round(18 * UI, 0)
+                              RadiusTopLeft: =Round(18 * UI, 0)
+                              RadiusTopRight: =Round(18 * UI, 0)
+                              Width: =Parent.TemplateWidth - Round(10 * UI, 0)
+                              X: =1
+                              Y: =Round(5 * UI, 0)
+                            Children:
+                              - lblSeq_Sct:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(22 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: ="#" & ThisItem.Seq
+                                    Width: =Round(60 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(16 * UI, 0)
+                                    Y: =Round(10 * UI, 0)
+                              - lblTime_Sct:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Align: =Align.Right
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    Height: =Round(22 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: =Text(ThisItem.When, "h:mm:ss AM/PM")
+                                    Width: =Round(124 * UI, 0)
+                                    Wrap: =false
+                                    X: =Parent.Width - Round(140 * UI, 0)
+                                    Y: =Round(10 * UI, 0)
+                              - lblVal_Sct:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(28 * UI, 0)
+                                    Size: =Round(15 * UI, 0)
+                                    Text: =ThisItem.Value
+                                    Width: =Parent.Width - Round(32 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(16 * UI, 0)
+                                    Y: =Round(32 * UI, 0)
+                              - lblType_Sct:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Accent
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(22 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: =Text(ThisItem.Kind)
+                                    Width: =Round(150 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(16 * UI, 0)
+                                    Y: =Round(64 * UI, 0)
+                              - lblInfo_Sct:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink2
+                                    Font: =AppFont
+                                    Height: =Round(22 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: =Len(ThisItem.Value) & " characters" & If(CountIf(colScanTest, Value = ThisItem.Value) > 1, "  ·  scanned " & CountIf(colScanTest, Value = ThisItem.Value) & " times", "") & If(ThisItem.InScan > 1, "  ·  " & ThisItem.InScan & " codes in one scan", "") & If(IsBlank(ThisItem.Note), "", "  ·  " & ThisItem.Note)
+                                    Width: =Parent.Width - Round(186 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(170 * UI, 0)
+                                    Y: =Round(64 * UI, 0)
+            - conFoot_Sct:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  BorderColor: =C_Line
+                  BorderThickness: =1
+                  DropShadow: =DropShadow.None
+                  Fill: =C_White
+                  FillPortions: =0
+                  Height: =Round(84 * UI, 0)
+                  LayoutMinHeight: =Round(84 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                  - conEmail_Sct:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =C_Accent
+                        Height: =Round(60 * UI, 0)
+                        RadiusBottomLeft: =Round(28 * UI, 0)
+                        RadiusBottomRight: =Round(28 * UI, 0)
+                        RadiusTopLeft: =Round(28 * UI, 0)
+                        RadiusTopRight: =Round(28 * UI, 0)
+                        Width: =(PageW - Round(40 * UI, 0) - Round(12 * UI, 0)) / 2
+                        X: =Gutter + Round(20 * UI, 0)
+                        Y: =Round(12 * UI, 0)
+                      Children:
+                        - lblEmail_Sct:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Center
+                              Color: =C_White
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(60 * UI, 0)
+                              Size: =Round(14 * UI, 0)
+                              Text: =If(varSaving, "Sending...", "Email Me Results")
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+                              Wrap: =false
+                        - btnEmail_Sct:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              BorderStyle: =BorderStyle.None
+                              DisplayMode: =If(varSaving || IsEmpty(colScanTest), DisplayMode.Disabled, DisplayMode.Edit)
+                              FontWeight: =""
+                              Height: =Parent.Height
+                              OnSelect: =Select(btnSend_Sct)
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =4
+                              RadiusBottomRight: =4
+                              RadiusTopLeft: =4
+                              RadiusTopRight: =4
+                              Text: =""
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+                  - conClear_Sct:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        BorderColor: =C_Line
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =If(varScanClearAsk, RGBA(176, 52, 40, 1), C_White)
+                        Height: =Round(60 * UI, 0)
+                        RadiusBottomLeft: =Round(28 * UI, 0)
+                        RadiusBottomRight: =Round(28 * UI, 0)
+                        RadiusTopLeft: =Round(28 * UI, 0)
+                        RadiusTopRight: =Round(28 * UI, 0)
+                        Width: =(PageW - Round(40 * UI, 0) - Round(12 * UI, 0)) / 2
+                        X: =Gutter + Round(20 * UI, 0) + (PageW - Round(40 * UI, 0) - Round(12 * UI, 0)) / 2 + Round(12 * UI, 0)
+                        Y: =Round(12 * UI, 0)
+                      Children:
+                        - lblClear_Sct:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Center
+                              Color: =If(varScanClearAsk, C_White, C_Ink2)
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(60 * UI, 0)
+                              Size: =Round(14 * UI, 0)
+                              Text: =If(varScanClearAsk, "Tap Again to Clear", "Clear List")
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+                              Wrap: =false
+                        - btnClear_Sct:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              BorderStyle: =BorderStyle.None
+                              FontWeight: =""
+                              Height: =Parent.Height
+                              OnSelect: =If(varScanClearAsk, Clear(colScanTest); Set(varScanClearAsk, false), Set(varScanClearAsk, true))
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =4
+                              RadiusBottomRight: =4
+                              RadiusTopLeft: =4
+                              RadiusTopRight: =4
+                              Text: =""
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+      - btnSend_Sct:
+          Control: ModernButton@1.0.0
+          Properties:
+            Align: =Align.Center
+            FontWeight: =""
+            Height: =1
+            OnSelect: |-
+              =If(
+                  IsEmpty(colScanTest),
+                  Notify("Scan something first.", NotificationType.Information),
+                  Set(varSaving, true);
+                  Set(
+                      varScanCsv,
+                      "Order,Barcode Value,Characters,Codes In Same Scan,Time,Label" & Char(13) & Char(10) &
+                      Concat(
+                          colScanTest,
+                          Seq & "," & Char(34) & Substitute(Coalesce(Value, ""), Char(34), Char(34) & Char(34)) & Char(34) & "," & Len(Value) & "," & InScan & "," & Text(When, "yyyy-mm-dd hh:mm:ss") & "," & Char(34) & Substitute(Coalesce(Note, ""), Char(34), Char(34) & Char(34)) & Char(34),
+                          Char(13) & Char(10)
+                      )
+                  );
+                  Set(
+                      varScanHtml,
+                      Substitute(Substitute(EmailHead, "{{TITLE}}", "Kit Scan Test"), "{{SUB}}", CountRows(colScanTest) & " scans  |  " & Text(Now(), "d mmm yyyy h:mm AM/PM")) &
+                      "<tr><td style='padding:24px 32px 8px 32px;'>" &
+                      "<table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' style='border-collapse:separate;border-spacing:0;width:100%;font-size:14px;border:1px solid #E3EAF1;border-radius:14px;overflow:hidden;'>" &
+                          "<tr bgcolor='#F2F6FA' style='background-color:#F2F6FA;'>" &
+                              "<th align='left' style='padding:10px 12px;font-size:11px;letter-spacing:1px;color:#8C9BAE;border-bottom:2px solid #1A5A99;'>#</th>" &
+                              "<th align='left' style='padding:10px 12px;font-size:11px;letter-spacing:1px;color:#8C9BAE;border-bottom:2px solid #1A5A99;'>BARCODE VALUE</th>" &
+                              "<th align='left' style='padding:10px 12px;font-size:11px;letter-spacing:1px;color:#8C9BAE;border-bottom:2px solid #1A5A99;'>LABEL</th>" &
+                          "</tr>" &
+                          Concat(
+                              colScanTest,
+                              "<tr>" &
+                                  "<td style='padding:10px 12px;border-top:1px solid #E3EAF1;color:#8C9BAE;'>" & Seq & "</td>" &
+                                  "<td style='padding:10px 12px;border-top:1px solid #E3EAF1;font-weight:700;color:#0E1C2A;font-family:Consolas,monospace;'>" & Substitute(Substitute(Value, "&", "&amp;"), "<", "&lt;") & "</td>" &
+                                  "<td style='padding:10px 12px;border-top:1px solid #E3EAF1;color:#3A5068;'>" & Note & "</td>" &
+                              "</tr>"
+                          ) &
+                      "</table></td></tr>" &
+                      "<tr><td style='padding:16px 32px 28px 32px;font-size:15px;line-height:22px;color:#3A5068;'>The same list is attached as a CSV file.</td></tr>" &
+                      Substitute(EmailFoot, "{{NOTE}}", "Kit scan test from the DTV Audit app.")
+                  );
+                  If(
+                      IsError(DTVDashboardEmail.Run(User().Email, "DTV Kit Scan Test (" & CountRows(colScanTest) & " scans)", varScanHtml, "Kit_Scan_Test_" & Text(Now(), "yyyy-mm-dd_hhmm") & ".csv", varScanCsv)),
+                      Notify("Could not send the email.", NotificationType.Error),
+                      Notify("Email sent to " & User().Email & ".", NotificationType.Success)
+                  );
+                  Set(varSaving, false)
+              )
+            PaddingBottom: =5
+            PaddingLeft: =12
+            PaddingRight: =12
+            PaddingTop: =5
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Size: =Round(11 * UI, 0)
+            Text: =""
+            VerticalAlign: =VerticalAlign.Middle
+            Visible: =false
+            Width: =1
