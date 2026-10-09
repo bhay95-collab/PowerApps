@@ -44,12 +44,17 @@ for k in kits:
     for it in k['items']:
         kk = key(it); names[kk][re.sub(r'\s*\((SW|MN)\d+\)$', '', it['name'])] += 1
         meta.setdefault(kk, it)
+# Scan test 9 Oct 2026: SW forms' barcodes read exactly the form number (SW1171, SW626); 00201:xxxxx codes read as printed.
+# MN forms carry a different 00201:xxxxx barcode (e.g. a fluid balance chart read 00201:12256), so those stay blank until scanned.
+def barcode(form):
+    f = (form or '').strip().upper()
+    return f if re.fullmatch(r'SW\d+|00201:\d+', f) else ''
 items = []
 for kk, it in meta.items():
     kd = kind(it['unit'])
     barcoded = kd == 'Form'
     items.append({'ItemKey': kk, 'ItemName': names[kk].most_common(1)[0][0], 'FormNumber': '' if it['form'] in ('', 'N/A') else it['form'],
-                  'Kind': kd, 'ScanMethod': 'Scan barcode' if barcoded else 'Tick present', 'BarcodeValue': '', 'CurrentVersion': '',
+                  'Kind': kd, 'ScanMethod': 'Scan barcode' if barcoded else 'Tick present', 'BarcodeValue': barcode(it['form']), 'CurrentVersion': '',
                   'OrderMethod': it['method'], 'OrderCode': '' if it['code'] in ('', 'N/A') else it['code']})
 items.sort(key=lambda x: (x['Kind'] != 'Form', x['FormNumber'] or 'zzz', x['ItemName']))
 
@@ -77,3 +82,5 @@ sets = collections.Counter(tuple(sorted({key(it) for it in k['items']})) for k i
 print(f'{len(reg)} kits, {len(types)} kit types, {len(sets)} different contents lists')
 print(f'{len(items)} distinct items: ' + ', '.join(f'{n} {kd}' for kd, n in collections.Counter(x["Kind"] for x in items).items()))
 print(f'{len(contents)} kit-content rows')
+miss = [x for x in items if x['ScanMethod'] == 'Scan barcode' and not x['BarcodeValue']]
+print(f'{len(miss)} forms still need a barcode scan: ' + ', '.join(f"{x['FormNumber']} {x['ItemName']}" for x in miss))
