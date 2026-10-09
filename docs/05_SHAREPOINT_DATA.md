@@ -87,3 +87,20 @@ How: list → ⚙ Settings → List settings → Indexed columns → Create a ne
 6. Image column: same steps, type **Image**.
 
 New list: **+ New → List → Blank list**, name exactly, then add columns. Then Studio: Data → Add data → SharePoint → site → tick list.
+
+---
+
+## Kit audit lists (DTVAuditing site, Oct 2026 — next audit round)
+
+Master lists are built from the DTK kit-list Word document by `tools/kits/build_kit_master.py` (CSV column names = SharePoint column names). The CSVs and QR labels are **not** in the repo (public).
+
+| List | One row per | Columns (all **Single line of text** unless stated) |
+|---|---|---|
+| `Kit_Register` | Physical kit (101) | Title (kit ID, e.g. DTK-014 = the QR code), Unit, Location, KitType, BedsidePacks |
+| `Kit_Items` | Distinct item (81) | Title (item key: form number, or a name slug), ItemName, FormNumber, Kind (Form / Printed guide / Stationery), ScanMethod (`Scan barcode` / `Tick present`), BarcodeValue, BarcodeChecked, CurrentVersion, OrderMethod, OrderCode |
+| `Kit_Contents` | Item expected in a kit (3,425) | Title (kit ID), ItemKey, Sections, Quantity. **Index `Title`** (the app filters on it) |
+| `Kit_Audits` | Kit audit | Title (kit ID, or `NO KIT`), Unit, KitLocation, KitType, AuditType, DTVTitle, AuditResultID (Number), RightLocation, SealIntact, StaffAware, ExpectedN (Number), MissingN (Number), ExtraN (Number), Result, MissingItems (Multiple lines, plain), ExtraItems (Multiple lines, plain), Notes (Multiple lines, plain), KitPhoto (Image). Who/when = Created By / Created |
+| `Kit_Audit_Items` | Missing or extra item (exceptions only) | Title (kit ID), KitAuditID (Number), ItemKey, ItemName, Status (`Missing` / `Extra`), ScannedValue |
+
+Rules learned from the scan test (9 Oct 2026): form barcodes contain exactly the form number (SW1171, SW626, MN383); no version in the barcode (versions are not checked); one code per scan.
+Keep every column as text when importing: a Choice column would need `.Value` and break the app's formulas.

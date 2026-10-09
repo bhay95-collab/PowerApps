@@ -14,9 +14,9 @@ hdr=inflow('conHdr_Hm',r(165),w='App.Width',fill=HDR_FILL,radius='0',children=[
 ])
 hero=inflow('conStart_Hm',r(120),fill='C_Accent',radius=r(25),children=[
   box('conStartIc_Hm',x=r(20),y=r(32),w=r(56),h=r(56),fill='RGBA(255, 255, 255, 0.16)',radius=r(28),children=[ico('icoStart_Hm','CheckmarkCircle',r(11),r(11),34,'C_White',True)]),
-  lbl('lblStartT_Hm','"Start an Audit"',x=r(92),y=r(32),w=f"Parent.Width - {r(108)}",h=r(32),size=24,color='C_White',bold=True),
-  lbl('lblStartS_Hm','"Pick a DTV from your stream"',x=r(92),y=r(66),w=f"Parent.Width - {r(108)}",h=r(22),size=15,color='RGBA(255, 255, 255, 0.85)'),
-  tbtn('btnStart_Hm','Set(varShowAll, IsBlank(varStream));\nNavigate(SelectDTV, ScreenTransition.Cover)'),
+  lbl('lblStartT_Hm','"Audit DTV + Kit"',x=r(92),y=r(32),w=f"Parent.Width - {r(108)}",h=r(32),size=24,color='C_White',bold=True),
+  lbl('lblStartS_Hm','"Pick a DTV, then scan its kit"',x=r(92),y=r(66),w=f"Parent.Width - {r(108)}",h=r(22),size=15,color='RGBA(255, 255, 255, 0.85)'),
+  tbtn('btnStart_Hm','Set(varWithKit, true);\nSet(varShowAll, IsBlank(varStream));\nNavigate(SelectDTV, ScreenTransition.Cover)'),
 ])
 noStream='IsBlank(varStream)'
 pct='Coalesce(varMyPct, 0)'
@@ -38,7 +38,7 @@ tile=inflow('conTileAll',r(100),fill='C_White',border='C_Line',radius=r(20),chil
   box('conAllBarBg_Hm',x=r(88),y=r(74),w=f"Parent.Width - {r(130)}",h=r(8),fill='C_Line',radius=r(4),children=[
     box('conAllBarFg_Hm',w=f'Parent.Width * {apct}',h='Parent.Height',fill=f'If({apct} >= 1, RGBA(30, 122, 80, 1), C_Accent)',radius=r(4))]),
   ico('icoTileGoAll','ChevronRight',f"Parent.Width - {r(38)}",r(38),24,'C_Muted'),
-  tbtn('btnTileAll','Set(varShowAll, true);\nNavigate(SelectDTV, ScreenTransition.Cover)'),
+  tbtn('btnTileAll','Set(varWithKit, true);\nSet(varShowAll, true);\nNavigate(SelectDTV, ScreenTransition.Cover)'),
 ])
 tileRe=inflow('conTileRe_Hm',r(90),fill='C_White',border='C_Line',radius=r(20),children=[
   box('conTileIcRe_Hm',x=r(18),y=r(18),w=r(55),h=r(55),fill='C_AmberBg',radius=r(28),children=[ico('icoTileRe_Hm','ArrowClockwise',r(13),r(13),30,'C_Amber',True)]),
@@ -54,15 +54,15 @@ tileDash=inflow('conTileDash_Hm',r(90),fill='C_White',border='C_Line',radius=r(2
   ico('icoTileGoDash_Hm','ChevronRight',f"Parent.Width - {r(38)}",r(33),24,'C_Muted'),
   tbtn('btnTileDash_Hm','Navigate(Dashboard, ScreenTransition.Cover)'),
 ])
-tileScan=inflow('conTileScan_Hm',r(90),fill='C_White',border='C_Line',radius=r(20),children=[
-  box('conTileIcScan_Hm',x=r(18),y=r(18),w=r(55),h=r(55),fill='C_AmberBg',radius=r(28),children=[ico('icoTileScan_Hm','Camera',r(13),r(13),30,'C_Amber',True)]),
-  lbl('lblTileTScan_Hm','"Kit Scan Test"',x=r(88),y=r(18),w=f"Parent.Width - {r(130)}",h=r(26),size=19,color='C_Ink',bold=True),
-  lbl('lblTileSScan_Hm','"Trial: scan form barcodes"',x=r(88),y=r(46),w=f"Parent.Width - {r(130)}",h=r(22),size=15,color='C_Muted'),
-  ico('icoTileGoScan_Hm','ChevronRight',f"Parent.Width - {r(38)}",r(33),24,'C_Muted'),
-  tbtn('btnTileScan_Hm','Navigate(ScanTest, ScreenTransition.Cover)'),
+tileKit=inflow('conTileKit_Hm',r(90),fill='C_White',border='C_Line',radius=r(20),children=[
+  box('conTileIcKit_Hm',x=r(18),y=r(18),w=r(55),h=r(55),fill='C_AccentSoft',radius=r(28),children=[ico('icoTileKit_Hm','Camera',r(13),r(13),30,'C_Accent',True)]),
+  lbl('lblTileTKit_Hm','"Audit Kit Only"',x=r(88),y=r(18),w=f"Parent.Width - {r(130)}",h=r(26),size=19,color='C_Ink',bold=True),
+  lbl('lblTileSKit_Hm','"Scan a kit QR code, no DTV"',x=r(88),y=r(46),w=f"Parent.Width - {r(130)}",h=r(22),size=15,color='C_Muted'),
+  ico('icoTileGoKit_Hm','ChevronRight',f"Parent.Width - {r(38)}",r(33),24,'C_Muted'),
+  tbtn('btnTileKit_Hm','Set(varKitMode, "KIT");\nNavigate(KitAudit, ScreenTransition.Cover)'),
 ])
 endHm=inflow('conEnd_Hm',r(16),extra={'DropShadow':'DropShadow.None'})
-body=vbody('conBody_Hm',[hero,stream,cap,tile,tileRe,tileDash,tileScan,endHm],gap=15,top=20,bottom=30,scroll=True)
+body=vbody('conBody_Hm',[hero,tileKit,stream,cap,tile,tileRe,tileDash,endHm],gap=15,top=20,bottom=30,scroll=True)
 onv_hm='''Set(varStreamPick, Blank());
 // back on Home: the next audit is a normal audit unless Re-audit is chosen
 Set(varReaudit, false);
@@ -193,7 +193,7 @@ rowR=box('conRow_Re',x=1,y=r(5),w=f"Parent.TemplateWidth - {r(10)}",h=r(84),fill
   lbl('lblLoc_Re','ThisItem.DTVLocation & "  ·  " & ThisItem.Title',x=r(22),y=r(35),w=f"Parent.Width - {r(62)}",h=r(20),size=14,color='C_Ink2'),
   lbl('lblIssue_Re','If(ThisItem.NeedsFollowUp, ThisItem.Issue, "All clear") & "  ·  " & Text(ThisItem.LastDate, "d mmm") & If(ThisItem.WasReaudit, "  ·  re-audit", "")',x=r(22),y=r(56),w=f"Parent.Width - {r(62)}",h=r(20),size=13,color='If(ThisItem.NeedsFollowUp, RGBA(176, 52, 40, 1), RGBA(30, 122, 80, 1))',bold=True),
   ico('icoGo_Re','ChevronRight',f"Parent.Width - {r(36)}",r(30),24,'C_Muted'),
-  tbtn('btnRow_Re','Set(varReaudit, true);\nSet(varPrevIssue, ThisItem.Issue);\nSet(varPrevDate, ThisItem.LastDate);\nSet(varPrevBy, ThisItem.LastBy);\nSet(varDTV, LookUp(DTV_Register, Title = ThisItem.Title));\nNavigate(Audit, ScreenTransition.Cover)'),
+  tbtn('btnRow_Re','Set(varWithKit, true);\nSet(varReaudit, true);\nSet(varPrevIssue, ThisItem.Issue);\nSet(varPrevDate, ThisItem.LastDate);\nSet(varPrevBy, ThisItem.LastBy);\nSet(varDTV, LookUp(DTV_Register, Title = ThisItem.Title));\nNavigate(Audit, ScreenTransition.Cover)'),
 ])
 galR=N('galRe_Re','Gallery@2.15.0','Vertical',{'AlignInContainer':'AlignInContainer.SetByContainer','Items':itemsR,'LayoutMinHeight':r(150),'TemplatePadding':'0','TemplateSize':r(94),'Width':W},[rowR])
 bodyR=vbody('conBody_Re',[searchR,segsR,cntRe,emptyRe,galR],gap=12,top=15,bottom=10)
@@ -326,6 +326,8 @@ kit=card('conKit_Aud','If(varFolder = "Yes", If(varList = "Yes", If(varMatch = "
 for c in kit.children:
     if c.name in ('conYes_List','conNo_List'): c.props['Visible']=FY
     if c.name in ('conYes_Match','conNo_Match'): c.props['Visible']=LY
+# DTV + Kit audits scan the kit on the next screen instead of answering section 4
+kit.props['Visible']='!varWithKit'
 # ---- 5 Staff and education
 EDU=['Downtime Escalation Pathway','Downtime Process','Downtime Coordinator',"Key's Location",'DMN Resourcing Page']
 def edupill(k,val,y):
@@ -365,7 +367,7 @@ prev=inflow('conPrev_Aud',r(76),fill='C_AmberBg',border='RGBA(178, 105, 0, 0.35)
   lbl('lblPrev_Aud','If(IsBlank(varPrevIssue), "Last audit was all clear", "Last time: " & varPrevIssue)',x=PADX,y=r(36),w=IW,h=r(28),size=16,color='C_Ink',bold=True),
 ])
 body=vbody('conBody_Aud',[prev,info,found,login,printcard,kit,staff,photo,notes,spacer],gap=12,top=15,bottom=0,scroll=True)
-READY='And(!IsBlank(varFound), varFound = "No" || And(!IsBlank(varLogin), (varLogin = "Yes" && !IsBlank(varPList)) || (varLogin = "No" && !IsBlank(varLoginWhy)), !IsBlank(varPrint), varPrint = "Yes" || !IsBlank(varPrintWhy)), !IsBlank(varFolder), varFolder = "No" || (!IsBlank(varList) && (varList = "No" || (!IsBlank(varMatch) && (varMatch = "Yes" || !IsBlank(Trim(txtMissing_Aud.Text)) || !IsBlank(Trim(txtExtra_Aud.Text)))))))'
+READY='And(!IsBlank(varFound), varFound = "No" || And(!IsBlank(varLogin), (varLogin = "Yes" && !IsBlank(varPList)) || (varLogin = "No" && !IsBlank(varLoginWhy)), !IsBlank(varPrint), varPrint = "Yes" || !IsBlank(varPrintWhy)), varWithKit || And(!IsBlank(varFolder), varFolder = "No" || (!IsBlank(varList) && (varList = "No" || (!IsBlank(varMatch) && (varMatch = "Yes" || !IsBlank(Trim(txtMissing_Aud.Text)) || !IsBlank(Trim(txtExtra_Aud.Text))))))))'
 ok='btnSubmit_Aud.DisplayMode = DisplayMode.Edit'
 save='''With(
     {
@@ -384,11 +386,11 @@ save='''With(
                 PrintWorked: If(varFound = "Yes", { Value: varPrint }, Blank()),
                 PrintFailReason: If(varFound = "Yes" && varPrint = "No", { Value: varPrintWhy }, Blank()),
                 PrintNotes: If(varFound = "Yes" && varPrint = "No", Trim(txtNotes_PrintNo.Text), Blank()),
-                FolderFound: { Value: varFolder },
-                ContentsListInFolder: If(varFolder = "Yes", { Value: varList }, Blank()),
-                KitMatched: If(varFolder = "Yes" && varList = "Yes", { Value: varMatch }, Blank()),
-                MissingItems: If(varFolder = "Yes" && varList = "Yes" && varMatch = "No", Trim(txtMissing_Aud.Text), Blank()),
-                ExtraItems: If(varFolder = "Yes" && varList = "Yes" && varMatch = "No", Trim(txtExtra_Aud.Text), Blank()),
+                FolderFound: If(varWithKit, Blank(), { Value: varFolder }),
+                ContentsListInFolder: If(!varWithKit && varFolder = "Yes", { Value: varList }, Blank()),
+                KitMatched: If(!varWithKit && varFolder = "Yes" && varList = "Yes", { Value: varMatch }, Blank()),
+                MissingItems: If(!varWithKit && varFolder = "Yes" && varList = "Yes" && varMatch = "No", Trim(txtMissing_Aud.Text), Blank()),
+                ExtraItems: If(!varWithKit && varFolder = "Yes" && varList = "Yes" && varMatch = "No", Trim(txtExtra_Aud.Text), Blank()),
                 SpokeTo: Trim(txtSpoke_Aud.Text),
                 EducationGiven: ForAll(colEdu As e, { Value: e.Value }),
                 IssuesRaised: Trim(txtIssues_Aud.Text),
@@ -411,13 +413,14 @@ save='''With(
         Collect(colRecentAudits, { Value: varDTV.Title });
         Set(varLastAudit, rec);
         Set(varSaving, false);
-        Navigate(Done, ScreenTransition.Cover),
+        // DTV + Kit: the kit is scanned next and its result is written back onto this audit
+        If(varWithKit, Set(varKitMode, "DTV"); Navigate(KitAudit, ScreenTransition.Cover), Navigate(Done, ScreenTransition.Cover)),
         Set(varSaving, false);
         Notify("Could not save the audit. Check your connection and try again.", NotificationType.Error)
     )
 )'''
 submit=box('conSubmit_Aud',x=f"Gutter + {r(20)}",y=r(12),w=W,h=r(60),fill=f'If({ok}, C_Accent, RGBA(160, 174, 180, 1))',radius=r(28),children=[
-  lbl('lblSubmit_Aud',f'If({ok}, "Submit Audit", "Answer every question to submit")',w='Parent.Width',h=r(60),size=19,color='C_White',bold=True,align='Align.Center',extra={'Size':f'If({ok}, {r(F(19))}, {r(F(15))})','VerticalAlign':'VerticalAlign.Middle'}),
+  lbl('lblSubmit_Aud',f'If({ok}, If(varWithKit, "Next: Scan the Kit", "Submit Audit"), "Answer every question to submit")',w='Parent.Width',h=r(60),size=19,color='C_White',bold=True,align='Align.Center',extra={'Size':f'If({ok}, {r(F(19))}, {r(F(15))})','VerticalAlign':'VerticalAlign.Middle'}),
   tbtn('btnSubmit_Aud','Set(varSaving, true);\n'+save,display=f'If({READY} && !varSaving, DisplayMode.Edit, DisplayMode.Disabled)'),
 ])
 foot=inflow('conFoot_Aud',r(84),w='App.Width',fill='C_White',border='C_Line',radius='0',children=[submit])

@@ -1189,6 +1189,7 @@ Screens:
                         RadiusBottomRight: =Round(20 * UI, 0)
                         RadiusTopLeft: =Round(20 * UI, 0)
                         RadiusTopRight: =Round(20 * UI, 0)
+                        Visible: =!varWithKit
                         Width: =PageW - Round(40 * UI, 0)
                       Children:
                         - cap_Kit:
@@ -2177,7 +2178,8 @@ Screens:
                               FontWeight: =FontWeight.Bold
                               Height: =Round(60 * UI, 0)
                               Size: =If(btnSubmit_Aud.DisplayMode = DisplayMode.Edit, Round(15 * UI, 0), Round(12 * UI, 0))
-                              Text: =If(btnSubmit_Aud.DisplayMode = DisplayMode.Edit, "Submit Audit", "Answer every question to submit")
+                              Text: |-
+                                =If(btnSubmit_Aud.DisplayMode = DisplayMode.Edit, If(varWithKit, "Next: Scan the Kit", "Submit Audit"), "Answer every question to submit")
                               VerticalAlign: =VerticalAlign.Middle
                               Width: =Parent.Width
                               Wrap: =false
@@ -2187,7 +2189,7 @@ Screens:
                               Align: =Align.Center
                               Appearance: =ButtonAppearance.Transparent
                               BorderStyle: =BorderStyle.None
-                              DisplayMode: =If(And(!IsBlank(varFound), varFound = "No" || And(!IsBlank(varLogin), (varLogin = "Yes" && !IsBlank(varPList)) || (varLogin = "No" && !IsBlank(varLoginWhy)), !IsBlank(varPrint), varPrint = "Yes" || !IsBlank(varPrintWhy)), !IsBlank(varFolder), varFolder = "No" || (!IsBlank(varList) && (varList = "No" || (!IsBlank(varMatch) && (varMatch = "Yes" || !IsBlank(Trim(txtMissing_Aud.Text)) || !IsBlank(Trim(txtExtra_Aud.Text))))))) && !varSaving, DisplayMode.Edit, DisplayMode.Disabled)
+                              DisplayMode: =If(And(!IsBlank(varFound), varFound = "No" || And(!IsBlank(varLogin), (varLogin = "Yes" && !IsBlank(varPList)) || (varLogin = "No" && !IsBlank(varLoginWhy)), !IsBlank(varPrint), varPrint = "Yes" || !IsBlank(varPrintWhy)), varWithKit || And(!IsBlank(varFolder), varFolder = "No" || (!IsBlank(varList) && (varList = "No" || (!IsBlank(varMatch) && (varMatch = "Yes" || !IsBlank(Trim(txtMissing_Aud.Text)) || !IsBlank(Trim(txtExtra_Aud.Text)))))))) && !varSaving, DisplayMode.Edit, DisplayMode.Disabled)
                               FontWeight: =""
                               Height: =Parent.Height
                               OnSelect: |-
@@ -2209,11 +2211,11 @@ Screens:
                                                 PrintWorked: If(varFound = "Yes", { Value: varPrint }, Blank()),
                                                 PrintFailReason: If(varFound = "Yes" && varPrint = "No", { Value: varPrintWhy }, Blank()),
                                                 PrintNotes: If(varFound = "Yes" && varPrint = "No", Trim(txtNotes_PrintNo.Text), Blank()),
-                                                FolderFound: { Value: varFolder },
-                                                ContentsListInFolder: If(varFolder = "Yes", { Value: varList }, Blank()),
-                                                KitMatched: If(varFolder = "Yes" && varList = "Yes", { Value: varMatch }, Blank()),
-                                                MissingItems: If(varFolder = "Yes" && varList = "Yes" && varMatch = "No", Trim(txtMissing_Aud.Text), Blank()),
-                                                ExtraItems: If(varFolder = "Yes" && varList = "Yes" && varMatch = "No", Trim(txtExtra_Aud.Text), Blank()),
+                                                FolderFound: If(varWithKit, Blank(), { Value: varFolder }),
+                                                ContentsListInFolder: If(!varWithKit && varFolder = "Yes", { Value: varList }, Blank()),
+                                                KitMatched: If(!varWithKit && varFolder = "Yes" && varList = "Yes", { Value: varMatch }, Blank()),
+                                                MissingItems: If(!varWithKit && varFolder = "Yes" && varList = "Yes" && varMatch = "No", Trim(txtMissing_Aud.Text), Blank()),
+                                                ExtraItems: If(!varWithKit && varFolder = "Yes" && varList = "Yes" && varMatch = "No", Trim(txtExtra_Aud.Text), Blank()),
                                                 SpokeTo: Trim(txtSpoke_Aud.Text),
                                                 EducationGiven: ForAll(colEdu As e, { Value: e.Value }),
                                                 IssuesRaised: Trim(txtIssues_Aud.Text),
@@ -2236,7 +2238,8 @@ Screens:
                                         Collect(colRecentAudits, { Value: varDTV.Title });
                                         Set(varLastAudit, rec);
                                         Set(varSaving, false);
-                                        Navigate(Done, ScreenTransition.Cover),
+                                        // DTV + Kit: the kit is scanned next and its result is written back onto this audit
+                                        If(varWithKit, Set(varKitMode, "DTV"); Navigate(KitAudit, ScreenTransition.Cover), Navigate(Done, ScreenTransition.Cover)),
                                         Set(varSaving, false);
                                         Notify("Could not save the audit. Check your connection and try again.", NotificationType.Error)
                                     )

@@ -1,9 +1,10 @@
 # Turns the RBWH DTK kit list (Word, one table per kit) into the three master lists for kit scanning.
 #   python3 -I tools/kits/build_kit_master.py <RBWH_DTK_Kit_Lists.docx> <output folder>
 # Writes (CSV, ready to import into SharePoint lists). Do NOT commit the outputs: this repo is public.
-#   Kit_Register.csv  one row per physical kit (101): KitID (goes on the barcode label), unit, floor/building, kit type, bedside packs, DTV (to fill)
-#   Kit_Items.csv     catalogue of every distinct item: ItemKey, name, form number, kind, scan method, barcode value (to fill from the scan test)
-#   Kit_Contents.csv  what each kit should hold: KitID x ItemKey (+ which folder/section, quantity for reference)
+# Column names = SharePoint column names (Title holds the key: kit ID / item key / kit ID).
+#   Kit_Register.csv  one row per physical kit (101): Title = kit ID (DTK-001, printed as the QR code), unit, location, kit type, bedside packs
+#   Kit_Items.csv     catalogue of every distinct item: Title = item key, name, form number, kind, scan method, barcode value (to fill from the scan test)
+#   Kit_Contents.csv  what each kit should hold: Title = kit ID, ItemKey (+ which folder/section, quantity for reference)
 # Re-run whenever the Word document changes; KitIDs follow the order of kits in the document, so add new kits at the end.
 import csv, re, sys, collections, os
 import docx
@@ -54,7 +55,7 @@ items = []
 for kk, it in meta.items():
     kd = kind(it['unit'])
     barcoded = kd == 'Form' and bool(barcode(it['form']))  # forms with no form number (ESM) are ticked
-    items.append({'ItemKey': kk, 'ItemName': names[kk].most_common(1)[0][0], 'FormNumber': '' if it['form'] in ('', 'N/A') else it['form'],
+    items.append({'Title': kk, 'ItemName': names[kk].most_common(1)[0][0], 'FormNumber': '' if it['form'] in ('', 'N/A') else it['form'],
                   'Kind': kd, 'ScanMethod': 'Scan barcode' if barcoded else 'Tick present', 'BarcodeValue': barcode(it['form']), 'BarcodeChecked': 'Yes' if barcode(it['form']) in CONFIRMED else '', 'CurrentVersion': '',
                   'OrderMethod': it['method'], 'OrderCode': '' if it['code'] in ('', 'N/A') else it['code']})
 items.sort(key=lambda x: (x['Kind'] != 'Form', x['FormNumber'] or 'zzz', x['ItemName']))
@@ -63,7 +64,7 @@ items.sort(key=lambda x: (x['Kind'] != 'Form', x['FormNumber'] or 'zzz', x['Item
 reg, contents = [], []
 for i, k in enumerate(kits, 1):
     kid = f'DTK-{i:03d}'
-    reg.append({'KitID': kid, 'Unit': k['unit'], 'Location': k['where'], 'KitType': k['type'], 'BedsidePacks': k['beds'], 'DTVAssetTag': ''})
+    reg.append({'Title': kid, 'Unit': k['unit'], 'Location': k['where'], 'KitType': k['type'], 'BedsidePacks': k['beds']})
     per = collections.OrderedDict()
     for it in k['items']:
         kk = key(it)
@@ -71,7 +72,7 @@ for i, k in enumerate(kits, 1):
         if it['section'] not in e['Sections']: e['Sections'].append(it['section'])
         e['Quantity'].append(f"{it['qty']} {it['unit']}".strip())
     for e in per.values():
-        contents.append({'KitID': e['KitID'], 'ItemKey': e['ItemKey'], 'Sections': '; '.join(e['Sections']), 'Quantity': '; '.join(e['Quantity'])})
+        contents.append({'Title': e['KitID'], 'ItemKey': e['ItemKey'], 'Sections': '; '.join(e['Sections']), 'Quantity': '; '.join(e['Quantity'])})
 
 def write(name, rows):
     with open(os.path.join(out, name), 'w', newline='', encoding='utf-8-sig') as f:

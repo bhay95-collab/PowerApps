@@ -429,7 +429,8 @@ Screens:
                                     FontWeight: =""
                                     Height: =Parent.Height
                                     OnSelect: |-
-                                      =Set(varReaudit, true);
+                                      =Set(varWithKit, true);
+                                      Set(varReaudit, true);
                                       Set(varPrevIssue, ThisItem.Issue);
                                       Set(varPrevDate, ThisItem.LastDate);
                                       Set(varPrevBy, ThisItem.LastBy);

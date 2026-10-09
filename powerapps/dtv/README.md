@@ -57,3 +57,11 @@ Control names are shared by the whole app, so delete the old screen first or Stu
 - Screen `ScanTest` (`DTV_ScanTest.pa.yaml`, built by `tools/dtv_generator/scantestbuild.py`), Home tile **Kit Scan Test**.
 - Scan any barcode: shows the raw value, barcode type, length, repeat scans and multiple codes read at once. Optional label per scan. **Email Me Results** sends the list + CSV through the `DTVDashboardEmail` flow.
 - Purpose: find out what form barcodes encode (form number, version?) before designing kit scanning for the next audit round. Remove the tile when done.
+
+## Kit audit (next audit round, Oct 2026)
+- Home: **Audit DTV + Kit** (hero) and **Audit Kit Only** (tile). The Kit Scan Test tile is gone (screen `ScanTest` can be deleted).
+- **DTV + Kit**: SelectDTV → Audit (section 4 Kit and Folder hidden; button reads "Next: Scan the Kit") → saves the DTV audit → `KitAudit` (`varKitMode = "DTV"`) → Done. The kit result is written back onto the DTV audit (FolderFound, ContentsListInFolder, KitMatched, MissingItems, ExtraItems) so the Dashboard keeps working. "No Kit at This DTV" (tap twice) records FolderFound = No.
+- **Kit Only**: `KitAudit` (`varKitMode = "KIT"`) → `KitDone`.
+- `KitAudit`: scan the kit QR (or type the kit ID) → kit card → 3 Yes/No (location, seal, staff aware) → scan each form (live "x of y", unlisted barcodes go to "Not on this kit's list") → tap each non-barcoded item that is present → photo + notes → Submit. Saves `Kit_Audits` + exception rows in `Kit_Audit_Items`.
+- Built by `tools/dtv_generator/kitbuild.py`; Home/Audit changes in `dtvbuild.py` (`varWithKit`).
+- Labels: `tools/kits/build_kit_labels.py` → A4 PDF, 8 QR labels per page.

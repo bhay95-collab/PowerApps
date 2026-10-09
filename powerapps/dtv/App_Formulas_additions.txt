@@ -28,6 +28,8 @@ Gutter = (App.Width - PageW) / 2;
 
 // ---- Dashboard (added Oct 2026): extra colour and the wide-screen layout
 C_Teal = RGBA(0, 144, 153, 1);
+// Kit audit (green 'present' rows)
+C_GoodBg = RGBA(232, 246, 240, 1);
 // DashW is the width of the dashboard content (stops at 1400); DashX the space either side.
 DashW = Min(App.Width - Round(48 * UI, 0), 1400);
 DashX = (App.Width - DashW) / 2;
