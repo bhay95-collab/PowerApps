@@ -964,8 +964,8 @@ Screens:
                         Height: =Round(23 * UI, 0)
                         LayoutMinHeight: =Round(23 * UI, 0)
                         Size: =Round(11 * UI, 0)
-                        Text: ="FORMS STILL TO SCAN  ·  " & CountRows(Filter(colKitExp, Scan && !Present))
-                        Visible: =!IsBlank(varKit)
+                        Text: ="FORMS  ·  " & CountRows(Filter(colKitExp, Scan && Present)) & " OF " & CountRows(Filter(colKitExp, Scan)) & " SCANNED"
+                        Visible: =!IsBlank(varKit) && !IsEmpty(Filter(colKitExp, Scan))
                         Width: =PageW - Round(40 * UI, 0)
                         Wrap: =false
                   - galToScan_Kit:
@@ -974,13 +974,13 @@ Screens:
                       Properties:
                         AlignInContainer: =AlignInContainer.SetByContainer
                         FillPortions: =0
-                        Height: =Max(1, CountRows(Filter(colKitExp, Scan && !Present))) * Round(70 * UI, 0)
-                        Items: =Filter(colKitExp, Scan && !Present)
-                        LayoutMinHeight: =Max(1, CountRows(Filter(colKitExp, Scan && !Present))) * Round(70 * UI, 0)
+                        Height: =Max(1, CountRows(Filter(colKitExp, Scan))) * Round(70 * UI, 0)
+                        Items: =Filter(colKitExp, Scan)
+                        LayoutMinHeight: =Max(1, CountRows(Filter(colKitExp, Scan))) * Round(70 * UI, 0)
                         ShowScrollbar: =false
                         TemplatePadding: =0
                         TemplateSize: =Round(70 * UI, 0)
-                        Visible: =!IsBlank(varKit) && !IsEmpty(Filter(colKitExp, Scan && !Present))
+                        Visible: =!IsBlank(varKit) && !IsEmpty(Filter(colKitExp, Scan))
                         Width: =PageW - Round(40 * UI, 0)
                       Children:
                         - conTsRow_Kit:
@@ -997,10 +997,10 @@ Screens:
                                   Control: GroupContainer@1.5.0
                                   Variant: ManualLayout
                                   Properties:
-                                    BorderColor: =C_Line
+                                    BorderColor: =If(ThisItem.Present, RGBA(30, 122, 80, 1), RGBA(176, 52, 40, 0.45))
                                     BorderThickness: =1
                                     DropShadow: =DropShadow.None
-                                    Fill: =C_White
+                                    Fill: =If(ThisItem.Present, C_GoodBg, RGBA(176, 52, 40, 0.07))
                                     Height: =Round(62 * UI, 0)
                                     RadiusBottomLeft: =Round(16 * UI, 0)
                                     RadiusBottomRight: =Round(16 * UI, 0)
@@ -1010,18 +1010,34 @@ Screens:
                                     X: =1
                                     Y: =Round(4 * UI, 0)
                                   Children:
-                                    - conTsBar_Kit:
+                                    - conTsDot_Kit:
                                         Control: GroupContainer@1.5.0
                                         Variant: ManualLayout
                                         Properties:
                                           DropShadow: =DropShadow.None
-                                          Fill: =C_Amber
-                                          Height: =Parent.Height
-                                          RadiusBottomLeft: =Round(16 * UI, 0)
-                                          RadiusBottomRight: =0
-                                          RadiusTopLeft: =Round(16 * UI, 0)
-                                          RadiusTopRight: =0
-                                          Width: =Round(8 * UI, 0)
+                                          Fill: =If(ThisItem.Present, RGBA(30, 122, 80, 1), RGBA(176, 52, 40, 1))
+                                          Height: =Round(28 * UI, 0)
+                                          RadiusBottomLeft: =Round(14 * UI, 0)
+                                          RadiusBottomRight: =Round(14 * UI, 0)
+                                          RadiusTopLeft: =Round(14 * UI, 0)
+                                          RadiusTopRight: =Round(14 * UI, 0)
+                                          Width: =Round(28 * UI, 0)
+                                          X: =Round(14 * UI, 0)
+                                          Y: =(Parent.Height - Round(28 * UI, 0)) / 2
+                                        Children:
+                                          - lblTsDot_Kit:
+                                              Control: Label@2.5.1
+                                              Properties:
+                                                Align: =Align.Center
+                                                Color: =C_White
+                                                Font: =AppFont
+                                                FontWeight: =FontWeight.Bold
+                                                Height: =Parent.Height
+                                                Size: =Round(11 * UI, 0)
+                                                Text: =If(ThisItem.Present, "✓", "!")
+                                                VerticalAlign: =VerticalAlign.Middle
+                                                Width: =Parent.Width
+                                                Wrap: =false
                                     - lblTsName_Kit:
                                         Control: Label@2.5.1
                                         Properties:
@@ -1031,21 +1047,22 @@ Screens:
                                           Height: =Round(24 * UI, 0)
                                           Size: =Round(12 * UI, 0)
                                           Text: =ThisItem.Name
-                                          Width: =Parent.Width - Round(36 * UI, 0)
+                                          Width: =Parent.Width - Round(66 * UI, 0)
                                           Wrap: =false
-                                          X: =Round(20 * UI, 0)
+                                          X: =Round(54 * UI, 0)
                                           Y: =Round(8 * UI, 0)
                                     - lblTsSub_Kit:
                                         Control: Label@2.5.1
                                         Properties:
-                                          Color: =C_Muted
+                                          Color: =If(ThisItem.Present, RGBA(30, 122, 80, 1), RGBA(176, 52, 40, 1))
                                           Font: =AppFont
+                                          FontWeight: =FontWeight.Bold
                                           Height: =Round(22 * UI, 0)
                                           Size: =Round(11 * UI, 0)
-                                          Text: =ThisItem.Barcode & "  ·  " & ThisItem.Sections
-                                          Width: =Parent.Width - Round(36 * UI, 0)
+                                          Text: =If(ThisItem.Present, "Scanned", "Not scanned yet") & "  ·  " & ThisItem.Barcode & "  ·  " & ThisItem.Sections
+                                          Width: =Parent.Width - Round(66 * UI, 0)
                                           Wrap: =false
-                                          X: =Round(20 * UI, 0)
+                                          X: =Round(54 * UI, 0)
                                           Y: =Round(32 * UI, 0)
                   - conAllScanned_Kit:
                       Control: GroupContainer@1.5.0
@@ -1063,7 +1080,7 @@ Screens:
                         RadiusBottomRight: =Round(16 * UI, 0)
                         RadiusTopLeft: =Round(16 * UI, 0)
                         RadiusTopRight: =Round(16 * UI, 0)
-                        Visible: =!IsBlank(varKit) && IsEmpty(Filter(colKitExp, Scan && !Present))
+                        Visible: =!IsBlank(varKit) && !IsEmpty(Filter(colKitExp, Scan)) && IsEmpty(Filter(colKitExp, Scan && !Present))
                         Width: =PageW - Round(40 * UI, 0)
                       Children:
                         - lblAllScanned_Kit:
@@ -1193,7 +1210,7 @@ Screens:
                         Height: =Round(23 * UI, 0)
                         LayoutMinHeight: =Round(23 * UI, 0)
                         Size: =Round(11 * UI, 0)
-                        Text: ="OTHER ITEMS  ·  TAP EACH ONE THAT IS PRESENT"
+                        Text: ="OTHER ITEMS  ·  TAP IF IN THE BOX"
                         Visible: =!IsBlank(varKit) && !IsEmpty(Filter(colKitExp, !Scan))
                         Width: =PageW - Round(40 * UI, 0)
                         Wrap: =false
@@ -1226,10 +1243,10 @@ Screens:
                                   Control: GroupContainer@1.5.0
                                   Variant: ManualLayout
                                   Properties:
-                                    BorderColor: =If(ThisItem.Present, RGBA(30, 122, 80, 1), C_Line)
+                                    BorderColor: =If(ThisItem.Present, RGBA(30, 122, 80, 1), RGBA(176, 52, 40, 0.45))
                                     BorderThickness: =1
                                     DropShadow: =DropShadow.None
-                                    Fill: =If(ThisItem.Present, C_GoodBg, C_White)
+                                    Fill: =If(ThisItem.Present, C_GoodBg, RGBA(176, 52, 40, 0.07))
                                     Height: =Round(56 * UI, 0)
                                     RadiusBottomLeft: =Round(16 * UI, 0)
                                     RadiusBottomRight: =Round(16 * UI, 0)
@@ -1243,7 +1260,7 @@ Screens:
                                         Control: GroupContainer@1.5.0
                                         Variant: ManualLayout
                                         Properties:
-                                          BorderColor: =If(ThisItem.Present, RGBA(30, 122, 80, 1), C_Muted)
+                                          BorderColor: =If(ThisItem.Present, RGBA(30, 122, 80, 1), RGBA(176, 52, 40, 1))
                                           BorderThickness: =1
                                           DropShadow: =DropShadow.None
                                           Fill: =If(ThisItem.Present, RGBA(30, 122, 80, 1), C_White)
@@ -1285,7 +1302,7 @@ Screens:
                                     - lblTkSub_Kit:
                                         Control: Label@2.5.1
                                         Properties:
-                                          Color: =If(ThisItem.Present, RGBA(30, 122, 80, 1), C_Muted)
+                                          Color: =If(ThisItem.Present, RGBA(30, 122, 80, 1), RGBA(176, 52, 40, 1))
                                           Font: =AppFont
                                           Height: =Round(20 * UI, 0)
                                           Size: =Round(11 * UI, 0)
@@ -1518,7 +1535,7 @@ Screens:
                               FontWeight: =FontWeight.Bold
                               Height: =Round(60 * UI, 0)
                               Size: =Round(14 * UI, 0)
-                              Text: =If(btnSubmit_Kit.DisplayMode = DisplayMode.Edit, "Submit Kit Audit" & If(CountRows(Filter(colKitExp, !Present)) + CountRows(colKitExtra) > 0, "  ·  " & CountRows(Filter(colKitExp, !Present)) & " missing, " & CountRows(colKitExtra) & " extra", ""), If(IsBlank(varKit), "Scan the kit first", "Answer questions 1 to 3 to submit"))
+                              Text: =If(btnSubmit_Kit.DisplayMode = DisplayMode.Edit, "Complete Kit" & If(CountRows(Filter(colKitExp, !Present)) + CountRows(colKitExtra) > 0, "  ·  " & CountRows(Filter(colKitExp, !Present)) & " missing, " & CountRows(colKitExtra) & " extra", ""), If(IsBlank(varKit), "Scan the kit first", "Answer questions 1 to 3 to submit"))
                               VerticalAlign: =VerticalAlign.Middle
                               Width: =Parent.Width
                               Wrap: =false

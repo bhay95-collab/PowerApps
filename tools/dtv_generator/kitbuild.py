@@ -98,15 +98,18 @@ scanForm = hero('conScanForm_Kit', 'Camera', '"Scan Each Form"', f'{NDONE} & " o
         box('conFormBarFg_Kit', w=f'Parent.Width * {pct}', h='Parent.Height', fill='C_White', radius=r(4))]),
     scanner('scnForm_Kit', SCANFORM)], visible=HASKIT, h=120)
 RH = 70
-toScanItems = 'Filter(colKitExp, Scan && !Present)'
+toScanItems = 'Filter(colKitExp, Scan)'
+leftItems = 'Filter(colKitExp, Scan && !Present)'
 toScanRow = box('conTsRow_Kit', x='0', y='0', w='Parent.TemplateWidth', h='Parent.TemplateHeight', children=[
-    box('conTs_Kit', x='1', y=r(4), w=f'Parent.Width - {r(2)}', h=r(RH - 8), fill='C_White', border='C_Line', radius=r(16), children=[
-        box('conTsBar_Kit', w=r(8), h='Parent.Height', fill='C_Amber', extra={'RadiusTopLeft': r(16), 'RadiusBottomLeft': r(16), 'RadiusTopRight': '0', 'RadiusBottomRight': '0'}),
-        lbl('lblTsName_Kit', 'ThisItem.Name', x=r(20), y=r(8), w=f'Parent.Width - {r(36)}', h=r(24), size=15, color='C_Ink', bold=True),
-        lbl('lblTsSub_Kit', 'ThisItem.Barcode & "  ·  " & ThisItem.Sections', x=r(20), y=r(32), w=f'Parent.Width - {r(36)}', h=r(22), size=13, color='C_Muted')])])
+    box('conTs_Kit', x='1', y=r(4), w=f'Parent.Width - {r(2)}', h=r(RH - 8), fill='If(ThisItem.Present, C_GoodBg, RGBA(176, 52, 40, 0.07))', border=f'If(ThisItem.Present, {GREEN}, RGBA(176, 52, 40, 0.45))', radius=r(16), children=[
+        box('conTsDot_Kit', x=r(14), y=f'(Parent.Height - {r(28)}) / 2', w=r(28), h=r(28), fill=f'If(ThisItem.Present, {GREEN}, {RED})', radius=r(14), children=[
+            lbl('lblTsDot_Kit', 'If(ThisItem.Present, "✓", "!")', w='Parent.Width', h='Parent.Height', size=14, color='C_White', bold=True, align='Align.Center', extra={'VerticalAlign': 'VerticalAlign.Middle'})]),
+        lbl('lblTsName_Kit', 'ThisItem.Name', x=r(54), y=r(8), w=f'Parent.Width - {r(66)}', h=r(24), size=15, color='C_Ink', bold=True),
+        lbl('lblTsSub_Kit', 'If(ThisItem.Present, "Scanned", "Not scanned yet") & "  ·  " & ThisItem.Barcode & "  ·  " & ThisItem.Sections', x=r(54), y=r(32), w=f'Parent.Width - {r(66)}', h=r(22), size=13,
+            color=f'If(ThisItem.Present, {GREEN}, {RED})', bold=True)])])
 galToScan = N('galToScan_Kit', 'Gallery@2.15.0', 'Vertical', {'AlignInContainer': 'AlignInContainer.SetByContainer', 'FillPortions': '0', 'Height': f'Max(1, CountRows({toScanItems})) * {r(RH)}',
     'Items': toScanItems, 'LayoutMinHeight': f'Max(1, CountRows({toScanItems})) * {r(RH)}', 'ShowScrollbar': 'false', 'TemplatePadding': '0', 'TemplateSize': r(RH), 'Visible': f'{HASKIT} && !IsEmpty({toScanItems})', 'Width': W}, [toScanRow])
-allScanned = inflow('conAllScanned_Kit', r(56), fill='C_GoodBg', border='RGBA(30, 122, 80, 0.35)', radius=r(16), visible=f'{HASKIT} && IsEmpty({toScanItems})', children=[
+allScanned = inflow('conAllScanned_Kit', r(56), fill='C_GoodBg', border='RGBA(30, 122, 80, 0.35)', radius=r(16), visible=f'{HASKIT} && !IsEmpty({toScanItems}) && IsEmpty({leftItems})', children=[
     lbl('lblAllScanned_Kit', '"✓  All forms on the list scanned"', x=r(16), w=f'Parent.Width - {r(32)}', h=r(56), size=15, color=GREEN, bold=True, extra={'VerticalAlign': 'VerticalAlign.Middle'})])
 
 # extras
@@ -125,11 +128,11 @@ extras = inflow('conExtras_Kit', f'{r(56)} + Max(1, CountRows(colKitExtra)) * {r
 tickItems = 'Filter(colKitExp, !Scan)'
 TH = 64
 tRow = box('conTkRow_Kit', x='0', y='0', w='Parent.TemplateWidth', h='Parent.TemplateHeight', children=[
-    box('conTk_Kit', x='1', y=r(4), w=f'Parent.Width - {r(2)}', h=r(TH - 8), fill='If(ThisItem.Present, C_GoodBg, C_White)', border=f'If(ThisItem.Present, {GREEN}, C_Line)', radius=r(16), children=[
-        box('conTkDot_Kit', x=r(14), y=f'(Parent.Height - {r(26)}) / 2', w=r(26), h=r(26), fill=f'If(ThisItem.Present, {GREEN}, C_White)', border=f'If(ThisItem.Present, {GREEN}, C_Muted)', radius=r(13), children=[
+    box('conTk_Kit', x='1', y=r(4), w=f'Parent.Width - {r(2)}', h=r(TH - 8), fill='If(ThisItem.Present, C_GoodBg, RGBA(176, 52, 40, 0.07))', border=f'If(ThisItem.Present, {GREEN}, RGBA(176, 52, 40, 0.45))', radius=r(16), children=[
+        box('conTkDot_Kit', x=r(14), y=f'(Parent.Height - {r(26)}) / 2', w=r(26), h=r(26), fill=f'If(ThisItem.Present, {GREEN}, C_White)', border=f'If(ThisItem.Present, {GREEN}, {RED})', radius=r(13), children=[
             lbl('lblTkDot_Kit', 'If(ThisItem.Present, "✓", "")', w='Parent.Width', h='Parent.Height', size=13, color='C_White', bold=True, align='Align.Center', extra={'VerticalAlign': 'VerticalAlign.Middle'})]),
         lbl('lblTkName_Kit', 'ThisItem.Name', x=r(52), y=r(6), w=f'Parent.Width - {r(64)}', h=r(24), size=14, color='C_Ink', bold=True),
-        lbl('lblTkSub_Kit', 'If(ThisItem.Present, "Present", "Tap if present") & "  ·  " & ThisItem.Sections', x=r(52), y=r(30), w=f'Parent.Width - {r(64)}', h=r(20), size=13, color=f'If(ThisItem.Present, {GREEN}, C_Muted)'),
+        lbl('lblTkSub_Kit', 'If(ThisItem.Present, "Present", "Tap if present") & "  ·  " & ThisItem.Sections', x=r(52), y=r(30), w=f'Parent.Width - {r(64)}', h=r(20), size=13, color=f'If(ThisItem.Present, {GREEN}, {RED})'),
         tbtn('btnTk_Kit', 'Patch(colKitExp, ThisItem, { Present: !ThisItem.Present })')])])
 galTick = N('galTick_Kit', 'Gallery@2.15.0', 'Vertical', {'AlignInContainer': 'AlignInContainer.SetByContainer', 'FillPortions': '0', 'Height': f'Max(1, CountRows({tickItems})) * {r(TH)}',
     'Items': tickItems, 'LayoutMinHeight': f'Max(1, CountRows({tickItems})) * {r(TH)}', 'ShowScrollbar': 'false', 'TemplatePadding': '0', 'TemplateSize': r(TH), 'Visible': f'{HASKIT} && !IsEmpty({tickItems})', 'Width': W}, [tRow])
@@ -153,8 +156,8 @@ photo = inflow('conPhoto_Kit', f'Round(If({nophoto}, 268, 390) * UI, 0)', fill='
     tin('txtNotes_Kit', 'Anything else about this kit (optional)', f'Round(If({nophoto}, 104, 226) * UI, 0)', 140)])
 end = inflow('conEnd_Kit', r(16), extra={'DropShadow': 'DropShadow.None'})
 body = vbody('conBody_Kit', [scanKit, typeKit, noKit, kitInfo, qs, scanForm,
-                             cap('capToScan_Kit', '"FORMS STILL TO SCAN  ·  " & CountRows(' + toScanItems + ')', visible=HASKIT), galToScan, allScanned, extras,
-                             cap('capTick_Kit', '"OTHER ITEMS  ·  TAP EACH ONE THAT IS PRESENT"', visible=f'{HASKIT} && !IsEmpty({tickItems})'), galTick,
+                             cap('capToScan_Kit', '"FORMS  ·  " & ' + NDONE + ' & " OF " & ' + NSCAN + ' & " SCANNED"', visible=f'{HASKIT} && !IsEmpty({toScanItems})'), galToScan, allScanned, extras,
+                             cap('capTick_Kit', '"OTHER ITEMS  ·  TAP IF IN THE BOX"', visible=f'{HASKIT} && !IsEmpty({tickItems})'), galTick,
                              photo, end], gap=12, top=15, bottom=0, scroll=True)
 
 # ------------------------------------------------------------------ save
@@ -287,7 +290,7 @@ If(
 def hidden(name, onselect):
     return N(name, 'ModernButton@1.0.0', props=dict({'Align': 'Align.Center', 'FontWeight': '""', 'Height': '1', 'OnSelect': onselect, 'Size': r(11), 'Text': '""', 'VerticalAlign': 'VerticalAlign.Middle', 'Visible': 'false', 'Width': '1'}, **SBOX))
 submit = box('conSubmit_Kit', x=f"Gutter + {r(20)}", y=r(12), w=W, h=r(60), fill=f'If({ok}, C_Accent, RGBA(160, 174, 180, 1))', radius=r(28), children=[
-    lbl('lblSubmit_Kit', f'If({ok}, "Submit Kit Audit" & If({NMISS} + CountRows(colKitExtra) > 0, "  ·  " & {NMISS} & " missing, " & CountRows(colKitExtra) & " extra", ""), If(IsBlank(varKit), "Scan the kit first", "Answer questions 1 to 3 to submit"))',
+    lbl('lblSubmit_Kit', f'If({ok}, "Complete Kit" & If({NMISS} + CountRows(colKitExtra) > 0, "  ·  " & {NMISS} & " missing, " & CountRows(colKitExtra) & " extra", ""), If(IsBlank(varKit), "Scan the kit first", "Answer questions 1 to 3 to submit"))',
         w='Parent.Width', h=r(60), size=17, color='C_White', bold=True, align='Align.Center', extra={'VerticalAlign': 'VerticalAlign.Middle'}),
     tbtn('btnSubmit_Kit', SAVE, display=f'If({READY} && !varSaving, DisplayMode.Edit, DisplayMode.Disabled)')])
 foot = inflow('conFoot_Kit', r(84), w='App.Width', fill='C_White', border='C_Line', radius='0', children=[submit])
