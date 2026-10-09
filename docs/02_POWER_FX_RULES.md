@@ -169,6 +169,10 @@ Data row limit: set **2000** (Settings → General). Above that, non-delegable f
 
 ---
 
+## 7b. Percentages
+
+`Text(0.52, "0%")` gives **"1%"** in Power Apps (it does NOT multiply by 100). Write `Round(x * 100, 0) & "%"`.
+
 ## 8. Email attachments
 
 `Office365Outlook.SendEmailV2(..., { Attachments: Table({ Name, ContentBytes: <text> }) })` is **rejected** in Studio: ContentBytes must be a file/blob, not text. To attach a CSV or text file, pass the text to a flow (Power Apps V2 trigger) and attach it there (see `DTVDashboardEmail`).

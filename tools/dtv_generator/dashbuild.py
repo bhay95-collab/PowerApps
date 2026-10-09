@@ -57,10 +57,10 @@ filters = inflow('conFilters_Dsh', r(76), w='DashW', fill='C_White', border='C_L
 
 # ------------------------------------------------------------------ KPI tiles
 KPIS = [  # key, caption, value, sub, colour, focus
-    ('Aud', 'DTVS AUDITED', 'varDashN & " / " & varDashRegN', 'Text(If(varDashRegN > 0, varDashCovN / varDashRegN, 0), "0%") & " of the register"', 'C_Ink', ''),
+    ('Aud', 'DTVS AUDITED', 'varDashN & " / " & varDashRegN', 'Round((If(varDashRegN > 0, varDashCovN / varDashRegN, 0)) * 100, 0) & "%" & " of the register"', 'C_Ink', ''),
     ('Cov', 'NOT YET AUDITED', 'Max(0, varDashRegN - varDashCovN)', '"DTVs with no audit"', 'C_Accent', ''),
-    ('Clr', 'ALL CLEAR', 'varDashClearN', 'Text(If(varDashN > 0, varDashClearN / varDashN, 0), "0%") & " of DTVs"', GREEN, 'Clear'),
-    ('Fol', 'NEED FOLLOW-UP', 'varDashFollowN', 'Text(If(varDashN > 0, varDashFollowN / varDashN, 0), "0%") & " of DTVs"', RED, 'Follow'),
+    ('Clr', 'ALL CLEAR', 'varDashClearN', 'Round((If(varDashN > 0, varDashClearN / varDashN, 0)) * 100, 0) & "%" & " of DTVs"', GREEN, 'Clear'),
+    ('Fol', 'NEED FOLLOW-UP', 'varDashFollowN', 'Round((If(varDashN > 0, varDashFollowN / varDashN, 0)) * 100, 0) & "%" & " of DTVs"', RED, 'Follow'),
     ('Nf', 'DTV NOT FOUND', 'varDashNotFoundN', '"Tap to list them"', 'C_Amber', 'Found'),
 ]
 TH = 112
@@ -132,7 +132,7 @@ def listpanel(name, title, sub, items, label, value, frac, color, onsel=None, se
 pCov = listpanel('Cov', 'COVERAGE BY STREAM', '"DTVs audited so far"', 'colDashCov', 'ThisItem.Short', 'ThisItem.Done & " / " & ThisItem.Total',
                  'If(ThisItem.Total > 0, ThisItem.Done / ThisItem.Total, 0)', 'If(ThisItem.Done >= ThisItem.Total && ThisItem.Total > 0, ' + GREEN + ', C_Accent)',
                  onsel='Set(varDashStream, If(varDashStream = ThisItem.Stream, "ALL", ThisItem.Stream));\nSelect(btnCalc_Dsh)', selexpr='varDashStream = ThisItem.Stream')
-pEdu = listpanel('Edu', 'EDUCATION GIVEN', '"Share of DTVs (latest audit)"', 'colDashEdu', 'ThisItem.Item', 'ThisItem.N & "  ·  " & Text(If(varDashN > 0, ThisItem.N / varDashN, 0), "0%")',
+pEdu = listpanel('Edu', 'EDUCATION GIVEN', '"Share of DTVs (latest audit)"', 'colDashEdu', 'ThisItem.Item', 'ThisItem.N & "  ·  " & Round((If(varDashN > 0, ThisItem.N / varDashN, 0)) * 100, 0) & "%"',
                  'If(varDashN > 0, ThisItem.N / varDashN, 0)', 'C_Teal', empty='No education recorded yet')
 # follow-up progress: compares each DTV's first audit with its latest. Is follow-up fixing things?
 pStage = listpanel('Stage', 'FOLLOW-UP PROGRESS', '"First audit vs latest. Tap to list them"', 'colDashStage', 'ThisItem.Label', 'ThisItem.N',
@@ -425,8 +425,8 @@ If(
         "<tr><td style='padding:16px 28px 4px 28px;'><table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0'><tr>" &
             {kcell('DTVS AUDITED', 'varDashN', '"of " & varDashRegN & " on register"', '#0E1C2A')}
             {kcell('NOT AUDITED', 'Max(0, varDashRegN - varDashCovN)', '"DTVs"', '#1A5A99')}
-            {kcell('ALL CLEAR', 'varDashClearN', 'Text(If(varDashN > 0, varDashClearN / varDashN, 0), "0%") & " of DTVs"', '#1E7A50')}
-            {kcell('FOLLOW-UP', 'varDashFollowN', 'Text(If(varDashN > 0, varDashFollowN / varDashN, 0), "0%") & " of DTVs"', '#B03428')}
+            {kcell('ALL CLEAR', 'varDashClearN', 'Round((If(varDashN > 0, varDashClearN / varDashN, 0)) * 100, 0) & "%" & " of DTVs"', '#1E7A50')}
+            {kcell('FOLLOW-UP', 'varDashFollowN', 'Round((If(varDashN > 0, varDashFollowN / varDashN, 0)) * 100, 0) & "%" & " of DTVs"', '#B03428')}
             {kcell('NOT FOUND', 'varDashNotFoundN', '"DTVs"', '#B26900')}
         "</tr></table></td></tr>" &
 
@@ -505,7 +505,7 @@ If(
                 "<tr>" &
                     "<td style='{TD_}font-weight:600;color:#0E1C2A;'>" & Stream & "</td>" &
                     "<td align='right' style='{TD_}color:#3A5068;'>" & Done & " of " & Total & " DTVs</td>" &
-                    "<td align='right' style='{TD_}font-weight:700;color:" & If(Done >= Total && Total > 0, "#1E7A50", "#1A5A99") & ";' width='60'>" & Text(If(Total > 0, Done / Total, 0), "0%") & "</td>" &
+                    "<td align='right' style='{TD_}font-weight:700;color:" & If(Done >= Total && Total > 0, "#1E7A50", "#1A5A99") & ";' width='60'>" & Round((If(Total > 0, Done / Total, 0)) * 100, 0) & "%" & "</td>" &
                 "</tr>"
             ) &
         "</table></td></tr>" &
