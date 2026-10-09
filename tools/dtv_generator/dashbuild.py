@@ -59,8 +59,8 @@ filters = inflow('conFilters_Dsh', r(76), w='DashW', fill='C_White', border='C_L
 KPIS = [  # key, caption, value, sub, colour, focus
     ('Aud', 'DTVS AUDITED', 'varDashN & " / " & varDashRegN', 'Round((If(varDashRegN > 0, varDashCovN / varDashRegN, 0)) * 100, 0) & "%" & " of the register"', 'C_Ink', ''),
     ('Cov', 'NOT YET AUDITED', 'Max(0, varDashRegN - varDashCovN)', '"DTVs with no audit"', 'C_Accent', ''),
-    ('Clr', 'ALL CLEAR', 'varDashClearN', 'Round((If(varDashN > 0, varDashClearN / varDashN, 0)) * 100, 0) & "%" & " of DTVs"', GREEN, 'Clear'),
-    ('Fol', 'NEED FOLLOW-UP', 'varDashFollowN', 'Round((If(varDashN > 0, varDashFollowN / varDashN, 0)) * 100, 0) & "%" & " of DTVs"', RED, 'Follow'),
+    ('Clr', 'ALL CLEAR', 'varDashClearN', 'Round((If(varDashN > 0, varDashClearN / varDashN, 0)) * 100, 0) & "% of " & varDashN & " audited"', GREEN, 'Clear'),
+    ('Fol', 'NEED FOLLOW-UP', 'varDashFollowN', 'Round((If(varDashN > 0, varDashFollowN / varDashN, 0)) * 100, 0) & "% of " & varDashN & " audited"', RED, 'Follow'),
     ('Nf', 'DTV NOT FOUND', 'varDashNotFoundN', '"Tap to list them"', 'C_Amber', 'Found'),
 ]
 TH = 112
@@ -425,8 +425,8 @@ If(
         "<tr><td style='padding:16px 28px 4px 28px;'><table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0'><tr>" &
             {kcell('DTVS AUDITED', 'varDashN', '"of " & varDashRegN & " on register"', '#0E1C2A')}
             {kcell('NOT AUDITED', 'Max(0, varDashRegN - varDashCovN)', '"DTVs"', '#1A5A99')}
-            {kcell('ALL CLEAR', 'varDashClearN', 'Round((If(varDashN > 0, varDashClearN / varDashN, 0)) * 100, 0) & "%" & " of DTVs"', '#1E7A50')}
-            {kcell('FOLLOW-UP', 'varDashFollowN', 'Round((If(varDashN > 0, varDashFollowN / varDashN, 0)) * 100, 0) & "%" & " of DTVs"', '#B03428')}
+            {kcell('ALL CLEAR', 'varDashClearN', 'Round((If(varDashN > 0, varDashClearN / varDashN, 0)) * 100, 0) & "% of " & varDashN & " audited"', '#1E7A50')}
+            {kcell('FOLLOW-UP', 'varDashFollowN', 'Round((If(varDashN > 0, varDashFollowN / varDashN, 0)) * 100, 0) & "% of " & varDashN & " audited"', '#B03428')}
             {kcell('NOT FOUND', 'varDashNotFoundN', '"DTVs"', '#B26900')}
         "</tr></table></td></tr>" &
 

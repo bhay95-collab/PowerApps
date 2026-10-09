@@ -483,7 +483,7 @@ Screens:
                                     Font: =AppFont
                                     Height: =Round(20 * UI, 0)
                                     Size: =Round(11 * UI, 0)
-                                    Text: =Round((If(varDashN > 0, varDashClearN / varDashN, 0)) * 100, 0) & "%" & " of DTVs"
+                                    Text: =Round((If(varDashN > 0, varDashClearN / varDashN, 0)) * 100, 0) & "% of " & varDashN & " audited"
                                     Width: =Parent.Width - Round(36 * UI, 0)
                                     Wrap: =false
                                     X: =Round(18 * UI, 0)
@@ -560,7 +560,7 @@ Screens:
                                     Font: =AppFont
                                     Height: =Round(20 * UI, 0)
                                     Size: =Round(11 * UI, 0)
-                                    Text: =Round((If(varDashN > 0, varDashFollowN / varDashN, 0)) * 100, 0) & "%" & " of DTVs"
+                                    Text: =Round((If(varDashN > 0, varDashFollowN / varDashN, 0)) * 100, 0) & "% of " & varDashN & " audited"
                                     Width: =Parent.Width - Round(36 * UI, 0)
                                     Wrap: =false
                                     X: =Round(18 * UI, 0)
@@ -3352,12 +3352,12 @@ Screens:
                           "<td width='20%' valign='top' style='padding:4px;'><table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0'><tr><td bgcolor='#F4F9FC' style='background-color:#F4F9FC;border:1px solid #E3EAF1;border-radius:12px;padding:12px 12px;'>" &
                               "<div style='font-size:10px;letter-spacing:1px;font-weight:700;color:#8C9BAE;'>ALL CLEAR</div>" &
                               "<div style='font-size:24px;font-weight:700;color:#1E7A50;padding-top:4px;'>" & varDashClearN & "</div>" &
-                              "<div style='font-size:12px;color:#3A5068;padding-top:2px;'>" & Round((If(varDashN > 0, varDashClearN / varDashN, 0)) * 100, 0) & "%" & " of DTVs" & "</div>" &
+                              "<div style='font-size:12px;color:#3A5068;padding-top:2px;'>" & Round((If(varDashN > 0, varDashClearN / varDashN, 0)) * 100, 0) & "% of " & varDashN & " audited" & "</div>" &
                           "</td></tr></table></td>" &
                           "<td width='20%' valign='top' style='padding:4px;'><table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0'><tr><td bgcolor='#F4F9FC' style='background-color:#F4F9FC;border:1px solid #E3EAF1;border-radius:12px;padding:12px 12px;'>" &
                               "<div style='font-size:10px;letter-spacing:1px;font-weight:700;color:#8C9BAE;'>FOLLOW-UP</div>" &
                               "<div style='font-size:24px;font-weight:700;color:#B03428;padding-top:4px;'>" & varDashFollowN & "</div>" &
-                              "<div style='font-size:12px;color:#3A5068;padding-top:2px;'>" & Round((If(varDashN > 0, varDashFollowN / varDashN, 0)) * 100, 0) & "%" & " of DTVs" & "</div>" &
+                              "<div style='font-size:12px;color:#3A5068;padding-top:2px;'>" & Round((If(varDashN > 0, varDashFollowN / varDashN, 0)) * 100, 0) & "% of " & varDashN & " audited" & "</div>" &
                           "</td></tr></table></td>" &
                           "<td width='20%' valign='top' style='padding:4px;'><table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0'><tr><td bgcolor='#F4F9FC' style='background-color:#F4F9FC;border:1px solid #E3EAF1;border-radius:12px;padding:12px 12px;'>" &
                               "<div style='font-size:10px;letter-spacing:1px;font-weight:700;color:#8C9BAE;'>NOT FOUND</div>" &
