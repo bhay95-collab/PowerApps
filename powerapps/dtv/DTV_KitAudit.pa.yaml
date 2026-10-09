@@ -1560,8 +1560,8 @@ Screens:
                                         {
                                             clear: nMiss + nExtra = 0 && varKitLoc = "Yes" && varKitSeal = "Yes" && varKitStaff = "Yes",
                                             rec: Patch(
-                                                Kit_Audits,
-                                                Defaults(Kit_Audits),
+                                                KitAudits,
+                                                Defaults(KitAudits),
                                                 {
                                                     Title: varKit.Title,
                                                     Unit: varKit.Unit,
@@ -1583,8 +1583,8 @@ Screens:
                                             )
                                         },
                                         If(
-                                            IsEmpty(Errors(Kit_Audits)),
-                                            Patch(Kit_Audits, rec, { Result: If(clear, "All Clear", "Needs Follow-up") });
+                                            IsEmpty(Errors(KitAudits)),
+                                            Patch(KitAudits, rec, { Result: If(clear, "All Clear", "Needs Follow-up") });
                                             // exceptions only: one row per missing item and per extra barcode
                                             ForAll(
                                                 miss As m,
@@ -1594,7 +1594,7 @@ Screens:
                                                 colKitExtra As x,
                                                 Patch(Kit_Audit_Items, Defaults(Kit_Audit_Items), { Title: varKit.Title, KitAuditID: rec.ID, ItemKey: "", ItemName: x.Name, Status: "Extra", ScannedValue: x.Value })
                                             );
-                                            If(!IsBlank(addPhoto_Kit.Media), Patch(Kit_Audits, rec, { KitPhoto: imgPhoto_Kit.Image }));
+                                            If(!IsBlank(addPhoto_Kit.Media), Patch(KitAudits, rec, { KitPhoto: imgPhoto_Kit.Image }));
                                             // DTV + Kit: write the kit result onto the DTV audit so the Dashboard keeps working
                                             If(
                                                 varKitMode = "DTV" && !IsBlank(varLastAudit),
@@ -1693,8 +1693,8 @@ Screens:
               =Set(varSaving, true);
               Set(varKitNoKitAsk, false);
               Patch(
-                  Kit_Audits,
-                  Defaults(Kit_Audits),
+                  KitAudits,
+                  Defaults(KitAudits),
                   {
                       Title: "NO KIT",
                       AuditType: "DTV + Kit",

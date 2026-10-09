@@ -99,7 +99,7 @@ Master lists are built from the DTK kit-list Word document by `tools/kits/build_
 | `Kit_Register` | Physical kit (101) | Title (kit ID, e.g. DTK-014 = the QR code), Unit, Location, KitType, BedsidePacks |
 | `Kit_Items` | Distinct item (81) | Title (item key: form number, or a name slug), ItemName, FormNumber, Kind (Form / Printed guide / Stationery), ScanMethod (`Scan barcode` / `Tick present`), BarcodeValue, BarcodeChecked, CurrentVersion, OrderMethod, OrderCode |
 | `Kit_Contents` | Item expected in a kit (3,425) | Title (kit ID), ItemKey, Sections, Quantity. **Index `Title`** (the app filters on it) |
-| `Kit_Audits` | Kit audit | Title (kit ID, or `NO KIT`), Unit, KitLocation, KitType, AuditType, DTVTitle, AuditResultID (Number), RightLocation, SealIntact, StaffAware, ExpectedN (Number), MissingN (Number), ExtraN (Number), Result, MissingItems (Multiple lines, plain), ExtraItems (Multiple lines, plain), Notes (Multiple lines, plain), KitPhoto (Image). Who/when = Created By / Created |
+| `KitAudits` | Kit audit | Title (kit ID, or `NO KIT`), Unit, KitLocation, KitType, AuditType, DTVTitle, AuditResultID (Number), RightLocation, SealIntact, StaffAware, ExpectedN (Number), MissingN (Number), ExtraN (Number), Result, MissingItems (Multiple lines, plain), ExtraItems (Multiple lines, plain), Notes (Multiple lines, plain), KitPhoto (Image). Who/when = Created By / Created |
 | `Kit_Audit_Items` | Missing or extra item (exceptions only) | Title (kit ID), KitAuditID (Number), ItemKey, ItemName, Status (`Missing` / `Extra`), ScannedValue |
 
 Rules learned from the scan test (9 Oct 2026): form barcodes contain exactly the form number (SW1171, SW626, MN383); no version in the barcode (versions are not checked); one code per scan.

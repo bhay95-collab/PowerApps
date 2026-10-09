@@ -2,7 +2,7 @@
 #   cd tools/dtv_generator && python3 kitbuild.py   -> powerapps/dtv/DTV_KitAudit.pa.yaml, DTV_KitDone.pa.yaml
 # Two routes in:  Home "Audit DTV + Kit" -> Audit -> Submit -> KitAudit (varKitMode = "DTV")
 #                 Home "Audit Kit Only"                       -> KitAudit (varKitMode = "KIT")
-# SharePoint lists: Kit_Register, Kit_Items, Kit_Contents (master), Kit_Audits, Kit_Audit_Items (results, exceptions only).
+# SharePoint lists: Kit_Register, Kit_Items, Kit_Contents (master), KitAudits, Kit_Audit_Items (results, exceptions only).
 from dtvgen import *
 import os
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'powerapps', 'dtv') + os.sep
@@ -175,8 +175,8 @@ With(
         {
             clear: nMiss + nExtra = 0 && varKitLoc = "Yes" && varKitSeal = "Yes" && varKitStaff = "Yes",
             rec: Patch(
-                Kit_Audits,
-                Defaults(Kit_Audits),
+                KitAudits,
+                Defaults(KitAudits),
                 {
                     Title: varKit.Title,
                     Unit: varKit.Unit,
@@ -198,8 +198,8 @@ With(
             )
         },
         If(
-            IsEmpty(Errors(Kit_Audits)),
-            Patch(Kit_Audits, rec, { Result: If(clear, "All Clear", "Needs Follow-up") });
+            IsEmpty(Errors(KitAudits)),
+            Patch(KitAudits, rec, { Result: If(clear, "All Clear", "Needs Follow-up") });
             // exceptions only: one row per missing item and per extra barcode
             ForAll(
                 miss As m,
@@ -209,7 +209,7 @@ With(
                 colKitExtra As x,
                 Patch(Kit_Audit_Items, Defaults(Kit_Audit_Items), { Title: varKit.Title, KitAuditID: rec.ID, ItemKey: "", ItemName: x.Name, Status: "Extra", ScannedValue: x.Value })
             );
-            If(!IsBlank(addPhoto_Kit.Media), Patch(Kit_Audits, rec, { KitPhoto: imgPhoto_Kit.Image }));
+            If(!IsBlank(addPhoto_Kit.Media), Patch(KitAudits, rec, { KitPhoto: imgPhoto_Kit.Image }));
             // DTV + Kit: write the kit result onto the DTV audit so the Dashboard keeps working
             If(
                 varKitMode = "DTV" && !IsBlank(varLastAudit),
@@ -243,8 +243,8 @@ With(
 NOKIT_SAVE = '''Set(varSaving, true);
 Set(varKitNoKitAsk, false);
 Patch(
-    Kit_Audits,
-    Defaults(Kit_Audits),
+    KitAudits,
+    Defaults(KitAudits),
     {
         Title: "NO KIT",
         AuditType: "DTV + Kit",
