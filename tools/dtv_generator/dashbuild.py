@@ -171,11 +171,13 @@ DETAIL = ('Concat(Filter(Table({ t: If(IsBlank(ThisItem.LoginWhy), "", "Login: "
           '{ t: If(IsBlank(ThisItem.Issues), "", "Ward: " & ThisItem.Issues) }, { t: ThisItem.Notes }, { t: ThisItem.LoginNotes }, { t: ThisItem.PrintNotes }), !IsBlank(Trim(t))), Trim(t), "  ·  ")')
 lrow = box('conRow_Dsh', x='1', y=r(5), w=f'Parent.TemplateWidth - {r(12)}', h=r(LH - 10), fill='C_White', border='C_Line', radius=r(16), children=[
     box('conStripe_Dsh', w=r(8), h='Parent.Height', fill=f'If(ThisItem.Follow, {RED}, {GREEN})', extra={'RadiusTopLeft': r(16), 'RadiusBottomLeft': r(16), 'RadiusTopRight': '0', 'RadiusBottomRight': '0'}),
-    lbl('lblRowT_Dsh', 'ThisItem.Dept & If(IsBlank(ThisItem.Loc), "", "  ·  " & ThisItem.Loc)', x=r(22), y=r(8), w=f'Parent.Width - {r(240)}', h=r(24), size=16, color='C_Ink', bold=True),
-    lbl('lblRowW_Dsh', 'Text(ThisItem.When, "ddd d mmm yyyy, h:mm AM/PM")', x=f'Parent.Width - {r(220)}', y=r(8), w=r(206), h=r(24), size=13, color='C_Ink2', bold=True, align='Align.Right'),
+    lbl('lblRowT_Dsh', 'ThisItem.Dept & If(IsBlank(ThisItem.Loc), "", "  ·  " & ThisItem.Loc)', x=r(22), y=r(8), w=f'Parent.Width - {r(270)}', h=r(24), size=16, color='C_Ink', bold=True),
+    lbl('lblRowW_Dsh', 'Text(ThisItem.When, "ddd d mmm yyyy, h:mm AM/PM")', x=f'Parent.Width - {r(250)}', y=r(8), w=r(206), h=r(24), size=13, color='C_Ink2', bold=True, align='Align.Right'),
     lbl('lblRowS_Dsh', 'ThisItem.Title & "  ·  " & ThisItem.Stream & "  ·  " & ThisItem.Auditor & If(ThisItem.AuditN > 1, "  ·  " & ThisItem.AuditN & " audits, showing latest", "")', x=r(22), y=r(32), w=f'Parent.Width - {r(36)}', h=r(20), size=13, color='C_Muted'),
     lbl('lblRowI_Dsh', 'If(ThisItem.Follow, ThisItem.Fails, "All clear")', x=r(22), y=r(54), w=f'Parent.Width - {r(36)}', h=r(20), size=14, color=f'If(ThisItem.Follow, {RED}, {GREEN})', bold=True),
-    lbl('lblRowD_Dsh', DETAIL, x=r(22), y=r(74), w=f'Parent.Width - {r(36)}', h=r(20), size=13, color='C_Ink2'),
+    lbl('lblRowD_Dsh', DETAIL, x=r(22), y=r(74), w=f'Parent.Width - {r(70)}', h=r(20), size=13, color='C_Ink2'),
+    ico('icoRowGo_Dsh', 'ChevronRight', f'Parent.Width - {r(40)}', r(40), 24, 'C_Muted'),
+    tbtn('btnRow_Dsh', 'Set(varDashSel, LookUp(colDashSrc, ID = ThisItem.AID));\nSet(varDashShowDet, true)'),
 ])
 galList = N('galList_Dsh', 'Gallery@2.15.0', 'Vertical', {'Height': f'Parent.Height - {r(128)}', 'Items': ITEMS, 'TemplatePadding': '0', 'TemplateSize': r(LH), 'Width': f'Parent.Width - {r(28)}', 'X': r(16), 'Y': r(118)}, [lrow])
 nf = '!IsBlank(varDashFocus) || !IsBlank(varDashWhyR) || !IsBlank(varDashStage)'
@@ -305,7 +307,7 @@ ClearCollect(
         )
     )
 );
-Clear(colDashSrc);
+// colDashSrc is kept: the audit detail panel reads the full record (photo, notes) from it
 // coverage by stream (ignores the stream filter): shared DTVs (Stream = "All") count in every stream
 ClearCollect(
     colDashCov,
@@ -561,6 +563,7 @@ Set(varDashFocus, "");
 Set(varDashWhyR, "");
 Set(varDashStage, "");
 Set(varSaving, false);
+Set(varDashShowDet, false);
 Reset(txtSearch_Dsh);
 // stream pills: All, then one per stream (short name = text before the first "&" or ",")
 ClearCollect(colDashPills, {{ Label: "All Streams", Key: "ALL" }});
@@ -570,6 +573,90 @@ ForAll(
 );
 Select(btnLoad_Dsh)'''
 
-kids = [vroot('conRoot_Dsh', [hdr, body]), hidden('btnLoad_Dsh', LOAD), hidden('btnCalc_Dsh', CALC), hidden('btnSend_Dsh', SEND)]
+
+# ------------------------------------------------------------------ audit detail (drill-in)
+S_ = 'varDashSel'
+REG = f'LookUp(colDashReg, Title = {S_}.Title)'
+FAILS_SEL = (f'{S_}.DTVFound.Value = "No" || {S_}.LoginWorked.Value = "No" || {S_}.PatientListWorked.Value = "No" || {S_}.PrintWorked.Value = "No" '
+             f'|| {S_}.FolderFound.Value = "No" || {S_}.ContentsListInFolder.Value = "No" || {S_}.KitMatched.Value = "No"')
+DETW = f'Min(App.Width - {r(48)}, {r(980)})'
+IW2 = f'{DETW} - {r(64)}'
+def dlbl(name, text, h, size=15, color='C_Ink', bold=False, wrap=False, auto=False, visible=None):
+    x = {'AlignInContainer': 'AlignInContainer.SetByContainer', 'FillPortions': '0', 'LayoutMinHeight': r(h)}
+    if auto: x['AutoHeight'] = 'true'
+    return lbl(name, text, w=IW2, h=r(h), size=size, color=color, bold=bold, wrap=wrap, visible=visible, extra=x)
+def dcap(name, text, visible=None):
+    return dlbl(name, f'"{text}"', 30, size=13, color='C_Muted', bold=True, visible=visible)
+def answer(v):
+    return f'Coalesce({S_}.{v}.Value, "Skipped")'
+def acol(v):
+    return f'Switch({S_}.{v}.Value, "Yes", {GREEN}, "No", {RED}, C_Muted)'
+QS = [('Found', 'DTV found', 'DTVFound'), ('Login', 'Login', 'LoginWorked'), ('PList', 'Patient list opened', 'PatientListWorked'), ('Print', 'Print', 'PrintWorked'),
+      ('Folder', 'Yellow folder and kit found', 'FolderFound'), ('List', 'Contents list in folder', 'ContentsListInFolder'), ('Match', 'Kit matches the list', 'KitMatched')]
+QH = 46
+qrows = []
+for i, (k, label, col) in enumerate(QS):
+    qrows += [
+        box(f'conQ{k}Ln_Dsh', x='0', y=r(i * QH), w='Parent.Width', h='1', fill='C_Line') if i else None,
+        lbl(f'lblQ{k}_Dsh', f'"{label}"', x=r(16), y=r(i * QH), w=f'Parent.Width - {r(160)}', h=r(QH), size=15, color='C_Ink2', bold=True, extra={'VerticalAlign': 'VerticalAlign.Middle'}),
+        box(f'conQ{k}A_Dsh', x=f'Parent.Width - {r(126)}', y=r(i * QH + 9), w=r(110), h=r(28), fill=f'Switch({S_}.{col}.Value, "Yes", RGBA(30, 122, 80, 0.12), "No", RGBA(176, 52, 40, 0.12), C_Bg)', radius=r(14), children=[
+            lbl(f'lblQ{k}A_Dsh', answer(col), w='Parent.Width', h=r(28), size=13, color=acol(col), bold=True, align='Align.Center', extra={'VerticalAlign': 'VerticalAlign.Middle'})])]
+qrows = [q for q in qrows if q]
+checks = inflow('conDetChecks_Dsh', r(len(QS) * QH), w=IW2, fill='C_White', border='C_Line', radius=r(14), children=qrows)
+def pair(k, cap, expr):
+    vis = f'!IsBlank(Trim({expr}))'
+    return [dlbl(f'lblD{k}C_Dsh', f'"{cap}"', 24, size=13, color='C_Muted', bold=True, visible=vis),
+            dlbl(f'lblD{k}V_Dsh', expr, 26, size=16, color='C_Ink', wrap=True, auto=True, visible=vis)]
+details = (pair('LWhy', 'WHY LOGIN FAILED', f'{S_}.LoginFailReason.Value') + pair('LNote', 'LOGIN NOTES', f'{S_}.LoginNotes')
+           + pair('PWhy', 'WHY PRINT FAILED', f'{S_}.PrintFailReason.Value') + pair('PNote', 'PRINT NOTES / ERROR MESSAGE', f'{S_}.PrintNotes')
+           + pair('Miss', 'MISSING FROM THE KIT', f'{S_}.MissingItems') + pair('Extra', 'EXTRA IN THE KIT', f'{S_}.ExtraItems')
+           + pair('Spoke', 'SPOKE TO', f'{S_}.SpokeTo') + pair('Edu', 'EDUCATION GIVEN', f'Concat({S_}.EducationGiven, Value, ", ")')
+           + pair('Iss', 'ISSUES RAISED BY STAFF', f'{S_}.IssuesRaised') + pair('Note', 'AUDITOR NOTES', f'{S_}.Notes'))
+noDetail = dlbl('lblDetNone_Dsh', '"No comments recorded on this audit"', 30, size=15, color='C_Muted',
+                visible=f'IsBlank(Trim({S_}.LoginNotes & {S_}.PrintNotes & {S_}.MissingItems & {S_}.ExtraItems & {S_}.SpokeTo & {S_}.IssuesRaised & {S_}.Notes & {S_}.LoginFailReason.Value & {S_}.PrintFailReason.Value)) && CountRows({S_}.EducationGiven) = 0')
+photo = inflow('conDetPhoto_Dsh', f'If(IsBlank({S_}.AuditPhoto), {r(50)}, {r(420)})', w=IW2, fill='C_Bg', radius=r(14), children=[
+    N('imgDetPhoto_Dsh', 'Image@2.2.3', props={'Height': f'Parent.Height - {r(16)}', 'Image': f'{S_}.AuditPhoto', 'ImagePosition': 'ImagePosition.Fit', 'Visible': f'!IsBlank({S_}.AuditPhoto)', 'Width': f'Parent.Width - {r(16)}', 'X': r(8), 'Y': r(8)}),
+    lbl('lblDetNoPhoto_Dsh', '"No photo taken"', x=r(16), w=f'Parent.Width - {r(32)}', h=r(50), size=15, color='C_Muted', visible=f'IsBlank({S_}.AuditPhoto)', extra={'VerticalAlign': 'VerticalAlign.Middle'})])
+HH = 52
+selH = f'ThisItem.ID = {S_}.ID'
+hrow = box('conHistRow_Dsh', x='0', y='0', w='Parent.TemplateWidth', h='Parent.TemplateHeight', children=[
+    box('conHistSel_Dsh', x='0', y=r(3), w='Parent.Width', h=r(HH - 6), fill=f'If({selH}, C_AccentSoft, C_White)', border=f'If({selH}, C_Accent, C_Line)', radius=r(12)),
+    lbl('lblHistW_Dsh', 'Text(ThisItem.Created, "ddd d mmm yyyy, h:mm AM/PM") & If(IsBlank(ThisItem.ReAudit), "", "  ·  Re-audit")', x=r(14), y='0', w=f'Parent.Width * 0.45', h=r(HH), size=14, color='C_Ink', bold=True, extra={'VerticalAlign': 'VerticalAlign.Middle'}),
+    lbl('lblHistB_Dsh', "ThisItem.'Created By'.DisplayName", x='Parent.Width * 0.45', y='0', w=f'Parent.Width * 0.3', h=r(HH), size=14, color='C_Ink2', extra={'VerticalAlign': 'VerticalAlign.Middle'}),
+    lbl('lblHistR_Dsh', f'If(ThisItem.DTVFound.Value = "No" || ThisItem.LoginWorked.Value = "No" || ThisItem.PatientListWorked.Value = "No" || ThisItem.PrintWorked.Value = "No" || ThisItem.FolderFound.Value = "No" || ThisItem.ContentsListInFolder.Value = "No" || ThisItem.KitMatched.Value = "No", "Needs follow-up", "All clear")',
+        x='Parent.Width * 0.75', y='0', w=f'Parent.Width * 0.25 - {r(14)}', h=r(HH), size=14, bold=True, align='Align.Right',
+        color=f'If(ThisItem.DTVFound.Value = "No" || ThisItem.LoginWorked.Value = "No" || ThisItem.PatientListWorked.Value = "No" || ThisItem.PrintWorked.Value = "No" || ThisItem.FolderFound.Value = "No" || ThisItem.ContentsListInFolder.Value = "No" || ThisItem.KitMatched.Value = "No", {RED}, {GREEN})', extra={'VerticalAlign': 'VerticalAlign.Middle'}),
+    tbtn('btnHist_Dsh', f'Set({S_}, ThisItem)')])
+HIST = f'Filter(colDashSrc, Title = {S_}.Title)'
+hist = N('galDetHist_Dsh', 'Gallery@2.15.0', 'Vertical', {'AlignInContainer': 'AlignInContainer.SetByContainer', 'FillPortions': '0', 'Height': f'Max(1, CountRows({HIST})) * {r(HH)}',
+         'Items': HIST, 'LayoutMinHeight': f'Max(1, CountRows({HIST})) * {r(HH)}', 'ShowScrollbar': 'false', 'TemplatePadding': '0', 'TemplateSize': r(HH), 'Width': IW2}, [hrow])
+META = [('When', 'AUDITED', f'Text({S_}.Created, "ddd d mmm yyyy, h:mm AM/PM")'), ('By', 'AUDITOR', f"{S_}.'Created By'.DisplayName"),
+        ('Type', 'TYPE', f'If(IsBlank({S_}.ReAudit), "First audit", "Re-audit")'), ('Acc', 'LOGIN ACCOUNT', f'Coalesce({REG}.LoginAccount, "—")')]
+mw = f'({IW2}) / 4'
+meta = inflow('conDetMeta_Dsh', r(70), w=IW2, fill='C_Bg', radius=r(14), children=sum([[
+    lbl(f'lblM{k}C_Dsh', f'"{c}"', x=f'{i} * {mw} + {r(16)}', y=r(12), w=f'{mw} - {r(24)}', h=r(20), size=13, color='C_Muted', bold=True),
+    lbl(f'lblM{k}V_Dsh', v, x=f'{i} * {mw} + {r(16)}', y=r(34), w=f'{mw} - {r(24)}', h=r(26), size=15, color='C_Ink', bold=True)] for i, (k, c, v) in enumerate(META)], []))
+endD = inflow('conDetEnd_Dsh', r(16), w=IW2, extra={'DropShadow': 'DropShadow.None'})
+detP = {'AlignInContainer': 'AlignInContainer.SetByContainer', 'DropShadow': 'DropShadow.None', 'Height': f'Parent.Height - {r(108)}', 'LayoutAlignItems': 'LayoutAlignItems.Start',
+        'LayoutDirection': 'LayoutDirection.Vertical', 'LayoutGap': r(8), 'LayoutOverflowY': 'LayoutOverflow.Scroll', 'PaddingBottom': r(8), 'PaddingLeft': r(32), 'PaddingRight': r(32),
+        'PaddingTop': r(6), 'Width': 'Parent.Width', 'X': '0', 'Y': r(100)}
+detP.update(rad('0'))
+detBody = N('conDetBody_Dsh', 'GroupContainer@1.5.0', 'AutoLayout', detP,
+            [meta, dcap('capDetChk_Dsh', 'ANSWERS'), checks, dcap('capDetCom_Dsh', 'COMMENTS AND DETAILS')] + details + [noDetail,
+             dcap('capDetPhoto_Dsh', 'PHOTO'), photo, dcap('capDetHist_Dsh', 'EVERY AUDIT OF THIS DTV  ·  TAP ONE TO VIEW IT'), hist, endD])
+isFail = f'({FAILS_SEL})'
+card = box('conDetCard_Dsh', x=f'(App.Width - {DETW}) / 2', y=r(24), w=DETW, h=f'App.Height - {r(48)}', fill='C_White', radius=r(22), extra={'DropShadow': 'DropShadow.Bold'}, children=[
+    box('conDetStripe_Dsh', w=r(10), h=r(100), fill=f'If({isFail}, {RED}, {GREEN})', extra={'RadiusTopLeft': r(22), 'RadiusBottomLeft': '0', 'RadiusTopRight': '0', 'RadiusBottomRight': '0'}),
+    lbl('lblDetT_Dsh', f'Coalesce({REG}.Department, {S_}.DisplayName, {S_}.Title)', x=r(32), y=r(16), w=f'Parent.Width - {r(300)}', h=r(36), size=22, color='C_Ink', bold=True),
+    lbl('lblDetS_Dsh', f'Coalesce({REG}.DTVLocation, "") & "  ·  " & {S_}.Title & "  ·  " & {S_}.Stream & "  ·  " & {REG}.Building & " " & {REG}.Floor', x=r(32), y=r(54), w=f'Parent.Width - {r(300)}', h=r(26), size=15, color='C_Ink2'),
+    box('conDetRes_Dsh', x=f'Parent.Width - {r(260)}', y=r(28), w=r(170), h=r(40), fill=f'If({isFail}, RGBA(176, 52, 40, 0.12), RGBA(30, 122, 80, 0.12))', radius=r(20), children=[
+        lbl('lblDetRes_Dsh', f'If({isFail}, "Needs Follow-up", "All Clear")', w='Parent.Width', h=r(40), size=15, color=f'If({isFail}, {RED}, {GREEN})', bold=True, align='Align.Center', extra={'VerticalAlign': 'VerticalAlign.Middle'})]),
+    N('btnDetClose_Dsh', 'ModernButton@1.0.0', props=dict({'Align': 'Align.Center', 'Appearance': 'ButtonAppearance.Transparent', 'Color': 'C_Ink2', 'FontWeight': '""', 'Height': r(56), 'Icon': '"DismissCircle"', 'OnSelect': 'Set(varDashShowDet, false)', 'Size': r(24), 'Text': '""', 'VerticalAlign': 'VerticalAlign.Middle', 'Width': r(56), 'X': f'Parent.Width - {r(72)}', 'Y': r(20)}, **SBOX)),
+    box('conDetLine_Dsh', x='0', y=r(99), w='Parent.Width', h='1', fill='C_Line'),
+    detBody])
+overlay = box('conDetail_Dsh', x='0', y='0', w='App.Width', h='App.Height', fill='RGBA(14, 28, 42, 0.45)', visible='varDashShowDet', children=[
+    tbtn('btnDetVeil_Dsh', 'Set(varDashShowDet, false)'), card])
+
+kids = [vroot('conRoot_Dsh', [hdr, body]), overlay, hidden('btnLoad_Dsh', LOAD), hidden('btnCalc_Dsh', CALC), hidden('btnSend_Dsh', SEND)]
 open(OUT + 'DTV_Dashboard.pa.yaml', 'w').write(screen('Dashboard', {'Fill': 'C_Bg', 'OnVisible': ONV}, kids))
 print('built Dashboard')

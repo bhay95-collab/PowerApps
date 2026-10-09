@@ -9,6 +9,7 @@ Screens:
         Set(varDashWhyR, "");
         Set(varDashStage, "");
         Set(varSaving, false);
+        Set(varDashShowDet, false);
         Reset(txtSearch_Dsh);
         // stream pills: All, then one per stream (short name = text before the first "&" or ",")
         ClearCollect(colDashPills, { Label: "All Streams", Key: "ALL" });
@@ -1809,7 +1810,7 @@ Screens:
                                           Height: =Round(24 * UI, 0)
                                           Size: =Round(13 * UI, 0)
                                           Text: =ThisItem.Dept & If(IsBlank(ThisItem.Loc), "", "  ·  " & ThisItem.Loc)
-                                          Width: =Parent.Width - Round(240 * UI, 0)
+                                          Width: =Parent.Width - Round(270 * UI, 0)
                                           Wrap: =false
                                           X: =Round(22 * UI, 0)
                                           Y: =Round(8 * UI, 0)
@@ -1825,7 +1826,7 @@ Screens:
                                           Text: =Text(ThisItem.When, "ddd d mmm yyyy, h:mm AM/PM")
                                           Width: =Round(206 * UI, 0)
                                           Wrap: =false
-                                          X: =Parent.Width - Round(220 * UI, 0)
+                                          X: =Parent.Width - Round(250 * UI, 0)
                                           Y: =Round(8 * UI, 0)
                                     - lblRowS_Dsh:
                                         Control: Label@2.5.1
@@ -1861,10 +1862,41 @@ Screens:
                                           Size: =Round(11 * UI, 0)
                                           Text: |-
                                             =Concat(Filter(Table({ t: If(IsBlank(ThisItem.LoginWhy), "", "Login: " & ThisItem.LoginWhy) }, { t: If(IsBlank(ThisItem.PrintWhy), "", "Print: " & ThisItem.PrintWhy) }, { t: If(IsBlank(ThisItem.Missing), "", "Missing: " & ThisItem.Missing) }, { t: If(IsBlank(ThisItem.Extra), "", "Extra: " & ThisItem.Extra) }, { t: If(IsBlank(ThisItem.Issues), "", "Ward: " & ThisItem.Issues) }, { t: ThisItem.Notes }, { t: ThisItem.LoginNotes }, { t: ThisItem.PrintNotes }), !IsBlank(Trim(t))), Trim(t), "  ·  ")
-                                          Width: =Parent.Width - Round(36 * UI, 0)
+                                          Width: =Parent.Width - Round(70 * UI, 0)
                                           Wrap: =false
                                           X: =Round(22 * UI, 0)
                                           Y: =Round(74 * UI, 0)
+                                    - icoRowGo_Dsh:
+                                        Control: ModernIcon@1.1.1
+                                        Properties:
+                                          Height: =Round(24 * UI, 0)
+                                          Icon: ="ChevronRight"
+                                          IconColor: =C_Muted
+                                          Width: =Round(24 * UI, 0)
+                                          X: =Parent.Width - Round(40 * UI, 0)
+                                          Y: =Round(40 * UI, 0)
+                                    - btnRow_Dsh:
+                                        Control: ModernButton@1.0.0
+                                        Properties:
+                                          Align: =Align.Center
+                                          Appearance: =ButtonAppearance.Transparent
+                                          BorderStyle: =BorderStyle.None
+                                          FontWeight: =""
+                                          Height: =Parent.Height
+                                          OnSelect: |-
+                                            =Set(varDashSel, LookUp(colDashSrc, ID = ThisItem.AID));
+                                            Set(varDashShowDet, true)
+                                          PaddingBottom: =5
+                                          PaddingLeft: =12
+                                          PaddingRight: =12
+                                          PaddingTop: =5
+                                          RadiusBottomLeft: =4
+                                          RadiusBottomRight: =4
+                                          RadiusTopLeft: =4
+                                          RadiusTopRight: =4
+                                          Text: =""
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
                   - conEnd_Dsh:
                       Control: GroupContainer@1.5.0
                       Variant: ManualLayout
@@ -1875,6 +1907,1178 @@ Screens:
                         Height: =Round(16 * UI, 0)
                         LayoutMinHeight: =Round(16 * UI, 0)
                         Width: =DashW
+      - conDetail_Dsh:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =RGBA(14, 28, 42, 0.45)
+            Height: =App.Height
+            Visible: =varDashShowDet
+            Width: =App.Width
+            X: =0
+            Y: =0
+          Children:
+            - btnDetVeil_Dsh:
+                Control: ModernButton@1.0.0
+                Properties:
+                  Align: =Align.Center
+                  Appearance: =ButtonAppearance.Transparent
+                  BorderStyle: =BorderStyle.None
+                  FontWeight: =""
+                  Height: =Parent.Height
+                  OnSelect: =Set(varDashShowDet, false)
+                  PaddingBottom: =5
+                  PaddingLeft: =12
+                  PaddingRight: =12
+                  PaddingTop: =5
+                  RadiusBottomLeft: =4
+                  RadiusBottomRight: =4
+                  RadiusTopLeft: =4
+                  RadiusTopRight: =4
+                  Text: =""
+                  VerticalAlign: =VerticalAlign.Middle
+                  Width: =Parent.Width
+            - conDetCard_Dsh:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Bold
+                  Fill: =C_White
+                  Height: =App.Height - Round(48 * UI, 0)
+                  RadiusBottomLeft: =Round(22 * UI, 0)
+                  RadiusBottomRight: =Round(22 * UI, 0)
+                  RadiusTopLeft: =Round(22 * UI, 0)
+                  RadiusTopRight: =Round(22 * UI, 0)
+                  Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0))
+                  X: =(App.Width - Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0))) / 2
+                  Y: =Round(24 * UI, 0)
+                Children:
+                  - conDetStripe_Dsh:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =If((varDashSel.DTVFound.Value = "No" || varDashSel.LoginWorked.Value = "No" || varDashSel.PatientListWorked.Value = "No" || varDashSel.PrintWorked.Value = "No" || varDashSel.FolderFound.Value = "No" || varDashSel.ContentsListInFolder.Value = "No" || varDashSel.KitMatched.Value = "No"), RGBA(176, 52, 40, 1), RGBA(30, 122, 80, 1))
+                        Height: =Round(100 * UI, 0)
+                        RadiusBottomLeft: =0
+                        RadiusBottomRight: =0
+                        RadiusTopLeft: =Round(22 * UI, 0)
+                        RadiusTopRight: =0
+                        Width: =Round(10 * UI, 0)
+                  - lblDetT_Dsh:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_Ink
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(36 * UI, 0)
+                        Size: =Round(18 * UI, 0)
+                        Text: =Coalesce(LookUp(colDashReg, Title = varDashSel.Title).Department, varDashSel.DisplayName, varDashSel.Title)
+                        Width: =Parent.Width - Round(300 * UI, 0)
+                        Wrap: =false
+                        X: =Round(32 * UI, 0)
+                        Y: =Round(16 * UI, 0)
+                  - lblDetS_Dsh:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_Ink2
+                        Font: =AppFont
+                        Height: =Round(26 * UI, 0)
+                        Size: =Round(12 * UI, 0)
+                        Text: =Coalesce(LookUp(colDashReg, Title = varDashSel.Title).DTVLocation, "") & "  ·  " & varDashSel.Title & "  ·  " & varDashSel.Stream & "  ·  " & LookUp(colDashReg, Title = varDashSel.Title).Building & " " & LookUp(colDashReg, Title = varDashSel.Title).Floor
+                        Width: =Parent.Width - Round(300 * UI, 0)
+                        Wrap: =false
+                        X: =Round(32 * UI, 0)
+                        Y: =Round(54 * UI, 0)
+                  - conDetRes_Dsh:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =If((varDashSel.DTVFound.Value = "No" || varDashSel.LoginWorked.Value = "No" || varDashSel.PatientListWorked.Value = "No" || varDashSel.PrintWorked.Value = "No" || varDashSel.FolderFound.Value = "No" || varDashSel.ContentsListInFolder.Value = "No" || varDashSel.KitMatched.Value = "No"), RGBA(176, 52, 40, 0.12), RGBA(30, 122, 80, 0.12))
+                        Height: =Round(40 * UI, 0)
+                        RadiusBottomLeft: =Round(20 * UI, 0)
+                        RadiusBottomRight: =Round(20 * UI, 0)
+                        RadiusTopLeft: =Round(20 * UI, 0)
+                        RadiusTopRight: =Round(20 * UI, 0)
+                        Width: =Round(170 * UI, 0)
+                        X: =Parent.Width - Round(260 * UI, 0)
+                        Y: =Round(28 * UI, 0)
+                      Children:
+                        - lblDetRes_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Center
+                              Color: =If((varDashSel.DTVFound.Value = "No" || varDashSel.LoginWorked.Value = "No" || varDashSel.PatientListWorked.Value = "No" || varDashSel.PrintWorked.Value = "No" || varDashSel.FolderFound.Value = "No" || varDashSel.ContentsListInFolder.Value = "No" || varDashSel.KitMatched.Value = "No"), RGBA(176, 52, 40, 1), RGBA(30, 122, 80, 1))
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(40 * UI, 0)
+                              Size: =Round(12 * UI, 0)
+                              Text: =If((varDashSel.DTVFound.Value = "No" || varDashSel.LoginWorked.Value = "No" || varDashSel.PatientListWorked.Value = "No" || varDashSel.PrintWorked.Value = "No" || varDashSel.FolderFound.Value = "No" || varDashSel.ContentsListInFolder.Value = "No" || varDashSel.KitMatched.Value = "No"), "Needs Follow-up", "All Clear")
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+                              Wrap: =false
+                  - btnDetClose_Dsh:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        Appearance: =ButtonAppearance.Transparent
+                        Color: =C_Ink2
+                        FontWeight: =""
+                        Height: =Round(56 * UI, 0)
+                        Icon: ="DismissCircle"
+                        OnSelect: =Set(varDashShowDet, false)
+                        PaddingBottom: =5
+                        PaddingLeft: =12
+                        PaddingRight: =12
+                        PaddingTop: =5
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =Round(24 * UI, 0)
+                        Text: =""
+                        VerticalAlign: =VerticalAlign.Middle
+                        Width: =Round(56 * UI, 0)
+                        X: =Parent.Width - Round(72 * UI, 0)
+                        Y: =Round(20 * UI, 0)
+                  - conDetLine_Dsh:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =C_Line
+                        Height: =1
+                        Width: =Parent.Width
+                        X: =0
+                        Y: =Round(99 * UI, 0)
+                  - conDetBody_Dsh:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        DropShadow: =DropShadow.None
+                        Height: =Parent.Height - Round(108 * UI, 0)
+                        LayoutAlignItems: =LayoutAlignItems.Start
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =Round(8 * UI, 0)
+                        LayoutOverflowY: =LayoutOverflow.Scroll
+                        PaddingBottom: =Round(8 * UI, 0)
+                        PaddingLeft: =Round(32 * UI, 0)
+                        PaddingRight: =Round(32 * UI, 0)
+                        PaddingTop: =Round(6 * UI, 0)
+                        RadiusBottomLeft: =0
+                        RadiusBottomRight: =0
+                        RadiusTopLeft: =0
+                        RadiusTopRight: =0
+                        Width: =Parent.Width
+                        X: =0
+                        Y: =Round(100 * UI, 0)
+                      Children:
+                        - conDetMeta_Dsh:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              DropShadow: =DropShadow.None
+                              Fill: =C_Bg
+                              FillPortions: =0
+                              Height: =Round(70 * UI, 0)
+                              LayoutMinHeight: =Round(70 * UI, 0)
+                              RadiusBottomLeft: =Round(14 * UI, 0)
+                              RadiusBottomRight: =Round(14 * UI, 0)
+                              RadiusTopLeft: =Round(14 * UI, 0)
+                              RadiusTopRight: =Round(14 * UI, 0)
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                            Children:
+                              - lblMWhenC_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(20 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: ="AUDITED"
+                                    Width: =(Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)) / 4 - Round(24 * UI, 0)
+                                    Wrap: =false
+                                    X: =0 * (Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)) / 4 + Round(16 * UI, 0)
+                                    Y: =Round(12 * UI, 0)
+                              - lblMWhenV_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(26 * UI, 0)
+                                    Size: =Round(12 * UI, 0)
+                                    Text: =Text(varDashSel.Created, "ddd d mmm yyyy, h:mm AM/PM")
+                                    Width: =(Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)) / 4 - Round(24 * UI, 0)
+                                    Wrap: =false
+                                    X: =0 * (Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)) / 4 + Round(16 * UI, 0)
+                                    Y: =Round(34 * UI, 0)
+                              - lblMByC_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(20 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: ="AUDITOR"
+                                    Width: =(Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)) / 4 - Round(24 * UI, 0)
+                                    Wrap: =false
+                                    X: =1 * (Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)) / 4 + Round(16 * UI, 0)
+                                    Y: =Round(12 * UI, 0)
+                              - lblMByV_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(26 * UI, 0)
+                                    Size: =Round(12 * UI, 0)
+                                    Text: =varDashSel.'Created By'.DisplayName
+                                    Width: =(Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)) / 4 - Round(24 * UI, 0)
+                                    Wrap: =false
+                                    X: =1 * (Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)) / 4 + Round(16 * UI, 0)
+                                    Y: =Round(34 * UI, 0)
+                              - lblMTypeC_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(20 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: ="TYPE"
+                                    Width: =(Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)) / 4 - Round(24 * UI, 0)
+                                    Wrap: =false
+                                    X: =2 * (Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)) / 4 + Round(16 * UI, 0)
+                                    Y: =Round(12 * UI, 0)
+                              - lblMTypeV_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(26 * UI, 0)
+                                    Size: =Round(12 * UI, 0)
+                                    Text: =If(IsBlank(varDashSel.ReAudit), "First audit", "Re-audit")
+                                    Width: =(Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)) / 4 - Round(24 * UI, 0)
+                                    Wrap: =false
+                                    X: =2 * (Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)) / 4 + Round(16 * UI, 0)
+                                    Y: =Round(34 * UI, 0)
+                              - lblMAccC_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(20 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: ="LOGIN ACCOUNT"
+                                    Width: =(Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)) / 4 - Round(24 * UI, 0)
+                                    Wrap: =false
+                                    X: =3 * (Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)) / 4 + Round(16 * UI, 0)
+                                    Y: =Round(12 * UI, 0)
+                              - lblMAccV_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(26 * UI, 0)
+                                    Size: =Round(12 * UI, 0)
+                                    Text: =Coalesce(LookUp(colDashReg, Title = varDashSel.Title).LoginAccount, "—")
+                                    Width: =(Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)) / 4 - Round(24 * UI, 0)
+                                    Wrap: =false
+                                    X: =3 * (Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)) / 4 + Round(16 * UI, 0)
+                                    Y: =Round(34 * UI, 0)
+                        - capDetChk_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              Color: =C_Muted
+                              FillPortions: =0
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(30 * UI, 0)
+                              LayoutMinHeight: =Round(30 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="ANSWERS"
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                              Wrap: =false
+                        - conDetChecks_Dsh:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              BorderColor: =C_Line
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =C_White
+                              FillPortions: =0
+                              Height: =Round(322 * UI, 0)
+                              LayoutMinHeight: =Round(322 * UI, 0)
+                              RadiusBottomLeft: =Round(14 * UI, 0)
+                              RadiusBottomRight: =Round(14 * UI, 0)
+                              RadiusTopLeft: =Round(14 * UI, 0)
+                              RadiusTopRight: =Round(14 * UI, 0)
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                            Children:
+                              - lblQFound_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink2
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(46 * UI, 0)
+                                    Size: =Round(12 * UI, 0)
+                                    Text: ="DTV found"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width - Round(160 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(16 * UI, 0)
+                                    Y: =Round(0 * UI, 0)
+                              - conQFoundA_Dsh:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =Switch(varDashSel.DTVFound.Value, "Yes", RGBA(30, 122, 80, 0.12), "No", RGBA(176, 52, 40, 0.12), C_Bg)
+                                    Height: =Round(28 * UI, 0)
+                                    RadiusBottomLeft: =Round(14 * UI, 0)
+                                    RadiusBottomRight: =Round(14 * UI, 0)
+                                    RadiusTopLeft: =Round(14 * UI, 0)
+                                    RadiusTopRight: =Round(14 * UI, 0)
+                                    Width: =Round(110 * UI, 0)
+                                    X: =Parent.Width - Round(126 * UI, 0)
+                                    Y: =Round(9 * UI, 0)
+                                  Children:
+                                    - lblQFoundA_Dsh:
+                                        Control: Label@2.5.1
+                                        Properties:
+                                          Align: =Align.Center
+                                          Color: =Switch(varDashSel.DTVFound.Value, "Yes", RGBA(30, 122, 80, 1), "No", RGBA(176, 52, 40, 1), C_Muted)
+                                          Font: =AppFont
+                                          FontWeight: =FontWeight.Bold
+                                          Height: =Round(28 * UI, 0)
+                                          Size: =Round(11 * UI, 0)
+                                          Text: =Coalesce(varDashSel.DTVFound.Value, "Skipped")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                                          Wrap: =false
+                              - conQLoginLn_Dsh:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =C_Line
+                                    Height: =1
+                                    Width: =Parent.Width
+                                    X: =0
+                                    Y: =Round(46 * UI, 0)
+                              - lblQLogin_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink2
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(46 * UI, 0)
+                                    Size: =Round(12 * UI, 0)
+                                    Text: ="Login"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width - Round(160 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(16 * UI, 0)
+                                    Y: =Round(46 * UI, 0)
+                              - conQLoginA_Dsh:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =Switch(varDashSel.LoginWorked.Value, "Yes", RGBA(30, 122, 80, 0.12), "No", RGBA(176, 52, 40, 0.12), C_Bg)
+                                    Height: =Round(28 * UI, 0)
+                                    RadiusBottomLeft: =Round(14 * UI, 0)
+                                    RadiusBottomRight: =Round(14 * UI, 0)
+                                    RadiusTopLeft: =Round(14 * UI, 0)
+                                    RadiusTopRight: =Round(14 * UI, 0)
+                                    Width: =Round(110 * UI, 0)
+                                    X: =Parent.Width - Round(126 * UI, 0)
+                                    Y: =Round(55 * UI, 0)
+                                  Children:
+                                    - lblQLoginA_Dsh:
+                                        Control: Label@2.5.1
+                                        Properties:
+                                          Align: =Align.Center
+                                          Color: =Switch(varDashSel.LoginWorked.Value, "Yes", RGBA(30, 122, 80, 1), "No", RGBA(176, 52, 40, 1), C_Muted)
+                                          Font: =AppFont
+                                          FontWeight: =FontWeight.Bold
+                                          Height: =Round(28 * UI, 0)
+                                          Size: =Round(11 * UI, 0)
+                                          Text: =Coalesce(varDashSel.LoginWorked.Value, "Skipped")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                                          Wrap: =false
+                              - conQPListLn_Dsh:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =C_Line
+                                    Height: =1
+                                    Width: =Parent.Width
+                                    X: =0
+                                    Y: =Round(92 * UI, 0)
+                              - lblQPList_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink2
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(46 * UI, 0)
+                                    Size: =Round(12 * UI, 0)
+                                    Text: ="Patient list opened"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width - Round(160 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(16 * UI, 0)
+                                    Y: =Round(92 * UI, 0)
+                              - conQPListA_Dsh:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =Switch(varDashSel.PatientListWorked.Value, "Yes", RGBA(30, 122, 80, 0.12), "No", RGBA(176, 52, 40, 0.12), C_Bg)
+                                    Height: =Round(28 * UI, 0)
+                                    RadiusBottomLeft: =Round(14 * UI, 0)
+                                    RadiusBottomRight: =Round(14 * UI, 0)
+                                    RadiusTopLeft: =Round(14 * UI, 0)
+                                    RadiusTopRight: =Round(14 * UI, 0)
+                                    Width: =Round(110 * UI, 0)
+                                    X: =Parent.Width - Round(126 * UI, 0)
+                                    Y: =Round(101 * UI, 0)
+                                  Children:
+                                    - lblQPListA_Dsh:
+                                        Control: Label@2.5.1
+                                        Properties:
+                                          Align: =Align.Center
+                                          Color: =Switch(varDashSel.PatientListWorked.Value, "Yes", RGBA(30, 122, 80, 1), "No", RGBA(176, 52, 40, 1), C_Muted)
+                                          Font: =AppFont
+                                          FontWeight: =FontWeight.Bold
+                                          Height: =Round(28 * UI, 0)
+                                          Size: =Round(11 * UI, 0)
+                                          Text: =Coalesce(varDashSel.PatientListWorked.Value, "Skipped")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                                          Wrap: =false
+                              - conQPrintLn_Dsh:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =C_Line
+                                    Height: =1
+                                    Width: =Parent.Width
+                                    X: =0
+                                    Y: =Round(138 * UI, 0)
+                              - lblQPrint_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink2
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(46 * UI, 0)
+                                    Size: =Round(12 * UI, 0)
+                                    Text: ="Print"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width - Round(160 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(16 * UI, 0)
+                                    Y: =Round(138 * UI, 0)
+                              - conQPrintA_Dsh:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =Switch(varDashSel.PrintWorked.Value, "Yes", RGBA(30, 122, 80, 0.12), "No", RGBA(176, 52, 40, 0.12), C_Bg)
+                                    Height: =Round(28 * UI, 0)
+                                    RadiusBottomLeft: =Round(14 * UI, 0)
+                                    RadiusBottomRight: =Round(14 * UI, 0)
+                                    RadiusTopLeft: =Round(14 * UI, 0)
+                                    RadiusTopRight: =Round(14 * UI, 0)
+                                    Width: =Round(110 * UI, 0)
+                                    X: =Parent.Width - Round(126 * UI, 0)
+                                    Y: =Round(147 * UI, 0)
+                                  Children:
+                                    - lblQPrintA_Dsh:
+                                        Control: Label@2.5.1
+                                        Properties:
+                                          Align: =Align.Center
+                                          Color: =Switch(varDashSel.PrintWorked.Value, "Yes", RGBA(30, 122, 80, 1), "No", RGBA(176, 52, 40, 1), C_Muted)
+                                          Font: =AppFont
+                                          FontWeight: =FontWeight.Bold
+                                          Height: =Round(28 * UI, 0)
+                                          Size: =Round(11 * UI, 0)
+                                          Text: =Coalesce(varDashSel.PrintWorked.Value, "Skipped")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                                          Wrap: =false
+                              - conQFolderLn_Dsh:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =C_Line
+                                    Height: =1
+                                    Width: =Parent.Width
+                                    X: =0
+                                    Y: =Round(184 * UI, 0)
+                              - lblQFolder_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink2
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(46 * UI, 0)
+                                    Size: =Round(12 * UI, 0)
+                                    Text: ="Yellow folder and kit found"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width - Round(160 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(16 * UI, 0)
+                                    Y: =Round(184 * UI, 0)
+                              - conQFolderA_Dsh:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =Switch(varDashSel.FolderFound.Value, "Yes", RGBA(30, 122, 80, 0.12), "No", RGBA(176, 52, 40, 0.12), C_Bg)
+                                    Height: =Round(28 * UI, 0)
+                                    RadiusBottomLeft: =Round(14 * UI, 0)
+                                    RadiusBottomRight: =Round(14 * UI, 0)
+                                    RadiusTopLeft: =Round(14 * UI, 0)
+                                    RadiusTopRight: =Round(14 * UI, 0)
+                                    Width: =Round(110 * UI, 0)
+                                    X: =Parent.Width - Round(126 * UI, 0)
+                                    Y: =Round(193 * UI, 0)
+                                  Children:
+                                    - lblQFolderA_Dsh:
+                                        Control: Label@2.5.1
+                                        Properties:
+                                          Align: =Align.Center
+                                          Color: =Switch(varDashSel.FolderFound.Value, "Yes", RGBA(30, 122, 80, 1), "No", RGBA(176, 52, 40, 1), C_Muted)
+                                          Font: =AppFont
+                                          FontWeight: =FontWeight.Bold
+                                          Height: =Round(28 * UI, 0)
+                                          Size: =Round(11 * UI, 0)
+                                          Text: =Coalesce(varDashSel.FolderFound.Value, "Skipped")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                                          Wrap: =false
+                              - conQListLn_Dsh:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =C_Line
+                                    Height: =1
+                                    Width: =Parent.Width
+                                    X: =0
+                                    Y: =Round(230 * UI, 0)
+                              - lblQList_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink2
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(46 * UI, 0)
+                                    Size: =Round(12 * UI, 0)
+                                    Text: ="Contents list in folder"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width - Round(160 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(16 * UI, 0)
+                                    Y: =Round(230 * UI, 0)
+                              - conQListA_Dsh:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =Switch(varDashSel.ContentsListInFolder.Value, "Yes", RGBA(30, 122, 80, 0.12), "No", RGBA(176, 52, 40, 0.12), C_Bg)
+                                    Height: =Round(28 * UI, 0)
+                                    RadiusBottomLeft: =Round(14 * UI, 0)
+                                    RadiusBottomRight: =Round(14 * UI, 0)
+                                    RadiusTopLeft: =Round(14 * UI, 0)
+                                    RadiusTopRight: =Round(14 * UI, 0)
+                                    Width: =Round(110 * UI, 0)
+                                    X: =Parent.Width - Round(126 * UI, 0)
+                                    Y: =Round(239 * UI, 0)
+                                  Children:
+                                    - lblQListA_Dsh:
+                                        Control: Label@2.5.1
+                                        Properties:
+                                          Align: =Align.Center
+                                          Color: =Switch(varDashSel.ContentsListInFolder.Value, "Yes", RGBA(30, 122, 80, 1), "No", RGBA(176, 52, 40, 1), C_Muted)
+                                          Font: =AppFont
+                                          FontWeight: =FontWeight.Bold
+                                          Height: =Round(28 * UI, 0)
+                                          Size: =Round(11 * UI, 0)
+                                          Text: =Coalesce(varDashSel.ContentsListInFolder.Value, "Skipped")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                                          Wrap: =false
+                              - conQMatchLn_Dsh:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =C_Line
+                                    Height: =1
+                                    Width: =Parent.Width
+                                    X: =0
+                                    Y: =Round(276 * UI, 0)
+                              - lblQMatch_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink2
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(46 * UI, 0)
+                                    Size: =Round(12 * UI, 0)
+                                    Text: ="Kit matches the list"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width - Round(160 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(16 * UI, 0)
+                                    Y: =Round(276 * UI, 0)
+                              - conQMatchA_Dsh:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =Switch(varDashSel.KitMatched.Value, "Yes", RGBA(30, 122, 80, 0.12), "No", RGBA(176, 52, 40, 0.12), C_Bg)
+                                    Height: =Round(28 * UI, 0)
+                                    RadiusBottomLeft: =Round(14 * UI, 0)
+                                    RadiusBottomRight: =Round(14 * UI, 0)
+                                    RadiusTopLeft: =Round(14 * UI, 0)
+                                    RadiusTopRight: =Round(14 * UI, 0)
+                                    Width: =Round(110 * UI, 0)
+                                    X: =Parent.Width - Round(126 * UI, 0)
+                                    Y: =Round(285 * UI, 0)
+                                  Children:
+                                    - lblQMatchA_Dsh:
+                                        Control: Label@2.5.1
+                                        Properties:
+                                          Align: =Align.Center
+                                          Color: =Switch(varDashSel.KitMatched.Value, "Yes", RGBA(30, 122, 80, 1), "No", RGBA(176, 52, 40, 1), C_Muted)
+                                          Font: =AppFont
+                                          FontWeight: =FontWeight.Bold
+                                          Height: =Round(28 * UI, 0)
+                                          Size: =Round(11 * UI, 0)
+                                          Text: =Coalesce(varDashSel.KitMatched.Value, "Skipped")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                                          Wrap: =false
+                        - capDetCom_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              Color: =C_Muted
+                              FillPortions: =0
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(30 * UI, 0)
+                              LayoutMinHeight: =Round(30 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="COMMENTS AND DETAILS"
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                              Wrap: =false
+                        - lblDLWhyC_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              Color: =C_Muted
+                              FillPortions: =0
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(24 * UI, 0)
+                              LayoutMinHeight: =Round(24 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="WHY LOGIN FAILED"
+                              Visible: =!IsBlank(Trim(varDashSel.LoginFailReason.Value))
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                              Wrap: =false
+                        - lblDLWhyV_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              AutoHeight: =true
+                              Color: =C_Ink
+                              FillPortions: =0
+                              Font: =AppFont
+                              Height: =Round(26 * UI, 0)
+                              LayoutMinHeight: =Round(26 * UI, 0)
+                              Size: =Round(13 * UI, 0)
+                              Text: =varDashSel.LoginFailReason.Value
+                              Visible: =!IsBlank(Trim(varDashSel.LoginFailReason.Value))
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                        - lblDLNoteC_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              Color: =C_Muted
+                              FillPortions: =0
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(24 * UI, 0)
+                              LayoutMinHeight: =Round(24 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="LOGIN NOTES"
+                              Visible: =!IsBlank(Trim(varDashSel.LoginNotes))
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                              Wrap: =false
+                        - lblDLNoteV_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              AutoHeight: =true
+                              Color: =C_Ink
+                              FillPortions: =0
+                              Font: =AppFont
+                              Height: =Round(26 * UI, 0)
+                              LayoutMinHeight: =Round(26 * UI, 0)
+                              Size: =Round(13 * UI, 0)
+                              Text: =varDashSel.LoginNotes
+                              Visible: =!IsBlank(Trim(varDashSel.LoginNotes))
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                        - lblDPWhyC_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              Color: =C_Muted
+                              FillPortions: =0
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(24 * UI, 0)
+                              LayoutMinHeight: =Round(24 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="WHY PRINT FAILED"
+                              Visible: =!IsBlank(Trim(varDashSel.PrintFailReason.Value))
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                              Wrap: =false
+                        - lblDPWhyV_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              AutoHeight: =true
+                              Color: =C_Ink
+                              FillPortions: =0
+                              Font: =AppFont
+                              Height: =Round(26 * UI, 0)
+                              LayoutMinHeight: =Round(26 * UI, 0)
+                              Size: =Round(13 * UI, 0)
+                              Text: =varDashSel.PrintFailReason.Value
+                              Visible: =!IsBlank(Trim(varDashSel.PrintFailReason.Value))
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                        - lblDPNoteC_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              Color: =C_Muted
+                              FillPortions: =0
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(24 * UI, 0)
+                              LayoutMinHeight: =Round(24 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="PRINT NOTES / ERROR MESSAGE"
+                              Visible: =!IsBlank(Trim(varDashSel.PrintNotes))
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                              Wrap: =false
+                        - lblDPNoteV_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              AutoHeight: =true
+                              Color: =C_Ink
+                              FillPortions: =0
+                              Font: =AppFont
+                              Height: =Round(26 * UI, 0)
+                              LayoutMinHeight: =Round(26 * UI, 0)
+                              Size: =Round(13 * UI, 0)
+                              Text: =varDashSel.PrintNotes
+                              Visible: =!IsBlank(Trim(varDashSel.PrintNotes))
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                        - lblDMissC_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              Color: =C_Muted
+                              FillPortions: =0
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(24 * UI, 0)
+                              LayoutMinHeight: =Round(24 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="MISSING FROM THE KIT"
+                              Visible: =!IsBlank(Trim(varDashSel.MissingItems))
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                              Wrap: =false
+                        - lblDMissV_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              AutoHeight: =true
+                              Color: =C_Ink
+                              FillPortions: =0
+                              Font: =AppFont
+                              Height: =Round(26 * UI, 0)
+                              LayoutMinHeight: =Round(26 * UI, 0)
+                              Size: =Round(13 * UI, 0)
+                              Text: =varDashSel.MissingItems
+                              Visible: =!IsBlank(Trim(varDashSel.MissingItems))
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                        - lblDExtraC_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              Color: =C_Muted
+                              FillPortions: =0
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(24 * UI, 0)
+                              LayoutMinHeight: =Round(24 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="EXTRA IN THE KIT"
+                              Visible: =!IsBlank(Trim(varDashSel.ExtraItems))
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                              Wrap: =false
+                        - lblDExtraV_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              AutoHeight: =true
+                              Color: =C_Ink
+                              FillPortions: =0
+                              Font: =AppFont
+                              Height: =Round(26 * UI, 0)
+                              LayoutMinHeight: =Round(26 * UI, 0)
+                              Size: =Round(13 * UI, 0)
+                              Text: =varDashSel.ExtraItems
+                              Visible: =!IsBlank(Trim(varDashSel.ExtraItems))
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                        - lblDSpokeC_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              Color: =C_Muted
+                              FillPortions: =0
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(24 * UI, 0)
+                              LayoutMinHeight: =Round(24 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="SPOKE TO"
+                              Visible: =!IsBlank(Trim(varDashSel.SpokeTo))
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                              Wrap: =false
+                        - lblDSpokeV_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              AutoHeight: =true
+                              Color: =C_Ink
+                              FillPortions: =0
+                              Font: =AppFont
+                              Height: =Round(26 * UI, 0)
+                              LayoutMinHeight: =Round(26 * UI, 0)
+                              Size: =Round(13 * UI, 0)
+                              Text: =varDashSel.SpokeTo
+                              Visible: =!IsBlank(Trim(varDashSel.SpokeTo))
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                        - lblDEduC_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              Color: =C_Muted
+                              FillPortions: =0
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(24 * UI, 0)
+                              LayoutMinHeight: =Round(24 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="EDUCATION GIVEN"
+                              Visible: =!IsBlank(Trim(Concat(varDashSel.EducationGiven, Value, ", ")))
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                              Wrap: =false
+                        - lblDEduV_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              AutoHeight: =true
+                              Color: =C_Ink
+                              FillPortions: =0
+                              Font: =AppFont
+                              Height: =Round(26 * UI, 0)
+                              LayoutMinHeight: =Round(26 * UI, 0)
+                              Size: =Round(13 * UI, 0)
+                              Text: =Concat(varDashSel.EducationGiven, Value, ", ")
+                              Visible: =!IsBlank(Trim(Concat(varDashSel.EducationGiven, Value, ", ")))
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                        - lblDIssC_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              Color: =C_Muted
+                              FillPortions: =0
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(24 * UI, 0)
+                              LayoutMinHeight: =Round(24 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="ISSUES RAISED BY STAFF"
+                              Visible: =!IsBlank(Trim(varDashSel.IssuesRaised))
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                              Wrap: =false
+                        - lblDIssV_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              AutoHeight: =true
+                              Color: =C_Ink
+                              FillPortions: =0
+                              Font: =AppFont
+                              Height: =Round(26 * UI, 0)
+                              LayoutMinHeight: =Round(26 * UI, 0)
+                              Size: =Round(13 * UI, 0)
+                              Text: =varDashSel.IssuesRaised
+                              Visible: =!IsBlank(Trim(varDashSel.IssuesRaised))
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                        - lblDNoteC_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              Color: =C_Muted
+                              FillPortions: =0
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(24 * UI, 0)
+                              LayoutMinHeight: =Round(24 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="AUDITOR NOTES"
+                              Visible: =!IsBlank(Trim(varDashSel.Notes))
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                              Wrap: =false
+                        - lblDNoteV_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              AutoHeight: =true
+                              Color: =C_Ink
+                              FillPortions: =0
+                              Font: =AppFont
+                              Height: =Round(26 * UI, 0)
+                              LayoutMinHeight: =Round(26 * UI, 0)
+                              Size: =Round(13 * UI, 0)
+                              Text: =varDashSel.Notes
+                              Visible: =!IsBlank(Trim(varDashSel.Notes))
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                        - lblDetNone_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              Color: =C_Muted
+                              FillPortions: =0
+                              Font: =AppFont
+                              Height: =Round(30 * UI, 0)
+                              LayoutMinHeight: =Round(30 * UI, 0)
+                              Size: =Round(12 * UI, 0)
+                              Text: ="No comments recorded on this audit"
+                              Visible: =IsBlank(Trim(varDashSel.LoginNotes & varDashSel.PrintNotes & varDashSel.MissingItems & varDashSel.ExtraItems & varDashSel.SpokeTo & varDashSel.IssuesRaised & varDashSel.Notes & varDashSel.LoginFailReason.Value & varDashSel.PrintFailReason.Value)) && CountRows(varDashSel.EducationGiven) = 0
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                              Wrap: =false
+                        - capDetPhoto_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              Color: =C_Muted
+                              FillPortions: =0
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(30 * UI, 0)
+                              LayoutMinHeight: =Round(30 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="PHOTO"
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                              Wrap: =false
+                        - conDetPhoto_Dsh:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              DropShadow: =DropShadow.None
+                              Fill: =C_Bg
+                              FillPortions: =0
+                              Height: =If(IsBlank(varDashSel.AuditPhoto), Round(50 * UI, 0), Round(420 * UI, 0))
+                              LayoutMinHeight: =If(IsBlank(varDashSel.AuditPhoto), Round(50 * UI, 0), Round(420 * UI, 0))
+                              RadiusBottomLeft: =Round(14 * UI, 0)
+                              RadiusBottomRight: =Round(14 * UI, 0)
+                              RadiusTopLeft: =Round(14 * UI, 0)
+                              RadiusTopRight: =Round(14 * UI, 0)
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                            Children:
+                              - imgDetPhoto_Dsh:
+                                  Control: Image@2.2.3
+                                  Properties:
+                                    Height: =Parent.Height - Round(16 * UI, 0)
+                                    Image: =varDashSel.AuditPhoto
+                                    ImagePosition: =ImagePosition.Fit
+                                    Visible: =!IsBlank(varDashSel.AuditPhoto)
+                                    Width: =Parent.Width - Round(16 * UI, 0)
+                                    X: =Round(8 * UI, 0)
+                                    Y: =Round(8 * UI, 0)
+                              - lblDetNoPhoto_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    Height: =Round(50 * UI, 0)
+                                    Size: =Round(12 * UI, 0)
+                                    Text: ="No photo taken"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Visible: =IsBlank(varDashSel.AuditPhoto)
+                                    Width: =Parent.Width - Round(32 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(16 * UI, 0)
+                        - capDetHist_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              Color: =C_Muted
+                              FillPortions: =0
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(30 * UI, 0)
+                              LayoutMinHeight: =Round(30 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="EVERY AUDIT OF THIS DTV  ·  TAP ONE TO VIEW IT"
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                              Wrap: =false
+                        - galDetHist_Dsh:
+                            Control: Gallery@2.15.0
+                            Variant: Vertical
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              FillPortions: =0
+                              Height: =Max(1, CountRows(Filter(colDashSrc, Title = varDashSel.Title))) * Round(52 * UI, 0)
+                              Items: =Filter(colDashSrc, Title = varDashSel.Title)
+                              LayoutMinHeight: =Max(1, CountRows(Filter(colDashSrc, Title = varDashSel.Title))) * Round(52 * UI, 0)
+                              ShowScrollbar: =false
+                              TemplatePadding: =0
+                              TemplateSize: =Round(52 * UI, 0)
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
+                            Children:
+                              - conHistRow_Dsh:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Height: =Parent.TemplateHeight
+                                    Width: =Parent.TemplateWidth
+                                    X: =0
+                                    Y: =0
+                                  Children:
+                                    - conHistSel_Dsh:
+                                        Control: GroupContainer@1.5.0
+                                        Variant: ManualLayout
+                                        Properties:
+                                          BorderColor: =If(ThisItem.ID = varDashSel.ID, C_Accent, C_Line)
+                                          BorderThickness: =1
+                                          DropShadow: =DropShadow.None
+                                          Fill: =If(ThisItem.ID = varDashSel.ID, C_AccentSoft, C_White)
+                                          Height: =Round(46 * UI, 0)
+                                          RadiusBottomLeft: =Round(12 * UI, 0)
+                                          RadiusBottomRight: =Round(12 * UI, 0)
+                                          RadiusTopLeft: =Round(12 * UI, 0)
+                                          RadiusTopRight: =Round(12 * UI, 0)
+                                          Width: =Parent.Width
+                                          X: =0
+                                          Y: =Round(3 * UI, 0)
+                                    - lblHistW_Dsh:
+                                        Control: Label@2.5.1
+                                        Properties:
+                                          Color: =C_Ink
+                                          Font: =AppFont
+                                          FontWeight: =FontWeight.Bold
+                                          Height: =Round(52 * UI, 0)
+                                          Size: =Round(11 * UI, 0)
+                                          Text: =Text(ThisItem.Created, "ddd d mmm yyyy, h:mm AM/PM") & If(IsBlank(ThisItem.ReAudit), "", "  ·  Re-audit")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width * 0.45
+                                          Wrap: =false
+                                          X: =Round(14 * UI, 0)
+                                          Y: =0
+                                    - lblHistB_Dsh:
+                                        Control: Label@2.5.1
+                                        Properties:
+                                          Color: =C_Ink2
+                                          Font: =AppFont
+                                          Height: =Round(52 * UI, 0)
+                                          Size: =Round(11 * UI, 0)
+                                          Text: =ThisItem.'Created By'.DisplayName
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width * 0.3
+                                          Wrap: =false
+                                          X: =Parent.Width * 0.45
+                                          Y: =0
+                                    - lblHistR_Dsh:
+                                        Control: Label@2.5.1
+                                        Properties:
+                                          Align: =Align.Right
+                                          Color: =If(ThisItem.DTVFound.Value = "No" || ThisItem.LoginWorked.Value = "No" || ThisItem.PatientListWorked.Value = "No" || ThisItem.PrintWorked.Value = "No" || ThisItem.FolderFound.Value = "No" || ThisItem.ContentsListInFolder.Value = "No" || ThisItem.KitMatched.Value = "No", RGBA(176, 52, 40, 1), RGBA(30, 122, 80, 1))
+                                          Font: =AppFont
+                                          FontWeight: =FontWeight.Bold
+                                          Height: =Round(52 * UI, 0)
+                                          Size: =Round(11 * UI, 0)
+                                          Text: =If(ThisItem.DTVFound.Value = "No" || ThisItem.LoginWorked.Value = "No" || ThisItem.PatientListWorked.Value = "No" || ThisItem.PrintWorked.Value = "No" || ThisItem.FolderFound.Value = "No" || ThisItem.ContentsListInFolder.Value = "No" || ThisItem.KitMatched.Value = "No", "Needs follow-up", "All clear")
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width * 0.25 - Round(14 * UI, 0)
+                                          Wrap: =false
+                                          X: =Parent.Width * 0.75
+                                          Y: =0
+                                    - btnHist_Dsh:
+                                        Control: ModernButton@1.0.0
+                                        Properties:
+                                          Align: =Align.Center
+                                          Appearance: =ButtonAppearance.Transparent
+                                          BorderStyle: =BorderStyle.None
+                                          FontWeight: =""
+                                          Height: =Parent.Height
+                                          OnSelect: =Set(varDashSel, ThisItem)
+                                          PaddingBottom: =5
+                                          PaddingLeft: =12
+                                          PaddingRight: =12
+                                          PaddingTop: =5
+                                          RadiusBottomLeft: =4
+                                          RadiusBottomRight: =4
+                                          RadiusTopLeft: =4
+                                          RadiusTopRight: =4
+                                          Text: =""
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+                        - conDetEnd_Dsh:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =Round(16 * UI, 0)
+                              LayoutMinHeight: =Round(16 * UI, 0)
+                              Width: =Min(App.Width - Round(48 * UI, 0), Round(980 * UI, 0)) - Round(64 * UI, 0)
       - btnLoad_Dsh:
           Control: ModernButton@1.0.0
           Properties:
@@ -1968,7 +3172,7 @@ Screens:
                       )
                   )
               );
-              Clear(colDashSrc);
+              // colDashSrc is kept: the audit detail panel reads the full record (photo, notes) from it
               // coverage by stream (ignores the stream filter): shared DTVs (Stream = "All") count in every stream
               ClearCollect(
                   colDashCov,
