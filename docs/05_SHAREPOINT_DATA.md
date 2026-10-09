@@ -97,10 +97,10 @@ Master lists are built from the DTK kit-list Word document by `tools/kits/build_
 | List | One row per | Columns (all **Single line of text** unless stated) |
 |---|---|---|
 | `Kit_Register` | Physical kit (101) | Title (kit ID, e.g. DTK-014 = the QR code), Unit, Location, KitType, BedsidePacks |
-| `Kit_Items` | Distinct item (81) | Title (item key: form number, or a name slug), ItemName, FormNumber, Kind (Form / Printed guide / Stationery), ScanMethod (`Scan barcode` / `Tick present`), BarcodeValue, BarcodeChecked, CurrentVersion, OrderMethod, OrderCode |
+| `Kit_Items` | Distinct item (81) | Title (item key: form number, or a name slug), ItemName, FormNumber, Kind (text: Form / Printed guide / Stationery), ScanMethod (text: `Scan barcode` / `Tick present`), BarcodeValue, BarcodeChecked, CurrentVersion, OrderMethod, OrderCode |
 | `Kit_Contents` | Item expected in a kit (3,425) | Title (kit ID), ItemKey, Sections, Quantity. **Index `Title`** (the app filters on it) |
-| `KitAudits` | Kit audit | Title (kit ID, or `NO KIT`), Unit, KitLocation, KitType, AuditType, DTVTitle, AuditResultID (Number), RightLocation, SealIntact, StaffAware, ExpectedN (Number), MissingN (Number), ExtraN (Number), Result, MissingItems (Multiple lines, plain), ExtraItems (Multiple lines, plain), Notes (Multiple lines, plain), KitPhoto (Image). Who/when = Created By / Created |
-| `Kit_Audit_Items` | Missing or extra item (exceptions only) | Title (kit ID), KitAuditID (Number), ItemKey, ItemName, Status (`Missing` / `Extra`), ScannedValue |
+| `KitAudits` | Kit audit | Title (kit ID, or `NO KIT`), Unit, KitLocation, KitType, AuditType (text: `DTV + Kit` / `Kit Only`), DTVTitle, AuditResultID (Number), RightLocation, SealIntact, StaffAware (text: `Yes` / `No`), ExpectedN (Number), MissingN (Number), ExtraN (Number), Result (text: `All Clear` / `Needs Follow-up` / `Kit not found`), MissingItems (Multiple lines, plain), ExtraItems (Multiple lines, plain), Notes (Multiple lines, plain), KitPhoto (Image). Who/when = Created By / Created |
+| `Kit_Audit_Items` | Missing or extra item (exceptions only) | Title (kit ID), KitAuditID (Number), ItemKey, ItemName, Status (Single line of text, **not Choice**; the app writes `Missing` or `Extra`), ScannedValue |
 
 Rules learned from the scan test (9 Oct 2026): form barcodes contain exactly the form number (SW1171, SW626, MN383); no version in the barcode (versions are not checked); one code per scan.
-Keep every column as text when importing: a Choice column would need `.Value` and break the app's formulas.
+**No Choice columns in any kit list.** Values shown in brackets are what the app writes as text. A Choice column needs `{ Value: ... }` and makes the save red (Status in `Kit_Audit_Items` caught this, Oct 2026). Keep every column as text when importing.

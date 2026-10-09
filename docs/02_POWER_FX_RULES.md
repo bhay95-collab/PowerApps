@@ -92,6 +92,8 @@ Set `IsActive = false` instead of `Remove()`. History stays; filter `IsActive` e
 | Number | `Text(x.Bed)` | number |
 | Image | `x.AuditPhoto` | `imgControl.Image` |
 
+**Writing text to a Choice column** turns the whole `Patch` red (every argument underlined, not just the column). If a save is red end to end, check the list's column types first. When writing specs, say "Single line of text" explicitly; a list of allowed values reads like a Choice column.
+
 **Columns imported from Excel** have internal names `field_N`.
 - `SortByColumns`, `ShowColumns` need the **internal** name: `SortByColumns(DTV_Register, "field_2", SortOrder.Ascending)`.
 - Filters and formulas accept display names.
