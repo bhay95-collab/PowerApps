@@ -3,17 +3,10 @@ Screens:
     Properties:
       Fill: =C_Bg
       OnVisible: |-
-        =Set(varHmLoading, true);
-        Refresh(Floorwalk_Ideas);
-        // today's ideas only (delegable date filter), counted on the device
-        ClearCollect(colToday_Hm, Filter(Floorwalk_Ideas, Created >= Today()));
-        Set(varHmTeamN, CountRows(colToday_Hm));
-        Set(varHmMineN, CountIf(colToday_Hm, Lower('Created By'.Email) = MeEmail));
-        // all-time counts (fine up to the 2000 row limit; see docs/05)
+        =Refresh(Floorwalk_Ideas);
+        // my ideas (for the My Ideas tile)
         ClearCollect(colMine_Hm, Filter(Floorwalk_Ideas, 'Created By'.Email = User().Email));
-        Set(varHmMineAllN, CountRows(colMine_Hm));
-        Set(varHmAllN, CountRows(Floorwalk_Ideas));
-        Set(varHmLoading, false)
+        Set(varHmMineAllN, CountRows(colMine_Hm))
     Children:
       - conRoot_Hm:
           Control: GroupContainer@1.5.0
@@ -198,63 +191,6 @@ Screens:
                               Text: =""
                               VerticalAlign: =VerticalAlign.Middle
                               Width: =Parent.Width
-                  - conToday_Hm:
-                      Control: GroupContainer@1.5.0
-                      Variant: ManualLayout
-                      Properties:
-                        AlignInContainer: =AlignInContainer.SetByContainer
-                        BorderColor: =C_Line
-                        BorderThickness: =1
-                        DropShadow: =DropShadow.None
-                        Fill: =C_White
-                        FillPortions: =0
-                        Height: =Round(112 * UI, 0)
-                        LayoutMinHeight: =Round(112 * UI, 0)
-                        RadiusBottomLeft: =Round(20 * UI, 0)
-                        RadiusBottomRight: =Round(20 * UI, 0)
-                        RadiusTopLeft: =Round(20 * UI, 0)
-                        RadiusTopRight: =Round(20 * UI, 0)
-                        Width: =PageW - Round(40 * UI, 0)
-                      Children:
-                        - lblTodayCap_Hm:
-                            Control: Label@2.5.1
-                            Properties:
-                              Color: =C_Muted
-                              Font: =AppFont
-                              FontWeight: =FontWeight.Bold
-                              Height: =Round(18 * UI, 0)
-                              Size: =Round(11 * UI, 0)
-                              Text: ="TODAY"
-                              Width: =Parent.Width - Round(40 * UI, 0)
-                              Wrap: =false
-                              X: =Round(20 * UI, 0)
-                              Y: =Round(12 * UI, 0)
-                        - lblTodayT_Hm:
-                            Control: Label@2.5.1
-                            Properties:
-                              Color: =C_Ink
-                              Font: =AppFont
-                              FontWeight: =FontWeight.Bold
-                              Height: =Round(32 * UI, 0)
-                              Size: =Round(18 * UI, 0)
-                              Text: =If(varHmLoading, "Loading...", varHmTeamN & If(varHmTeamN = 1, " idea", " ideas") & " captured")
-                              Width: =Parent.Width - Round(40 * UI, 0)
-                              Wrap: =false
-                              X: =Round(20 * UI, 0)
-                              Y: =Round(32 * UI, 0)
-                        - lblTodayS_Hm:
-                            Control: Label@2.5.1
-                            Properties:
-                              Color: =C_Ink2
-                              Font: =AppFont
-                              Height: =Round(22 * UI, 0)
-                              Size: =Round(12 * UI, 0)
-                              Text: |-
-                                ="You: " & varHmMineN & "  ·  All floorwalkers: " & varHmTeamN & "  ·  All time: " & varHmAllN
-                              Width: =Parent.Width - Round(40 * UI, 0)
-                              Wrap: =false
-                              X: =Round(20 * UI, 0)
-                              Y: =Round(68 * UI, 0)
                   - capOther_Hm:
                       Control: Label@2.5.1
                       Properties:

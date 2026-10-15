@@ -123,8 +123,8 @@ Screens:
                         DropShadow: =DropShadow.None
                         Fill: =C_White
                         FillPortions: =0
-                        Height: =Round((466) * UI, 0)
-                        LayoutMinHeight: =Round((466) * UI, 0)
+                        Height: =Round((226) * UI, 0)
+                        LayoutMinHeight: =Round((226) * UI, 0)
                         RadiusBottomLeft: =Round(20 * UI, 0)
                         RadiusBottomRight: =Round(20 * UI, 0)
                         RadiusTopLeft: =Round(20 * UI, 0)
@@ -236,9 +236,7 @@ Screens:
                                     FontWeight: =""
                                     Height: =Round(50 * UI, 0)
                                     Icon: ="DismissCircle"
-                                    OnSelect: |-
-                                      =Set(varSvc, Blank());
-                                      Set(varStream, "Other")
+                                    OnSelect: =Set(varSvc, Blank())
                                     PaddingBottom: =5
                                     PaddingLeft: =12
                                     PaddingRight: =12
@@ -254,187 +252,6 @@ Screens:
                                     Width: =Round(50 * UI, 0)
                                     X: =Parent.Width - Round(51 * UI, 0)
                                     Y: =0
-                        - lblStrQ_Cap:
-                            Control: Label@2.5.1
-                            Properties:
-                              Color: =C_Ink2
-                              Font: =AppFont
-                              FontWeight: =FontWeight.Bold
-                              Height: =Round(24 * UI, 0)
-                              Size: =Round(12 * UI, 0)
-                              Text: ="BAU stream"
-                              Width: =Parent.Width - Round(36 * UI, 0)
-                              Wrap: =false
-                              X: =Round(18 * UI, 0)
-                              Y: =Round(130 * UI, 0)
-                        - conStr0_Cap:
-                            Control: GroupContainer@1.5.0
-                            Variant: ManualLayout
-                            Properties:
-                              BorderColor: =If(varStream = "Surgical & Critical Care", C_Accent, C_Line)
-                              BorderThickness: =1
-                              DropShadow: =DropShadow.None
-                              Fill: =If(varStream = "Surgical & Critical Care", C_AccentSoft, C_White)
-                              Height: =Round(40 * UI, 0)
-                              RadiusBottomLeft: =Round(20 * UI, 0)
-                              RadiusBottomRight: =Round(20 * UI, 0)
-                              RadiusTopLeft: =Round(20 * UI, 0)
-                              RadiusTopRight: =Round(20 * UI, 0)
-                              Width: =Parent.Width - Round(36 * UI, 0)
-                              X: =Round(18 * UI, 0)
-                              Y: =Round(156 * UI, 0)
-                            Children:
-                              - btnStr0_Cap:
-                                  Control: ModernButton@1.0.0
-                                  Properties:
-                                    Align: =Align.Center
-                                    Appearance: =ButtonAppearance.Transparent
-                                    Color: =If(varStream = "Surgical & Critical Care", C_Accent, C_Ink2)
-                                    Font: =AppFont
-                                    FontWeight: =FontWeight.Bold
-                                    Height: =Parent.Height
-                                    OnSelect: =Set(varStream, "Surgical & Critical Care")
-                                    PaddingBottom: =5
-                                    PaddingLeft: =12
-                                    PaddingRight: =12
-                                    PaddingTop: =5
-                                    RadiusBottomLeft: =Round(20 * UI, 0)
-                                    RadiusBottomRight: =Round(20 * UI, 0)
-                                    RadiusTopLeft: =Round(20 * UI, 0)
-                                    RadiusTopRight: =Round(20 * UI, 0)
-                                    Size: =Round(11 * UI, 0)
-                                    Text: ="Surgical & Critical Care"
-                                    VerticalAlign: =VerticalAlign.Middle
-                                    Width: =Parent.Width
-                        - conStr1_Cap:
-                            Control: GroupContainer@1.5.0
-                            Variant: ManualLayout
-                            Properties:
-                              BorderColor: =If(varStream = "Women's, Cancer & Mental Health", C_Accent, C_Line)
-                              BorderThickness: =1
-                              DropShadow: =DropShadow.None
-                              Fill: =If(varStream = "Women's, Cancer & Mental Health", C_AccentSoft, C_White)
-                              Height: =Round(40 * UI, 0)
-                              RadiusBottomLeft: =Round(20 * UI, 0)
-                              RadiusBottomRight: =Round(20 * UI, 0)
-                              RadiusTopLeft: =Round(20 * UI, 0)
-                              RadiusTopRight: =Round(20 * UI, 0)
-                              Width: =Parent.Width - Round(36 * UI, 0)
-                              X: =Round(18 * UI, 0)
-                              Y: =Round(202 * UI, 0)
-                            Children:
-                              - btnStr1_Cap:
-                                  Control: ModernButton@1.0.0
-                                  Properties:
-                                    Align: =Align.Center
-                                    Appearance: =ButtonAppearance.Transparent
-                                    Color: =If(varStream = "Women's, Cancer & Mental Health", C_Accent, C_Ink2)
-                                    Font: =AppFont
-                                    FontWeight: =FontWeight.Bold
-                                    Height: =Parent.Height
-                                    OnSelect: =Set(varStream, "Women's, Cancer & Mental Health")
-                                    PaddingBottom: =5
-                                    PaddingLeft: =12
-                                    PaddingRight: =12
-                                    PaddingTop: =5
-                                    RadiusBottomLeft: =Round(20 * UI, 0)
-                                    RadiusBottomRight: =Round(20 * UI, 0)
-                                    RadiusTopLeft: =Round(20 * UI, 0)
-                                    RadiusTopRight: =Round(20 * UI, 0)
-                                    Size: =Round(11 * UI, 0)
-                                    Text: ="Women's, Cancer & Mental Health"
-                                    VerticalAlign: =VerticalAlign.Middle
-                                    Width: =Parent.Width
-                        - conStr2_Cap:
-                            Control: GroupContainer@1.5.0
-                            Variant: ManualLayout
-                            Properties:
-                              BorderColor: =If(varStream = "Internal Medicine & Emergency", C_Accent, C_Line)
-                              BorderThickness: =1
-                              DropShadow: =DropShadow.None
-                              Fill: =If(varStream = "Internal Medicine & Emergency", C_AccentSoft, C_White)
-                              Height: =Round(40 * UI, 0)
-                              RadiusBottomLeft: =Round(20 * UI, 0)
-                              RadiusBottomRight: =Round(20 * UI, 0)
-                              RadiusTopLeft: =Round(20 * UI, 0)
-                              RadiusTopRight: =Round(20 * UI, 0)
-                              Width: =Parent.Width - Round(36 * UI, 0)
-                              X: =Round(18 * UI, 0)
-                              Y: =Round(248 * UI, 0)
-                            Children:
-                              - btnStr2_Cap:
-                                  Control: ModernButton@1.0.0
-                                  Properties:
-                                    Align: =Align.Center
-                                    Appearance: =ButtonAppearance.Transparent
-                                    Color: =If(varStream = "Internal Medicine & Emergency", C_Accent, C_Ink2)
-                                    Font: =AppFont
-                                    FontWeight: =FontWeight.Bold
-                                    Height: =Parent.Height
-                                    OnSelect: =Set(varStream, "Internal Medicine & Emergency")
-                                    PaddingBottom: =5
-                                    PaddingLeft: =12
-                                    PaddingRight: =12
-                                    PaddingTop: =5
-                                    RadiusBottomLeft: =Round(20 * UI, 0)
-                                    RadiusBottomRight: =Round(20 * UI, 0)
-                                    RadiusTopLeft: =Round(20 * UI, 0)
-                                    RadiusTopRight: =Round(20 * UI, 0)
-                                    Size: =Round(11 * UI, 0)
-                                    Text: ="Internal Medicine & Emergency"
-                                    VerticalAlign: =VerticalAlign.Middle
-                                    Width: =Parent.Width
-                        - conStr3_Cap:
-                            Control: GroupContainer@1.5.0
-                            Variant: ManualLayout
-                            Properties:
-                              BorderColor: =If(varStream = "Other", C_Accent, C_Line)
-                              BorderThickness: =1
-                              DropShadow: =DropShadow.None
-                              Fill: =If(varStream = "Other", C_AccentSoft, C_White)
-                              Height: =Round(40 * UI, 0)
-                              RadiusBottomLeft: =Round(20 * UI, 0)
-                              RadiusBottomRight: =Round(20 * UI, 0)
-                              RadiusTopLeft: =Round(20 * UI, 0)
-                              RadiusTopRight: =Round(20 * UI, 0)
-                              Width: =Parent.Width - Round(36 * UI, 0)
-                              X: =Round(18 * UI, 0)
-                              Y: =Round(294 * UI, 0)
-                            Children:
-                              - btnStr3_Cap:
-                                  Control: ModernButton@1.0.0
-                                  Properties:
-                                    Align: =Align.Center
-                                    Appearance: =ButtonAppearance.Transparent
-                                    Color: =If(varStream = "Other", C_Accent, C_Ink2)
-                                    Font: =AppFont
-                                    FontWeight: =FontWeight.Bold
-                                    Height: =Parent.Height
-                                    OnSelect: =Set(varStream, "Other")
-                                    PaddingBottom: =5
-                                    PaddingLeft: =12
-                                    PaddingRight: =12
-                                    PaddingTop: =5
-                                    RadiusBottomLeft: =Round(20 * UI, 0)
-                                    RadiusBottomRight: =Round(20 * UI, 0)
-                                    RadiusTopLeft: =Round(20 * UI, 0)
-                                    RadiusTopRight: =Round(20 * UI, 0)
-                                    Size: =Round(11 * UI, 0)
-                                    Text: ="Other"
-                                    VerticalAlign: =VerticalAlign.Middle
-                                    Width: =Parent.Width
-                        - lblStrHint_Cap:
-                            Control: Label@2.5.1
-                            Properties:
-                              Color: =C_Muted
-                              Font: =AppFont
-                              Height: =Round(20 * UI, 0)
-                              Size: =Round(11 * UI, 0)
-                              Text: =If(!IsBlank(varSvc.Service), "Set from " & varSvc.Line & ". Tap to change.", "Not sure? Leave it as Other.")
-                              Width: =Parent.Width - Round(36 * UI, 0)
-                              Wrap: =false
-                              X: =Round(18 * UI, 0)
-                              Y: =Round(338 * UI, 0)
                         - lblLocQ_Cap:
                             Control: Label@2.5.1
                             Properties:
@@ -447,7 +264,7 @@ Screens:
                               Width: =Parent.Width - Round(36 * UI, 0)
                               Wrap: =false
                               X: =Round(18 * UI, 0)
-                              Y: =Round(370 * UI, 0)
+                              Y: =Round(130 * UI, 0)
                         - txtLoc_Cap:
                             Control: Classic/TextInput@2.3.2
                             Properties:
@@ -467,7 +284,7 @@ Screens:
                               Size: =Round(12 * UI, 0)
                               Width: =Parent.Width - Round(36 * UI, 0)
                               X: =Round(18 * UI, 0)
-                              Y: =Round(396 * UI, 0)
+                              Y: =Round(156 * UI, 0)
                   - conStake_Cap:
                       Control: GroupContainer@1.5.0
                       Variant: ManualLayout
@@ -1600,7 +1417,8 @@ Screens:
                                                 Idea: Trim(txtIdea_Cap.Text),
                                                 Service: varSvc.Service,
                                                 ServiceLine: varSvc.Line,
-                                                Stream: Coalesce(varStream, "Other"),
+                                                // stream: set from the service, never shown. Service with no clear stream = Other; no service = blank
+                                                Stream: If(IsBlank(varSvc.Service), Blank(), Coalesce(varSvc.Stream, "Other")),
                                                 Location: Trim(txtLoc_Cap.Text),
                                                 StakeholderName: If(varStakeMode = "Dir", varStake.Name, varStakeMode = "Manual", Trim(txtStakeName_Cap.Text), Blank()),
                                                 StakeholderEmail: If(varStakeMode = "Dir", varStake.Email, Blank()),
@@ -1785,7 +1603,7 @@ Screens:
                         FontWeight: =FontWeight.Bold
                         Height: =Round(22 * UI, 0)
                         Size: =Round(11 * UI, 0)
-                        Text: =CountRows(galSvc_Cap.AllItems) & If(CountRows(galSvc_Cap.AllItems) = 1, " service", " services") & "  ·  Allied Health is split by profession"
+                        Text: =CountRows(galSvc_Cap.AllItems) & If(CountRows(galSvc_Cap.AllItems) = 1, " service", " services") & "  ·  search ward, unit or profession"
                         Width: =Parent.Width - Round(40 * UI, 0)
                         Wrap: =false
                         X: =Round(20 * UI, 0)
@@ -1813,7 +1631,7 @@ Screens:
                               Filter(
                                   ServiceMap,
                                   IsBlank(Trim(txtSvcSearch_Cap.Text))
-                                  || Lower(Trim(txtSvcSearch_Cap.Text)) in Lower(Service & " " & Line & " " & Stream)
+                                  || Lower(Trim(txtSvcSearch_Cap.Text)) in Lower(Service & " " & Line)
                               ),
                               "Line",
                               SortOrder.Ascending,
@@ -1870,7 +1688,7 @@ Screens:
                                     Font: =AppFont
                                     Height: =Round(22 * UI, 0)
                                     Size: =Round(11 * UI, 0)
-                                    Text: =ThisItem.Line & "  ·  " & ThisItem.Stream
+                                    Text: =ThisItem.Line
                                     Width: =Parent.Width - Round(24 * UI, 0)
                                     Wrap: =false
                                     X: =Round(12 * UI, 0)
@@ -1895,7 +1713,6 @@ Screens:
                                     Height: =Parent.Height
                                     OnSelect: |-
                                       =Set(varSvc, ThisItem);
-                                      Set(varStream, ThisItem.Stream);
                                       Set(varShowSvc, false)
                                     PaddingBottom: =5
                                     PaddingLeft: =12
@@ -2383,7 +2200,6 @@ Screens:
             OnSelect: |-
               =// RESET: clear every answer (screen opens, and "Capture Another")
               Set(varSvc, Blank());
-              Set(varStream, "Other");
               Set(varStake, Blank());
               Set(varStakeMode, Blank());
               Set(varStakeDefault, "");

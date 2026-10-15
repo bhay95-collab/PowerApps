@@ -5,7 +5,7 @@
 import os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'dtv_generator'))
 from dtvgen import *
-from services import SERVICES, LINE_STREAM
+from services import SERVICES
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'powerapps', 'floorwalk') + os.sep
 os.makedirs(OUT, exist_ok=True)
@@ -13,7 +13,8 @@ LIST = 'Floorwalk_Ideas'
 GREEN = "RGBA(30, 122, 80, 1)"; RED = "RGBA(176, 52, 40, 1)"; LINE = "RGBA(14, 42, 70, 0.22)"; TR = "RGBA(0, 0, 0, 0)"
 W = f"PageW - {r(40)}"; PADX = r(18); IW = f"Parent.Width - {r(36)}"
 NOSB = {k: v for k, v in SBOX.items() if not k.startswith('Radius')}
-STREAMS = [("Surgical & Critical Care", "Surg & CC"), ("Women's, Cancer & Mental Health", "WCMH"), ("Internal Medicine & Emergency", "IM & ED"), ("Other", "Other")]
+STREAMS = [("Surgical & Critical Care", "Surg & CC"), ("Women's, Cancer & Mental Health", "WCMH"), ("Internal Medicine & Emergency", "IM & ED"), ("Operational Support Services", "Ops Support"), ("Other", "Other"), ("No service", "No service")]
+# first 4 = real CITTA streams (dashboard pills). "Other" = service picked but no clear stream. "No service" = no service picked (stream left blank in the list).
 THEMES = ["Workflow/Business Rules", "Functionality", "Downtime", "Resource Development", "Other"]
 STATUSES = ["New", "Under Review", "Actioned", "Not Progressing"]
 PRIS = ["Low", "Medium", "High"]
@@ -77,7 +78,7 @@ def sheet(sfx, key, visvar, title, children, h=640):
         tbtn(f'btnVeil{key}_{sfx}', f'Set({visvar}, false)'), sh])
 
 # ================================================================== APP FORMULAS
-svc_rows = ',\n    '.join('{ Service: "%s", Line: "%s", Stream: "%s" }' % (s.replace('"', "'"), l, LINE_STREAM.get(l, 'Other')) for l, s in SERVICES)
+svc_rows = ',\n    '.join('{ Service: "%s", Line: "%s", Stream: "%s" }' % (s.replace('"', "'"), l, st) for l, s, st in SERVICES)
 FORMULAS = f'''// =====================================================================
 // Floorwalking Ideas app > App > Formulas  (paste the whole file)
 // Same colours, font, header art and sizing as every other STARS app.
@@ -131,9 +132,10 @@ StreamList = Table(
 ThemeList = [{', '.join(f'"{t}"' for t in THEMES)}];
 StatusList = [{', '.join(f'"{t}"' for t in STATUSES)}];
 
-// ---- RBWH services (from the RBWH Service Map, Sept 2025) and the BAU stream each one belongs to.
-// Service lines that are not one of the three BAU streams (Allied Health, Nursing, Operations...) go to Other.
-// To add a service: add a row here (Service, Line, Stream). Stream must match StreamList exactly.
+// ---- RBWH services (service + sub-service) and the CITTA stream each belongs to.
+// From the "Service Allocations" sheet (RBWH Stakeholder Directory & Allocations, Oct 2026).
+// The stream is set behind the scenes from the service (floorwalkers don't see it). No service = stream left blank.
+// To add a service: add a row in tools/floorwalk_generator/services.py and re-run (Stream must match StreamList).
 ServiceMap = Table(
     {svc_rows}
 );
@@ -153,11 +155,6 @@ heroH = inflow('conHero_Hm', r(120), fill='C_Accent', radius=r(25), children=[
     lbl('lblHeroS_Hm', '"Takes under a minute"', x=r(92), y=r(66), w=f"Parent.Width - {r(108)}", h=r(22), size=15, color='RGBA(255, 255, 255, 0.85)'),
     tbtn('btnHero_Hm', 'Navigate(Capture, ScreenTransition.Cover)'),
 ])
-todayH = inflow('conToday_Hm', r(112), fill='C_White', border='C_Line', radius=r(20), children=[
-    lbl('lblTodayCap_Hm', '"TODAY"', x=r(20), y=r(12), w=f"Parent.Width - {r(40)}", h=r(18), size=13, color='C_Muted', bold=True),
-    lbl('lblTodayT_Hm', 'If(varHmLoading, "Loading...", varHmTeamN & If(varHmTeamN = 1, " idea", " ideas") & " captured")', x=r(20), y=r(32), w=f"Parent.Width - {r(40)}", h=r(32), size=22, color='C_Ink', bold=True),
-    lbl('lblTodayS_Hm', '"You: " & varHmMineN & "  ·  All floorwalkers: " & varHmTeamN & "  ·  All time: " & varHmAllN', x=r(20), y=r(68), w=f"Parent.Width - {r(40)}", h=r(22), size=15, color='C_Ink2'),
-])
 capH = lbl('capOther_Hm', '"SEE WHAT IS COMING IN"', w=W, h=r(23), size=14, color='C_Muted', bold=True, extra={'AlignInContainer': 'AlignInContainer.SetByContainer', 'LayoutMinHeight': r(23)})
 def tileH(k, icon, title, subtitle, onsel, amber=False):
     return inflow(f'conTile{k}_Hm', r(90), fill='C_White', border='C_Line', radius=r(20), children=[
@@ -169,18 +166,11 @@ def tileH(k, icon, title, subtitle, onsel, amber=False):
 t1 = tileH('Dash', 'AppsList', 'Ideas Dashboard', '"Overview and every idea"', 'Set(varDashMine, false);\nNavigate(Dashboard, ScreenTransition.Cover)')
 t2 = tileH('Mine', 'Person', 'My Ideas', 'varHmMineAllN & If(varHmMineAllN = 1, " idea", " ideas") & " captured by you"', 'Set(varDashMine, true);\nNavigate(Dashboard, ScreenTransition.Cover)', amber=True)
 endH = inflow('conEnd_Hm', r(16), extra={'DropShadow': 'DropShadow.None'})
-bodyH = vbody('conBody_Hm', [heroH, todayH, capH, t1, t2, endH], gap=15, top=20, bottom=30, scroll=True)
-ONV_H = f'''Set(varHmLoading, true);
-Refresh({LIST});
-// today's ideas only (delegable date filter), counted on the device
-ClearCollect(colToday_Hm, Filter({LIST}, Created >= Today()));
-Set(varHmTeamN, CountRows(colToday_Hm));
-Set(varHmMineN, CountIf(colToday_Hm, Lower('Created By'.Email) = MeEmail));
-// all-time counts (fine up to the 2000 row limit; see docs/05)
+bodyH = vbody('conBody_Hm', [heroH, capH, t1, t2, endH], gap=15, top=20, bottom=30, scroll=True)
+ONV_H = f'''Refresh({LIST});
+// my ideas (for the My Ideas tile)
 ClearCollect(colMine_Hm, Filter({LIST}, 'Created By'.Email = User().Email));
-Set(varHmMineAllN, CountRows(colMine_Hm));
-Set(varHmAllN, CountRows({LIST}));
-Set(varHmLoading, false)'''
+Set(varHmMineAllN, CountRows(colMine_Hm))'''
 open(OUT + 'FW_Home.pa.yaml', 'w').write(screen('Home', {'Fill': 'C_Bg', 'OnVisible': ONV_H}, [vroot('conRoot_Hm', [hdrH, bodyH])]))
 
 # ================================================================== CAPTURE
@@ -192,18 +182,14 @@ svcField = box('conSvcField_Cap', x=PADX, y=r(66), w=IW, h=r(52), fill='C_White'
     lbl('lblSvc_Cap', f'If({hasSvc}, varSvc.Service, "Search services")', x=r(48), w=f'Parent.Width - {r(100)}', h=r(52), size=16, color=f'If({hasSvc}, C_Ink, C_Muted)', bold=hasSvc != '', extra={'VerticalAlign': 'VerticalAlign.Middle', 'FontWeight': f'If({hasSvc}, FontWeight.Bold, FontWeight.Normal)'}),
     ico('icoSvcGo_Cap', 'ChevronRight', f'Parent.Width - {r(38)}', r(14), 24, 'C_Muted'),
     tbtn('btnSvc_Cap', 'Reset(txtSvcSearch_Cap);\nSet(varShowSvc, true)'),
-    N('btnSvcClear_Cap', 'ModernButton@1.0.0', props=dict({'Align': 'Align.Center', 'Appearance': 'ButtonAppearance.Transparent', 'Color': 'C_Muted', 'FontWeight': '""', 'Height': r(50), 'Icon': '"DismissCircle"', 'OnSelect': 'Set(varSvc, Blank());\nSet(varStream, "Other")', 'Size': r(22), 'Text': '""', 'VerticalAlign': 'VerticalAlign.Middle', 'Visible': hasSvc, 'Width': r(50), 'X': f'Parent.Width - {r(51)}', 'Y': '0'}, **SBOX)),
+    N('btnSvcClear_Cap', 'ModernButton@1.0.0', props=dict({'Align': 'Align.Center', 'Appearance': 'ButtonAppearance.Transparent', 'Color': 'C_Muted', 'FontWeight': '""', 'Height': r(50), 'Icon': '"DismissCircle"', 'OnSelect': 'Set(varSvc, Blank())', 'Size': r(22), 'Text': '""', 'VerticalAlign': 'VerticalAlign.Middle', 'Visible': hasSvc, 'Width': r(50), 'X': f'Parent.Width - {r(51)}', 'Y': '0'}, **SBOX)),
 ])
-streamPills = [choice(f'Str{i}_Cap', 'varStream', k, PADX, r(156 + 46 * i), IW, h=40) for i, (k, _) in enumerate(STREAMS)]
-where = card('conWhere_Cap', '466', [
+where = card('conWhere_Cap', '226', [
     cap('cap_Where', '1  ·  WHERE'),
     sublbl('lblSvcQ_Cap', 'Service (optional)', r(40)),
     svcField,
-    sublbl('lblStrQ_Cap', 'BAU stream', r(130)),
-] + streamPills + [
-    lbl('lblStrHint_Cap', f'If({hasSvc}, "Set from " & varSvc.Line & ". Tap to change.", "Not sure? Leave it as Other.")', x=PADX, y=r(338), w=IW, h=r(20), size=13, color='C_Muted'),
-    sublbl('lblLocQ_Cap', 'Location', r(370)),
-    tin('txtLoc_Cap', 'Ward, unit or area (e.g. 7B North)', PADX, r(396), IW, r(52)),
+    sublbl('lblLocQ_Cap', 'Location', r(130)),
+    tin('txtLoc_Cap', 'Ward, unit or area (e.g. 7B North)', PADX, r(156), IW, r(52)),
 ])
 
 # ---- 2 · stakeholder: Office 365 directory search, or type a name
@@ -285,7 +271,8 @@ With(
                 Idea: Trim(txtIdea_Cap.Text),
                 Service: varSvc.Service,
                 ServiceLine: varSvc.Line,
-                Stream: Coalesce(varStream, "Other"),
+                // stream: set from the service, never shown. Service with no clear stream = Other; no service = blank
+                Stream: If(IsBlank(varSvc.Service), Blank(), Coalesce(varSvc.Stream, "Other")),
                 Location: Trim(txtLoc_Cap.Text),
                 StakeholderName: If({DIR}, varStake.Name, {MAN}, Trim(txtStakeName_Cap.Text), Blank()),
                 StakeholderEmail: If({DIR}, varStake.Email, Blank()),
@@ -324,7 +311,7 @@ SVC_ITEMS = '''SortByColumns(
     Filter(
         ServiceMap,
         IsBlank(Trim(txtSvcSearch_Cap.Text))
-        || Lower(Trim(txtSvcSearch_Cap.Text)) in Lower(Service & " " & Line & " " & Stream)
+        || Lower(Trim(txtSvcSearch_Cap.Text)) in Lower(Service & " " & Line)
     ),
     "Line",
     SortOrder.Ascending,
@@ -336,13 +323,13 @@ selSv = 'ThisItem.Service = varSvc.Service'
 galSvc = wrap(N('galSvc_Cap', 'Gallery@2.15.0', 'Vertical', {'Height': f'Parent.Height - {r(160)}', 'Items': SVC_ITEMS, 'TemplatePadding': '0', 'TemplateSize': r(RH), 'Width': f'Parent.Width - {r(24)}', 'X': r(12), 'Y': r(150)}, [
     box('conSvcSel_Cap', x='0', y=r(2), w='Parent.TemplateWidth', h=r(RH - 4), fill=f'If({selSv}, C_AccentSoft, RGBA(0, 0, 0, 0))', radius=r(12)),
     lbl('lblSvcRowT_Cap', 'ThisItem.Service', x=r(12), y=r(8), w=f'Parent.TemplateWidth - {r(24)}', h=r(26), size=16, color='C_Ink', bold=True),
-    lbl('lblSvcRowS_Cap', 'ThisItem.Line & "  ·  " & ThisItem.Stream', x=r(12), y=r(34), w=f'Parent.TemplateWidth - {r(24)}', h=r(22), size=14, color='C_Muted'),
+    lbl('lblSvcRowS_Cap', 'ThisItem.Line', x=r(12), y=r(34), w=f'Parent.TemplateWidth - {r(24)}', h=r(22), size=14, color='C_Muted'),
     box('conSvcLn_Cap', x=r(12), y=f'Parent.TemplateHeight - 1', w=f'Parent.TemplateWidth - {r(24)}', h='1', fill='C_Line'),
-    tbtn('btnSvcRow_Cap', 'Set(varSvc, ThisItem);\nSet(varStream, ThisItem.Stream);\nSet(varShowSvc, false)')]), 'conSvcRow_Cap')
+    tbtn('btnSvcRow_Cap', 'Set(varSvc, ThisItem);\nSet(varShowSvc, false)')]), 'conSvcRow_Cap')
 svcSheet = sheet('Cap', 'Svc', 'varShowSvc', 'Pick a Service', [
     box('conSvcSearch_Cap', x=r(20), y=r(64), w=f'Parent.Width - {r(40)}', h=r(52), fill='C_White', border=LINE, radius=r(14), children=[
         ico('icoSvcSearch_Cap', 'Search', r(14), r(14), 24, 'C_Muted'), search_input('txtSvcSearch_Cap', 'Search e.g. physio, 7B, cardiology')]),
-    lbl('lblSvcCount_Cap', 'CountRows(galSvc_Cap.AllItems) & If(CountRows(galSvc_Cap.AllItems) = 1, " service", " services") & "  ·  Allied Health is split by profession"', x=r(20), y=r(122), w=f'Parent.Width - {r(40)}', h=r(22), size=13, color='C_Muted', bold=True),
+    lbl('lblSvcCount_Cap', 'CountRows(galSvc_Cap.AllItems) & If(CountRows(galSvc_Cap.AllItems) = 1, " service", " services") & "  ·  search ward, unit or profession"', x=r(20), y=r(122), w=f'Parent.Width - {r(40)}', h=r(22), size=13, color='C_Muted', bold=True),
     lbl('lblSvcNone_Cap', '"No service matches. Close this and leave Service blank."', x=r(20), y=r(200), w=f'Parent.Width - {r(40)}', h=r(50), size=15, color='C_Muted', align='Align.Center', wrap=True, visible='CountRows(galSvc_Cap.AllItems) = 0'),
     galSvc])
 
@@ -387,7 +374,6 @@ done = box('conOverlayDone_Cap', x='0', y='0', w='App.Width', h='App.Height', fi
 
 RESET = '''// RESET: clear every answer (screen opens, and "Capture Another")
 Set(varSvc, Blank());
-Set(varStream, "Other");
 Set(varStake, Blank());
 Set(varStakeMode, Blank());
 Set(varStakeDefault, "");
@@ -490,7 +476,7 @@ def focus(kind, key='ThisItem.Key'):
     sel = f'varDashFKind = "{kind}" && varDashFVal = {key}'
     return (f'If({sel}, Set(varDashFKind, ""); Set(varDashFVal, ""), Set(varDashFKind, "{kind}"); Set(varDashFVal, {key}))', sel)
 share = lambda tot: f'ThisItem.N & "  ·  " & Round((If({tot} > 0, ThisItem.N / {tot}, 0)) * 100, 0) & "%"'
-pStr = listpanel('ByStr', 'BY BAU STREAM', '"Tap to show one stream"', 'colDashStr', 'ThisItem.Key', share('varDashBaseN'), 'If(varDashBaseN > 0, ThisItem.N / varDashBaseN, 0)', 'C_Accent', 4,
+pStr = listpanel('ByStr', 'BY BAU STREAM', '"Tap to show one stream"', 'colDashStr', 'ThisItem.Key', share('varDashBaseN'), 'If(varDashBaseN > 0, ThisItem.N / varDashBaseN, 0)', 'C_Accent', 6,
                  onsel='Set(varDashStream, If(varDashStream = ThisItem.Key, "ALL", ThisItem.Key));\nSelect(btnCalc_Dsh)', selexpr='varDashStream = ThisItem.Key', empty='No ideas yet')
 o, s_ = focus('Theme'); pTh = listpanel('ByTheme', 'BY THEME', '"Tap a theme to list those ideas"', 'colDashTheme', 'ThisItem.Key', share('varDashN'), 'If(varDashN > 0, ThisItem.N / varDashN, 0)', 'C_Teal', 5, onsel=o, selexpr=s_, empty='No ideas yet')
 o, s_ = focus('Status'); pSt = listpanel('ByStat', 'BY STATUS', '"Where each idea is up to"', 'colDashStat', 'ThisItem.Key', share('varDashN'), 'If(varDashN > 0, ThisItem.N / varDashN, 0)', scol('ThisItem.Key'), 4, onsel=o, selexpr=s_, empty='No ideas yet')
@@ -555,16 +541,12 @@ bodyP = {'AlignInContainer': 'AlignInContainer.SetByContainer', 'DropShadow': 'D
 bodyP.update(rad('0'))
 bodyD = N('conBody_Dsh', 'GroupContainer@1.5.0', 'AutoLayout', bodyP, [
     filters, loading, kpi,
-    row('A', [(pStr, 1 / 3, 300), (pTh, 1 / 3, 300 + 56), (pSt, 1 / 3, 300)]),
+    row('A', [(pStr, 1 / 3, 412), (pTh, 1 / 3, 356), (pSt, 1 / 3, 300)]),
     row('B', [(pSv, 0.5, 412), (pWk, 0.5, 412)]),
     pList, endD])
-# row A: same height side by side (theme has 5 rows)
-for p_ in (pStr, pSt):
-    p_.props['Height'] = f'If({WIDE}, {r(356)}, {r(300)})'
-rowA = bodyD.children[3]
-rowA.props['Height'] = rowA.props['LayoutMinHeight'] = f'If({WIDE}, {r(356)}, {r(300)} + {r(356)} + {r(300)} + 2 * {GAP})'
-pTh.props['Y'] = f'If({WIDE}, 0, {r(300)} + {GAP})'
-pSt.props['Y'] = f'If({WIDE}, 0, {r(300)} + {r(356)} + 2 * {GAP})'
+# row A: all 412 high side by side (stream has 6 rows)
+for p_ in (pTh, pSt):
+    p_.props['Height'] = f'If({WIDE}, {r(412)}, {p_.props["Height"]})'
 
 # ---- idea detail (pop-up) + review (status, priority, notes)
 SEL = 'varDashSel'
@@ -705,8 +687,9 @@ ClearCollect(
             Idea: Coalesce(a.Idea, a.Title),
             Service: a.Service,
             Line: a.ServiceLine,
-            Stream: If(IsBlank(a.Stream), "Other", a.Stream),
-            StreamShort: Coalesce(LookUp(StreamList, Key = a.Stream).Short, "Other"),
+            // blank stream: no service picked ("No service"), or a service with no stream ("Other")
+            Stream: If(!IsBlank(a.Stream), a.Stream, IsBlank(a.Service), "No service", "Other"),
+            StreamShort: If(!IsBlank(a.Stream), Coalesce(LookUp(StreamList, Key = a.Stream).Short, a.Stream), IsBlank(a.Service), "No service", "Other"),
             Loc: a.Location,
             Stake: a.StakeholderName,
             StakeEmail: a.StakeholderEmail,
@@ -785,7 +768,7 @@ Set(varSaving, false);
 Set(varDashShowDet, false);
 Reset(txtSearch_Dsh);
 ClearCollect(colDashPills, { Label: "All", Full: "All Streams", Key: "ALL" });
-ForAll(StreamList As s, Collect(colDashPills, { Label: s.Short, Full: s.Key, Key: s.Key }));
+ForAll(FirstN(StreamList, 4) As s, Collect(colDashPills, { Label: s.Short, Full: s.Key, Key: s.Key }));
 ClearCollect(colDashPer, { Label: "Today", Key: "Today" }, { Label: "7 Days", Key: "7" }, { Label: "30 Days", Key: "30" }, { Label: "All Time", Key: "All" });
 Select(btnLoad_Dsh)'''
 open(OUT + 'FW_Dashboard.pa.yaml', 'w').write(screen('Dashboard', {'Fill': 'C_Bg', 'OnVisible': ONV_D},

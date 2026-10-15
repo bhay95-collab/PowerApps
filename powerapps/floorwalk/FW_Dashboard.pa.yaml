@@ -12,7 +12,7 @@ Screens:
         Set(varDashShowDet, false);
         Reset(txtSearch_Dsh);
         ClearCollect(colDashPills, { Label: "All", Full: "All Streams", Key: "ALL" });
-        ForAll(StreamList As s, Collect(colDashPills, { Label: s.Short, Full: s.Key, Key: s.Key }));
+        ForAll(FirstN(StreamList, 4) As s, Collect(colDashPills, { Label: s.Short, Full: s.Key, Key: s.Key }));
         ClearCollect(colDashPer, { Label: "Today", Key: "Today" }, { Label: "7 Days", Key: "7" }, { Label: "30 Days", Key: "30" }, { Label: "All Time", Key: "All" });
         Select(btnLoad_Dsh)
     Children:
@@ -765,8 +765,8 @@ Screens:
                         AlignInContainer: =AlignInContainer.SetByContainer
                         DropShadow: =DropShadow.None
                         FillPortions: =0
-                        Height: =If(DashWide, Round(356 * UI, 0), Round(300 * UI, 0) + Round(356 * UI, 0) + Round(300 * UI, 0) + 2 * DashGap)
-                        LayoutMinHeight: =If(DashWide, Round(356 * UI, 0), Round(300 * UI, 0) + Round(356 * UI, 0) + Round(300 * UI, 0) + 2 * DashGap)
+                        Height: =If(DashWide, Round(412 * UI, 0), Round(412 * UI, 0) + Round(356 * UI, 0) + Round(300 * UI, 0) + 2 * DashGap)
+                        LayoutMinHeight: =If(DashWide, Round(412 * UI, 0), Round(412 * UI, 0) + Round(356 * UI, 0) + Round(300 * UI, 0) + 2 * DashGap)
                         Width: =DashW
                       Children:
                         - conByStr_Dsh:
@@ -777,7 +777,7 @@ Screens:
                               BorderThickness: =1
                               DropShadow: =DropShadow.None
                               Fill: =C_White
-                              Height: =If(DashWide, Round(356 * UI, 0), Round(300 * UI, 0))
+                              Height: =Round(412 * UI, 0)
                               RadiusBottomLeft: =Round(20 * UI, 0)
                               RadiusBottomRight: =Round(20 * UI, 0)
                               RadiusTopLeft: =Round(20 * UI, 0)
@@ -815,7 +815,7 @@ Screens:
                                   Control: Gallery@2.15.0
                                   Variant: Vertical
                                   Properties:
-                                    Height: =4 * Round(56 * UI, 0)
+                                    Height: =6 * Round(56 * UI, 0)
                                     Items: =colDashStr
                                     ShowScrollbar: =false
                                     TemplatePadding: =0
@@ -946,14 +946,14 @@ Screens:
                               BorderThickness: =1
                               DropShadow: =DropShadow.None
                               Fill: =C_White
-                              Height: =Round(356 * UI, 0)
+                              Height: =If(DashWide, Round(412 * UI, 0), Round(356 * UI, 0))
                               RadiusBottomLeft: =Round(20 * UI, 0)
                               RadiusBottomRight: =Round(20 * UI, 0)
                               RadiusTopLeft: =Round(20 * UI, 0)
                               RadiusTopRight: =Round(20 * UI, 0)
                               Width: =If(DashWide, (DashW - 2 * DashGap) * 0.3333333333333333, DashW)
                               X: =If(DashWide, (DashW - 2 * DashGap) * 0.3333 + 1 * DashGap, 0)
-                              Y: =If(DashWide, 0, Round(300 * UI, 0) + DashGap)
+                              Y: =If(DashWide, 0, Round(412 * UI, 0) + 1 * DashGap)
                             Children:
                               - capByTheme_Dsh:
                                   Control: Label@2.5.1
@@ -1113,14 +1113,14 @@ Screens:
                               BorderThickness: =1
                               DropShadow: =DropShadow.None
                               Fill: =C_White
-                              Height: =If(DashWide, Round(356 * UI, 0), Round(300 * UI, 0))
+                              Height: =If(DashWide, Round(412 * UI, 0), Round(300 * UI, 0))
                               RadiusBottomLeft: =Round(20 * UI, 0)
                               RadiusBottomRight: =Round(20 * UI, 0)
                               RadiusTopLeft: =Round(20 * UI, 0)
                               RadiusTopRight: =Round(20 * UI, 0)
                               Width: =If(DashWide, (DashW - 2 * DashGap) * 0.3333333333333333, DashW)
                               X: =If(DashWide, (DashW - 2 * DashGap) * 0.6667 + 2 * DashGap, 0)
-                              Y: =If(DashWide, 0, Round(300 * UI, 0) + Round(356 * UI, 0) + 2 * DashGap)
+                              Y: =If(DashWide, 0, Round(412 * UI, 0) + Round(356 * UI, 0) + 2 * DashGap)
                             Children:
                               - capByStat_Dsh:
                                   Control: Label@2.5.1
@@ -2992,8 +2992,9 @@ Screens:
                           Idea: Coalesce(a.Idea, a.Title),
                           Service: a.Service,
                           Line: a.ServiceLine,
-                          Stream: If(IsBlank(a.Stream), "Other", a.Stream),
-                          StreamShort: Coalesce(LookUp(StreamList, Key = a.Stream).Short, "Other"),
+                          // blank stream: no service picked ("No service"), or a service with no stream ("Other")
+                          Stream: If(!IsBlank(a.Stream), a.Stream, IsBlank(a.Service), "No service", "Other"),
+                          StreamShort: If(!IsBlank(a.Stream), Coalesce(LookUp(StreamList, Key = a.Stream).Short, a.Stream), IsBlank(a.Service), "No service", "Other"),
                           Loc: a.Location,
                           Stake: a.StakeholderName,
                           StakeEmail: a.StakeholderEmail,

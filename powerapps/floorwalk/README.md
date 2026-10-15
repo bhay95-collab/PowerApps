@@ -27,7 +27,7 @@ Faster: create the list **From CSV** with `Floorwalk_Ideas.csv` (headers + one f
 | Idea | Multiple lines of text | More options → **plain text** (turn off rich text). Append changes **Off** |
 | Service | Single line of text | |
 | ServiceLine | Single line of text | |
-| Stream | Single line of text | App writes one of: `Surgical & Critical Care`, `Women's, Cancer & Mental Health`, `Internal Medicine & Emergency`, `Other` |
+| Stream | Single line of text | Set automatically from the service (floorwalker never sees it): `Surgical & Critical Care`, `Women's, Cancer & Mental Health`, `Internal Medicine & Emergency`, `Operational Support Services`, or `Other` (service with no clear stream). Blank when no service was picked |
 | Location | Single line of text | |
 | StakeholderName | Single line of text | |
 | StakeholderEmail | Single line of text | |
@@ -66,9 +66,9 @@ Size: one row per idea. The dashboard reads the newest **2000** (Settings → Ge
 11. File → Save → **Publish**.
 
 ## 4. Test
-1. Home: "Hi <name>", Today card shows 0.
+1. Home: "Hi <name>", Capture hero, Dashboard + My Ideas tiles (no Today card).
 2. Capture an Idea → Submit is grey ("Add a theme, idea and priority").
-3. Tap Service → type `physio` → pick Physiotherapy → stream shows **Other** with "Set from Allied Health". Pick `Orthopaedics` → stream **Surgical & Critical Care**.
+3. Tap Service → type `cath` → pick Cardiology - Cardiac Cath Lab. No stream shown on the form. After saving, SharePoint Stream = **Internal Medicine & Emergency**. An idea saved with no service has Stream blank.
 4. Stakeholder → type 3+ letters of a colleague's surname → rows show name + job title + department → pick → follow-up Yes/No appears.
 5. Clear (✕) → "Not in the Directory? Type a Name" → type → follow-up Yes → amber "No email" note.
 6. Theme Other → text box appears. Type idea, pick High → Submit → "Idea Saved". Check the row in SharePoint (Created By = you).
@@ -78,5 +78,6 @@ Size: one row per idea. The dashboard reads the newest **2000** (Settings → Ge
 10. Open the same idea on two devices, save on one, then save on the other → "Someone updated this idea…" warning.
 
 ## Service map
-`services.py`: 155 services from the RBWH Service Map (Sept 2025). Archived / out-of-scope / duplicate rows removed, spelling fixed. Allied Health split by profession (Physio, OT, Speech Pathology, Social Work, Dietetics, Psychology, Podiatry, Audiology, O&P, Pulmonary Rehab, IHLS, + "Allied Health - Other").
-Stream rule (by service line): Surgical & Perioperative, Critical Care & Clinical Support → **Surgical & Critical Care**; Cancer Care, Mental Health, Women's & Newborn → **Women's, Cancer & Mental Health**; Internal Medicine & Emergency → **Internal Medicine & Emergency**; everything else (Allied Health, Nursing & Midwifery, Admin, Operations, A&TSI, Medical Services, Finance/HIS, Other) → **Other**. Floorwalker can change the stream on the form.
+`tools/floorwalk_generator/services.py`: 262 services at sub-service level (e.g. `Cardiology - Cardiac Cath Lab`, `Pharmacy Services - Oncology Pharmacy`) from the **Service Allocations** sheet of the RBWH Stakeholder Directory & Allocations workbook (Oct 2026). Spelling fixed, duplicates removed. Each row carries its **RBWH CITTA Stream** from that sheet:
+Surgical & Critical Care 83 (incl. all Allied Health) · Women's, Cancer & Mental Health 86 (incl. A&TSI Health) · Internal Medicine & Emergency 62 · Operational Support Services 31.
+The stream is saved behind the scenes; the Capture form doesn't show it. No service → stream blank (dashboard shows "No service"). Dashboard pills: the 4 streams; the By Stream panel also lists Other and No service.
