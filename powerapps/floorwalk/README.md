@@ -17,7 +17,9 @@ Data: SharePoint list `Floorwalk_Ideas` on `https://healthqld.sharepoint.com/tea
 ## 1. SharePoint list (CITTA site)
 
 1. Open `https://healthqld.sharepoint.com/teams/CITTA` → **+ New → List → Blank list** → name exactly `Floorwalk_Ideas` → Create.
-2. Add each column below: **+ Add column** → type → name **exactly** (no spaces) → Save.
+Faster: create the list **From CSV** with `Floorwalk_Ideas.csv` (headers + one fake row to delete). At import set every column to **Single line of text** except Idea + ReviewNotes (**Multiple lines of text**) and StatusOn (**Date and time**). Then add Photo (Image) by hand.
+
+2. Or add each column below: **+ Add column** → type → name **exactly** (no spaces) → Save.
 
 | Column | Type | Notes |
 |---|---|---|
