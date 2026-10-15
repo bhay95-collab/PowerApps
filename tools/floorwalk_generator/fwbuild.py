@@ -226,7 +226,7 @@ stake = card('conStake_Cap', f'If({DIR}, 264, {MAN}, If(varFollow = "Yes", 292, 
 ])
 
 # ---- 3 · theme
-OTH = 'varTheme = "Other"'
+OTH = '(varTheme = "Other")'
 themes = card('conTheme_Cap', f'If({OTH}, 400, 336)', [cap('cap_Theme', '3  ·  THEME'), ques('q_Theme', 'What kind of uplift is it?')]
     + [choice(f'Th{i}_Cap', 'varTheme', t, PADX, r(74 + 50 * i), IW) for i, t in enumerate(THEMES)]
     + [tin('txtThemeOther_Cap', 'What kind of theme? (short)', PADX, r(330), IW, r(52), vis=OTH)])
@@ -350,7 +350,7 @@ galStake = wrap(N('galStake_Cap', 'Gallery@2.15.0', 'Vertical', {'Height': f'Par
     lbl('lblStkRowM_Cap', 'Lower(ThisItem.Mail)', x=r(12), y=r(50), w=f'Parent.TemplateWidth - {r(24)}', h=r(18), size=13, color='C_Muted'),
     box('conStkLn_Cap', x=r(12), y=f'Parent.TemplateHeight - 1', w=f'Parent.TemplateWidth - {r(24)}', h='1', fill='C_Line'),
     tbtn('btnStkRow_Cap', 'Set(varStake, { Name: ThisItem.DisplayName, Email: Lower(ThisItem.Mail), Job: ThisItem.JobTitle, Dept: ThisItem.Department });\nSet(varStakeMode, "Dir");\nSet(varShowStake, false)')]), 'conStkRow_Cap')
-short = 'Len(Trim(txtStakeSearch_Cap.Text)) < 3'
+short = '(Len(Trim(txtStakeSearch_Cap.Text)) < 3)'
 stakeSheet = sheet('Cap', 'Stk', 'varShowStake', 'Find a Stakeholder', [
     box('conStkSearch_Cap', x=r(20), y=r(64), w=f'Parent.Width - {r(40)}', h=r(52), fill='C_White', border=LINE, radius=r(14), children=[
         ico('icoStkSearch_Cap', 'Search', r(14), r(14), 24, 'C_Muted'), search_input('txtStakeSearch_Cap', 'Type a name (3+ letters)')]),

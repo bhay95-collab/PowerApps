@@ -710,8 +710,8 @@ Screens:
                         DropShadow: =DropShadow.None
                         Fill: =C_White
                         FillPortions: =0
-                        Height: =Round((If(varTheme = "Other", 400, 336)) * UI, 0)
-                        LayoutMinHeight: =Round((If(varTheme = "Other", 400, 336)) * UI, 0)
+                        Height: =Round((If((varTheme = "Other"), 400, 336)) * UI, 0)
+                        LayoutMinHeight: =Round((If((varTheme = "Other"), 400, 336)) * UI, 0)
                         RadiusBottomLeft: =Round(20 * UI, 0)
                         RadiusBottomRight: =Round(20 * UI, 0)
                         RadiusTopLeft: =Round(20 * UI, 0)
@@ -956,7 +956,7 @@ Screens:
                               RadiusTopLeft: =Round(12 * UI, 0)
                               RadiusTopRight: =Round(12 * UI, 0)
                               Size: =Round(12 * UI, 0)
-                              Visible: =varTheme = "Other"
+                              Visible: =(varTheme = "Other")
                               Width: =Parent.Width - Round(36 * UI, 0)
                               X: =Round(18 * UI, 0)
                               Y: =Round(330 * UI, 0)
@@ -1402,7 +1402,7 @@ Screens:
                               Align: =Align.Center
                               Appearance: =ButtonAppearance.Transparent
                               BorderStyle: =BorderStyle.None
-                              DisplayMode: =If(!IsBlank(varTheme) && (!varTheme = "Other" || !IsBlank(Trim(txtThemeOther_Cap.Text))) && !IsBlank(Trim(txtIdea_Cap.Text)) && !IsBlank(varPri) && !varSaving, DisplayMode.Edit, DisplayMode.Disabled)
+                              DisplayMode: =If(!IsBlank(varTheme) && (!(varTheme = "Other") || !IsBlank(Trim(txtThemeOther_Cap.Text))) && !IsBlank(Trim(txtIdea_Cap.Text)) && !IsBlank(varPri) && !varSaving, DisplayMode.Edit, DisplayMode.Disabled)
                               FontWeight: =""
                               Height: =Parent.Height
                               OnSelect: |-
@@ -1426,7 +1426,7 @@ Screens:
                                                 StakeholderDept: If(varStakeMode = "Dir", varStake.Dept, Blank()),
                                                 FollowUp: If(((varStakeMode = "Dir" && !IsBlank(varStake.Name)) || (varStakeMode = "Manual" && !IsBlank(Trim(txtStakeName_Cap.Text)))) && varFollow = "Yes", "Yes", "No"),
                                                 Theme: varTheme,
-                                                ThemeOther: If(varTheme = "Other", Trim(txtThemeOther_Cap.Text), Blank()),
+                                                ThemeOther: If((varTheme = "Other"), Trim(txtThemeOther_Cap.Text), Blank()),
                                                 Priority: varPri,
                                                 Status: "New"
                                             }
@@ -1871,7 +1871,7 @@ Screens:
                         FontWeight: =FontWeight.Bold
                         Height: =Round(22 * UI, 0)
                         Size: =Round(11 * UI, 0)
-                        Text: =If(Len(Trim(txtStakeSearch_Cap.Text)) < 3, "Type at least 3 letters of their name", CountRows(galStake_Cap.AllItems) & If(CountRows(galStake_Cap.AllItems) = 1, " person", " people") & " found  ·  shows job title")
+                        Text: =If((Len(Trim(txtStakeSearch_Cap.Text)) < 3), "Type at least 3 letters of their name", CountRows(galStake_Cap.AllItems) & If(CountRows(galStake_Cap.AllItems) = 1, " person", " people") & " found  ·  shows job title")
                         Width: =Parent.Width - Round(40 * UI, 0)
                         Wrap: =false
                         X: =Round(20 * UI, 0)
@@ -1885,7 +1885,7 @@ Screens:
                         Height: =Round(50 * UI, 0)
                         Size: =Round(12 * UI, 0)
                         Text: ="No one found. Try the surname, or type the name below."
-                        Visible: =!Len(Trim(txtStakeSearch_Cap.Text)) < 3 && CountRows(galStake_Cap.AllItems) = 0
+                        Visible: =!(Len(Trim(txtStakeSearch_Cap.Text)) < 3) && CountRows(galStake_Cap.AllItems) = 0
                         Width: =Parent.Width - Round(40 * UI, 0)
                         X: =Round(20 * UI, 0)
                         Y: =Round(200 * UI, 0)
