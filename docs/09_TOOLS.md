@@ -43,6 +43,8 @@ Formulas with newlines / `: ` / ` #` are written as block scalars automatically.
 - Simulator knows `DashW/DashX/DashWide/DashGap`: render the dashboard at `1440 2200` (wide) and `390 3000` (phone).
 - Templates: `cd tools/templates && python3 build_templates.py` → rewrites `templates/Template_*.pa.yaml`. Copy this file as the start of a new app's builder.
 
+- Floorwalking Ideas: `cd tools/floorwalk_generator && python3 fwbuild.py` → rewrites `powerapps/floorwalk/*` (services list in `services.py`). Render the dashboard at `1440 2000` and `390 3700`.
+
 ## Desktop responsive converter
 ```
 python3 tools/make_responsive.py <input folder of .pa.yaml> <output folder>

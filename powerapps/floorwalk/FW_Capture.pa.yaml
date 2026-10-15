@@ -1,0 +1,2414 @@
+Screens:
+  Capture:
+    Properties:
+      Fill: =C_Bg
+      OnVisible: =Select(btnReset_Cap)
+    Children:
+      - conRoot_Cap:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =C_Bg
+            Height: =Parent.Height
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Width: =Parent.Width
+          Children:
+            - conHdr_Cap:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(7, 95, 115, 1)
+                  FillPortions: =0
+                  Height: =Round(95 * UI, 0)
+                  LayoutMinHeight: =Round(95 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                  - imgHdr_Cap:
+                      Control: Image@2.2.3
+                      Properties:
+                        Height: =Parent.Height
+                        Image: =HeaderImage
+                        ImagePosition: =ImagePosition.Fill
+                        Width: =Parent.Width
+                  - btnBack_Cap:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        Appearance: =ButtonAppearance.Transparent
+                        Color: =C_White
+                        FontWeight: =""
+                        Height: =Round(60 * UI, 0)
+                        Icon: ="ChevronLeft"
+                        OnSelect: =Navigate(Home, ScreenTransition.UnCoverRight)
+                        PaddingBottom: =5
+                        PaddingLeft: =12
+                        PaddingRight: =12
+                        PaddingTop: =5
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =Round(24 * UI, 0)
+                        Text: =""
+                        VerticalAlign: =VerticalAlign.Middle
+                        Width: =Round(60 * UI, 0)
+                        X: =Gutter + Round(5 * UI, 0)
+                        Y: =Round(18 * UI, 0)
+                  - lblHdrT_Cap:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_White
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(42 * UI, 0)
+                        Size: =Round(19 * UI, 0)
+                        Text: ="Capture an Idea"
+                        Width: =PageW - Round(85 * UI, 0)
+                        Wrap: =false
+                        X: =Gutter + Round(65 * UI, 0)
+                        Y: =Round(12 * UI, 0)
+                  - lblHdrS_Cap:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 0.85)
+                        Font: =AppFont
+                        Height: =Round(25 * UI, 0)
+                        Size: =Round(12 * UI, 0)
+                        Text: |-
+                          ="Floorwalker: " & MeName
+                        Width: =PageW - Round(85 * UI, 0)
+                        Wrap: =false
+                        X: =Gutter + Round(65 * UI, 0)
+                        Y: =Round(53 * UI, 0)
+            - conBody_Cap:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  DropShadow: =DropShadow.None
+                  LayoutAlignItems: =LayoutAlignItems.Stretch
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =Round(12 * UI, 0)
+                  LayoutMinHeight: =Round(250 * UI, 0)
+                  LayoutOverflowY: =LayoutOverflow.Scroll
+                  PaddingBottom: =Round(0 * UI, 0)
+                  PaddingLeft: =Gutter + Round(20 * UI, 0)
+                  PaddingRight: =Gutter + Round(20 * UI, 0)
+                  PaddingTop: =Round(15 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                  - conWhere_Cap:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =C_Line
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round((466) * UI, 0)
+                        LayoutMinHeight: =Round((466) * UI, 0)
+                        RadiusBottomLeft: =Round(20 * UI, 0)
+                        RadiusBottomRight: =Round(20 * UI, 0)
+                        RadiusTopLeft: =Round(20 * UI, 0)
+                        RadiusTopRight: =Round(20 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - cap_Where:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Muted
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(22 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="1  ·  WHERE"
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              Wrap: =false
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(14 * UI, 0)
+                        - lblSvcQ_Cap:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink2
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(24 * UI, 0)
+                              Size: =Round(12 * UI, 0)
+                              Text: ="Service (optional)"
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              Wrap: =false
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(40 * UI, 0)
+                        - conSvcField_Cap:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =RGBA(14, 42, 70, 0.22)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =C_White
+                              Height: =Round(52 * UI, 0)
+                              RadiusBottomLeft: =Round(14 * UI, 0)
+                              RadiusBottomRight: =Round(14 * UI, 0)
+                              RadiusTopLeft: =Round(14 * UI, 0)
+                              RadiusTopRight: =Round(14 * UI, 0)
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(66 * UI, 0)
+                            Children:
+                              - icoSvc_Cap:
+                                  Control: ModernIcon@1.1.1
+                                  Properties:
+                                    Height: =Round(24 * UI, 0)
+                                    Icon: ="Search"
+                                    IconColor: =C_Muted
+                                    Width: =Round(24 * UI, 0)
+                                    X: =Round(14 * UI, 0)
+                                    Y: =Round(14 * UI, 0)
+                              - lblSvc_Cap:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =If(!IsBlank(varSvc.Service), C_Ink, C_Muted)
+                                    Font: =AppFont
+                                    FontWeight: =If(!IsBlank(varSvc.Service), FontWeight.Bold, FontWeight.Normal)
+                                    Height: =Round(52 * UI, 0)
+                                    Size: =Round(13 * UI, 0)
+                                    Text: =If(!IsBlank(varSvc.Service), varSvc.Service, "Search services")
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width - Round(100 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(48 * UI, 0)
+                              - icoSvcGo_Cap:
+                                  Control: ModernIcon@1.1.1
+                                  Properties:
+                                    Height: =Round(24 * UI, 0)
+                                    Icon: ="ChevronRight"
+                                    IconColor: =C_Muted
+                                    Width: =Round(24 * UI, 0)
+                                    X: =Parent.Width - Round(38 * UI, 0)
+                                    Y: =Round(14 * UI, 0)
+                              - btnSvc_Cap:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    BorderStyle: =BorderStyle.None
+                                    FontWeight: =""
+                                    Height: =Parent.Height
+                                    OnSelect: |-
+                                      =Reset(txtSvcSearch_Cap);
+                                      Set(varShowSvc, true)
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =4
+                                    RadiusBottomRight: =4
+                                    RadiusTopLeft: =4
+                                    RadiusTopRight: =4
+                                    Text: =""
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                              - btnSvcClear_Cap:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =C_Muted
+                                    FontWeight: =""
+                                    Height: =Round(50 * UI, 0)
+                                    Icon: ="DismissCircle"
+                                    OnSelect: |-
+                                      =Set(varSvc, Blank());
+                                      Set(varStream, "Other")
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =4
+                                    RadiusBottomRight: =4
+                                    RadiusTopLeft: =4
+                                    RadiusTopRight: =4
+                                    Size: =Round(22 * UI, 0)
+                                    Text: =""
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Visible: =!IsBlank(varSvc.Service)
+                                    Width: =Round(50 * UI, 0)
+                                    X: =Parent.Width - Round(51 * UI, 0)
+                                    Y: =0
+                        - lblStrQ_Cap:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink2
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(24 * UI, 0)
+                              Size: =Round(12 * UI, 0)
+                              Text: ="BAU stream"
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              Wrap: =false
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(130 * UI, 0)
+                        - conStr0_Cap:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =If(varStream = "Surgical & Critical Care", C_Accent, C_Line)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =If(varStream = "Surgical & Critical Care", C_AccentSoft, C_White)
+                              Height: =Round(40 * UI, 0)
+                              RadiusBottomLeft: =Round(20 * UI, 0)
+                              RadiusBottomRight: =Round(20 * UI, 0)
+                              RadiusTopLeft: =Round(20 * UI, 0)
+                              RadiusTopRight: =Round(20 * UI, 0)
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(156 * UI, 0)
+                            Children:
+                              - btnStr0_Cap:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =If(varStream = "Surgical & Critical Care", C_Accent, C_Ink2)
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Parent.Height
+                                    OnSelect: =Set(varStream, "Surgical & Critical Care")
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(20 * UI, 0)
+                                    RadiusBottomRight: =Round(20 * UI, 0)
+                                    RadiusTopLeft: =Round(20 * UI, 0)
+                                    RadiusTopRight: =Round(20 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: ="Surgical & Critical Care"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                        - conStr1_Cap:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =If(varStream = "Women's, Cancer & Mental Health", C_Accent, C_Line)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =If(varStream = "Women's, Cancer & Mental Health", C_AccentSoft, C_White)
+                              Height: =Round(40 * UI, 0)
+                              RadiusBottomLeft: =Round(20 * UI, 0)
+                              RadiusBottomRight: =Round(20 * UI, 0)
+                              RadiusTopLeft: =Round(20 * UI, 0)
+                              RadiusTopRight: =Round(20 * UI, 0)
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(202 * UI, 0)
+                            Children:
+                              - btnStr1_Cap:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =If(varStream = "Women's, Cancer & Mental Health", C_Accent, C_Ink2)
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Parent.Height
+                                    OnSelect: =Set(varStream, "Women's, Cancer & Mental Health")
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(20 * UI, 0)
+                                    RadiusBottomRight: =Round(20 * UI, 0)
+                                    RadiusTopLeft: =Round(20 * UI, 0)
+                                    RadiusTopRight: =Round(20 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: ="Women's, Cancer & Mental Health"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                        - conStr2_Cap:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =If(varStream = "Internal Medicine & Emergency", C_Accent, C_Line)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =If(varStream = "Internal Medicine & Emergency", C_AccentSoft, C_White)
+                              Height: =Round(40 * UI, 0)
+                              RadiusBottomLeft: =Round(20 * UI, 0)
+                              RadiusBottomRight: =Round(20 * UI, 0)
+                              RadiusTopLeft: =Round(20 * UI, 0)
+                              RadiusTopRight: =Round(20 * UI, 0)
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(248 * UI, 0)
+                            Children:
+                              - btnStr2_Cap:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =If(varStream = "Internal Medicine & Emergency", C_Accent, C_Ink2)
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Parent.Height
+                                    OnSelect: =Set(varStream, "Internal Medicine & Emergency")
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(20 * UI, 0)
+                                    RadiusBottomRight: =Round(20 * UI, 0)
+                                    RadiusTopLeft: =Round(20 * UI, 0)
+                                    RadiusTopRight: =Round(20 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: ="Internal Medicine & Emergency"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                        - conStr3_Cap:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =If(varStream = "Other", C_Accent, C_Line)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =If(varStream = "Other", C_AccentSoft, C_White)
+                              Height: =Round(40 * UI, 0)
+                              RadiusBottomLeft: =Round(20 * UI, 0)
+                              RadiusBottomRight: =Round(20 * UI, 0)
+                              RadiusTopLeft: =Round(20 * UI, 0)
+                              RadiusTopRight: =Round(20 * UI, 0)
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(294 * UI, 0)
+                            Children:
+                              - btnStr3_Cap:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =If(varStream = "Other", C_Accent, C_Ink2)
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Parent.Height
+                                    OnSelect: =Set(varStream, "Other")
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(20 * UI, 0)
+                                    RadiusBottomRight: =Round(20 * UI, 0)
+                                    RadiusTopLeft: =Round(20 * UI, 0)
+                                    RadiusTopRight: =Round(20 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: ="Other"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                        - lblStrHint_Cap:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Muted
+                              Font: =AppFont
+                              Height: =Round(20 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: =If(!IsBlank(varSvc.Service), "Set from " & varSvc.Line & ". Tap to change.", "Not sure? Leave it as Other.")
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              Wrap: =false
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(338 * UI, 0)
+                        - lblLocQ_Cap:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink2
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(24 * UI, 0)
+                              Size: =Round(12 * UI, 0)
+                              Text: ="Location"
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              Wrap: =false
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(370 * UI, 0)
+                        - txtLoc_Cap:
+                            Control: Classic/TextInput@2.3.2
+                            Properties:
+                              BorderColor: =RGBA(14, 42, 70, 0.22)
+                              BorderThickness: =1
+                              Color: =C_Ink
+                              Default: =""
+                              FocusedBorderColor: =C_Accent
+                              FocusedBorderThickness: =2
+                              Font: =AppFont
+                              Height: =Round(52 * UI, 0)
+                              HintText: ="Ward, unit or area (e.g. 7B North)"
+                              RadiusBottomLeft: =Round(12 * UI, 0)
+                              RadiusBottomRight: =Round(12 * UI, 0)
+                              RadiusTopLeft: =Round(12 * UI, 0)
+                              RadiusTopRight: =Round(12 * UI, 0)
+                              Size: =Round(12 * UI, 0)
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(396 * UI, 0)
+                  - conStake_Cap:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =C_Line
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round((If(varStakeMode = "Dir", 264, varStakeMode = "Manual", If(varFollow = "Yes", 292, 264), 198)) * UI, 0)
+                        LayoutMinHeight: =Round((If(varStakeMode = "Dir", 264, varStakeMode = "Manual", If(varFollow = "Yes", 292, 264), 198)) * UI, 0)
+                        RadiusBottomLeft: =Round(20 * UI, 0)
+                        RadiusBottomRight: =Round(20 * UI, 0)
+                        RadiusTopLeft: =Round(20 * UI, 0)
+                        RadiusTopRight: =Round(20 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - cap_Stake:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Muted
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(22 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="2  ·  STAKEHOLDER (OPTIONAL)"
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              Wrap: =false
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(14 * UI, 0)
+                        - q_Stake:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(28 * UI, 0)
+                              Size: =Round(13 * UI, 0)
+                              Text: ="Who raised it?"
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              Wrap: =false
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(38 * UI, 0)
+                        - conStakeField_Cap:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =RGBA(14, 42, 70, 0.22)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =C_White
+                              Height: =Round(52 * UI, 0)
+                              RadiusBottomLeft: =Round(14 * UI, 0)
+                              RadiusBottomRight: =Round(14 * UI, 0)
+                              RadiusTopLeft: =Round(14 * UI, 0)
+                              RadiusTopRight: =Round(14 * UI, 0)
+                              Visible: =IsBlank(varStakeMode)
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(74 * UI, 0)
+                            Children:
+                              - icoStake_Cap:
+                                  Control: ModernIcon@1.1.1
+                                  Properties:
+                                    Height: =Round(24 * UI, 0)
+                                    Icon: ="People"
+                                    IconColor: =C_Muted
+                                    Width: =Round(24 * UI, 0)
+                                    X: =Round(14 * UI, 0)
+                                    Y: =Round(14 * UI, 0)
+                              - lblStakeHint_Cap:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    Height: =Round(52 * UI, 0)
+                                    Size: =Round(13 * UI, 0)
+                                    Text: ="Search the staff directory"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width - Round(100 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(48 * UI, 0)
+                              - icoStakeGo_Cap:
+                                  Control: ModernIcon@1.1.1
+                                  Properties:
+                                    Height: =Round(24 * UI, 0)
+                                    Icon: ="ChevronRight"
+                                    IconColor: =C_Muted
+                                    Width: =Round(24 * UI, 0)
+                                    X: =Parent.Width - Round(38 * UI, 0)
+                                    Y: =Round(14 * UI, 0)
+                              - btnStake_Cap:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    BorderStyle: =BorderStyle.None
+                                    FontWeight: =""
+                                    Height: =Parent.Height
+                                    OnSelect: |-
+                                      =Reset(txtStakeSearch_Cap);
+                                      Set(varShowStake, true)
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =4
+                                    RadiusBottomRight: =4
+                                    RadiusTopLeft: =4
+                                    RadiusTopRight: =4
+                                    Text: =""
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                        - conTypeName_Cap:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =C_Accent
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =C_White
+                              Height: =Round(44 * UI, 0)
+                              RadiusBottomLeft: =Round(22 * UI, 0)
+                              RadiusBottomRight: =Round(22 * UI, 0)
+                              RadiusTopLeft: =Round(22 * UI, 0)
+                              RadiusTopRight: =Round(22 * UI, 0)
+                              Visible: =IsBlank(varStakeMode)
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(136 * UI, 0)
+                            Children:
+                              - btnTypeName_Cap:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =C_Accent
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Parent.Height
+                                    OnSelect: |-
+                                      =Set(varStakeDefault, "");
+                                      Set(varStakeMode, "Manual");
+                                      Reset(txtStakeName_Cap)
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(22 * UI, 0)
+                                    RadiusBottomRight: =Round(22 * UI, 0)
+                                    RadiusTopLeft: =Round(22 * UI, 0)
+                                    RadiusTopRight: =Round(22 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: ="Not in the Directory? Type a Name"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                        - conPerson_Cap:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =C_Accent
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =C_AccentSoft
+                              Height: =Round(84 * UI, 0)
+                              RadiusBottomLeft: =Round(16 * UI, 0)
+                              RadiusBottomRight: =Round(16 * UI, 0)
+                              RadiusTopLeft: =Round(16 * UI, 0)
+                              RadiusTopRight: =Round(16 * UI, 0)
+                              Visible: =varStakeMode = "Dir"
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(74 * UI, 0)
+                            Children:
+                              - lblPerName_Cap:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(26 * UI, 0)
+                                    Size: =Round(14 * UI, 0)
+                                    Text: =varStake.Name
+                                    Width: =Parent.Width - Round(76 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(16 * UI, 0)
+                                    Y: =Round(8 * UI, 0)
+                              - lblPerJob_Cap:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink2
+                                    Font: =AppFont
+                                    Height: =Round(22 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: =Coalesce(varStake.Job, "No job title listed") & If(IsBlank(varStake.Dept), "", "  ·  " & varStake.Dept)
+                                    Width: =Parent.Width - Round(76 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(16 * UI, 0)
+                                    Y: =Round(34 * UI, 0)
+                              - lblPerMail_Cap:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    Height: =Round(20 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: =varStake.Email
+                                    Width: =Parent.Width - Round(76 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(16 * UI, 0)
+                                    Y: =Round(56 * UI, 0)
+                              - btnPerClear_Cap:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =C_Ink2
+                                    FontWeight: =""
+                                    Height: =Round(56 * UI, 0)
+                                    Icon: ="DismissCircle"
+                                    OnSelect: |-
+                                      =Set(varStake, Blank());
+                                      Set(varStakeMode, Blank());
+                                      Set(varFollow, Blank())
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =4
+                                    RadiusBottomRight: =4
+                                    RadiusTopLeft: =4
+                                    RadiusTopRight: =4
+                                    Size: =Round(24 * UI, 0)
+                                    Text: =""
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Round(56 * UI, 0)
+                                    X: =Parent.Width - Round(58 * UI, 0)
+                                    Y: =Round(14 * UI, 0)
+                        - txtStakeName_Cap:
+                            Control: Classic/TextInput@2.3.2
+                            Properties:
+                              BorderColor: =RGBA(14, 42, 70, 0.22)
+                              BorderThickness: =1
+                              Color: =C_Ink
+                              Default: =varStakeDefault
+                              FocusedBorderColor: =C_Accent
+                              FocusedBorderThickness: =2
+                              Font: =AppFont
+                              Height: =Round(52 * UI, 0)
+                              HintText: ="Name and role (e.g. Jo Smith, NUM 7B)"
+                              RadiusBottomLeft: =Round(12 * UI, 0)
+                              RadiusBottomRight: =Round(12 * UI, 0)
+                              RadiusTopLeft: =Round(12 * UI, 0)
+                              RadiusTopRight: =Round(12 * UI, 0)
+                              Size: =Round(12 * UI, 0)
+                              Visible: =varStakeMode = "Manual"
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(74 * UI, 0)
+                        - conBackDir_Cap:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Height: =Round(30 * UI, 0)
+                              Visible: =varStakeMode = "Manual"
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(132 * UI, 0)
+                            Children:
+                              - lblBackDir_Cap:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Accent
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(30 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: ="Search the directory instead"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - btnBackDir_Cap:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    BorderStyle: =BorderStyle.None
+                                    FontWeight: =""
+                                    Height: =Parent.Height
+                                    OnSelect: |-
+                                      =Set(varStakeMode, Blank());
+                                      Set(varFollow, Blank());
+                                      Reset(txtStakeSearch_Cap);
+                                      Set(varShowStake, true)
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =4
+                                    RadiusBottomRight: =4
+                                    RadiusTopLeft: =4
+                                    RadiusTopRight: =4
+                                    Text: =""
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                        - lblFolQ_Cap:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink2
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(24 * UI, 0)
+                              Size: =Round(12 * UI, 0)
+                              Text: ="Do they want follow-up?"
+                              Visible: =!IsBlank(varStakeMode)
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              Wrap: =false
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(170 * UI, 0)
+                        - conFolYes_Cap:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =If(varFollow = "Yes", RGBA(30, 122, 80, 1), C_Line)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =If(varFollow = "Yes", RGBA(30, 122, 80, 1), C_White)
+                              Height: =Round(48 * UI, 0)
+                              RadiusBottomLeft: =Round(24 * UI, 0)
+                              RadiusBottomRight: =Round(24 * UI, 0)
+                              RadiusTopLeft: =Round(24 * UI, 0)
+                              RadiusTopRight: =Round(24 * UI, 0)
+                              Visible: =!IsBlank(varStakeMode)
+                              Width: =Round((Parent.Width - Round(36 * UI, 0) - Round(12 * UI, 0)) / 2, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(198 * UI, 0)
+                            Children:
+                              - btnFolYes_Cap:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =If(varFollow = "Yes", C_White, C_Muted)
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Parent.Height
+                                    OnSelect: =Set(varFollow, "Yes")
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(24 * UI, 0)
+                                    RadiusBottomRight: =Round(24 * UI, 0)
+                                    RadiusTopLeft: =Round(24 * UI, 0)
+                                    RadiusTopRight: =Round(24 * UI, 0)
+                                    Size: =Round(12 * UI, 0)
+                                    Text: ="Yes"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                        - conFolNo_Cap:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =If(varFollow = "No", RGBA(176, 52, 40, 1), C_Line)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =If(varFollow = "No", RGBA(176, 52, 40, 1), C_White)
+                              Height: =Round(48 * UI, 0)
+                              RadiusBottomLeft: =Round(24 * UI, 0)
+                              RadiusBottomRight: =Round(24 * UI, 0)
+                              RadiusTopLeft: =Round(24 * UI, 0)
+                              RadiusTopRight: =Round(24 * UI, 0)
+                              Visible: =!IsBlank(varStakeMode)
+                              Width: =Round((Parent.Width - Round(36 * UI, 0) - Round(12 * UI, 0)) / 2, 0)
+                              X: =Round(18 * UI, 0) + Round((Parent.Width - Round(36 * UI, 0) - Round(12 * UI, 0)) / 2, 0) + Round(12 * UI, 0)
+                              Y: =Round(198 * UI, 0)
+                            Children:
+                              - btnFolNo_Cap:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =If(varFollow = "No", C_White, C_Muted)
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Parent.Height
+                                    OnSelect: =Set(varFollow, "No")
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(24 * UI, 0)
+                                    RadiusBottomRight: =Round(24 * UI, 0)
+                                    RadiusTopLeft: =Round(24 * UI, 0)
+                                    RadiusTopRight: =Round(24 * UI, 0)
+                                    Size: =Round(12 * UI, 0)
+                                    Text: ="No"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                        - lblFolWarn_Cap:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Amber
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(20 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="No email for them. Put contact details in the idea."
+                              Visible: =varStakeMode = "Manual" && varFollow = "Yes"
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              Wrap: =false
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(254 * UI, 0)
+                  - conTheme_Cap:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =C_Line
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round((If(varTheme = "Other", 400, 336)) * UI, 0)
+                        LayoutMinHeight: =Round((If(varTheme = "Other", 400, 336)) * UI, 0)
+                        RadiusBottomLeft: =Round(20 * UI, 0)
+                        RadiusBottomRight: =Round(20 * UI, 0)
+                        RadiusTopLeft: =Round(20 * UI, 0)
+                        RadiusTopRight: =Round(20 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - cap_Theme:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Muted
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(22 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="3  ·  THEME"
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              Wrap: =false
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(14 * UI, 0)
+                        - q_Theme:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(28 * UI, 0)
+                              Size: =Round(13 * UI, 0)
+                              Text: ="What kind of uplift is it?"
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              Wrap: =false
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(38 * UI, 0)
+                        - conTh0_Cap:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =If(varTheme = "Workflow/Business Rules", C_Accent, C_Line)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =If(varTheme = "Workflow/Business Rules", C_AccentSoft, C_White)
+                              Height: =Round(44 * UI, 0)
+                              RadiusBottomLeft: =Round(22 * UI, 0)
+                              RadiusBottomRight: =Round(22 * UI, 0)
+                              RadiusTopLeft: =Round(22 * UI, 0)
+                              RadiusTopRight: =Round(22 * UI, 0)
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(74 * UI, 0)
+                            Children:
+                              - btnTh0_Cap:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =If(varTheme = "Workflow/Business Rules", C_Accent, C_Ink2)
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Parent.Height
+                                    OnSelect: =Set(varTheme, "Workflow/Business Rules")
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(22 * UI, 0)
+                                    RadiusBottomRight: =Round(22 * UI, 0)
+                                    RadiusTopLeft: =Round(22 * UI, 0)
+                                    RadiusTopRight: =Round(22 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: ="Workflow/Business Rules"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                        - conTh1_Cap:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =If(varTheme = "Functionality", C_Accent, C_Line)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =If(varTheme = "Functionality", C_AccentSoft, C_White)
+                              Height: =Round(44 * UI, 0)
+                              RadiusBottomLeft: =Round(22 * UI, 0)
+                              RadiusBottomRight: =Round(22 * UI, 0)
+                              RadiusTopLeft: =Round(22 * UI, 0)
+                              RadiusTopRight: =Round(22 * UI, 0)
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(124 * UI, 0)
+                            Children:
+                              - btnTh1_Cap:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =If(varTheme = "Functionality", C_Accent, C_Ink2)
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Parent.Height
+                                    OnSelect: =Set(varTheme, "Functionality")
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(22 * UI, 0)
+                                    RadiusBottomRight: =Round(22 * UI, 0)
+                                    RadiusTopLeft: =Round(22 * UI, 0)
+                                    RadiusTopRight: =Round(22 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: ="Functionality"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                        - conTh2_Cap:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =If(varTheme = "Downtime", C_Accent, C_Line)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =If(varTheme = "Downtime", C_AccentSoft, C_White)
+                              Height: =Round(44 * UI, 0)
+                              RadiusBottomLeft: =Round(22 * UI, 0)
+                              RadiusBottomRight: =Round(22 * UI, 0)
+                              RadiusTopLeft: =Round(22 * UI, 0)
+                              RadiusTopRight: =Round(22 * UI, 0)
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(174 * UI, 0)
+                            Children:
+                              - btnTh2_Cap:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =If(varTheme = "Downtime", C_Accent, C_Ink2)
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Parent.Height
+                                    OnSelect: =Set(varTheme, "Downtime")
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(22 * UI, 0)
+                                    RadiusBottomRight: =Round(22 * UI, 0)
+                                    RadiusTopLeft: =Round(22 * UI, 0)
+                                    RadiusTopRight: =Round(22 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: ="Downtime"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                        - conTh3_Cap:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =If(varTheme = "Resource Development", C_Accent, C_Line)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =If(varTheme = "Resource Development", C_AccentSoft, C_White)
+                              Height: =Round(44 * UI, 0)
+                              RadiusBottomLeft: =Round(22 * UI, 0)
+                              RadiusBottomRight: =Round(22 * UI, 0)
+                              RadiusTopLeft: =Round(22 * UI, 0)
+                              RadiusTopRight: =Round(22 * UI, 0)
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(224 * UI, 0)
+                            Children:
+                              - btnTh3_Cap:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =If(varTheme = "Resource Development", C_Accent, C_Ink2)
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Parent.Height
+                                    OnSelect: =Set(varTheme, "Resource Development")
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(22 * UI, 0)
+                                    RadiusBottomRight: =Round(22 * UI, 0)
+                                    RadiusTopLeft: =Round(22 * UI, 0)
+                                    RadiusTopRight: =Round(22 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: ="Resource Development"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                        - conTh4_Cap:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =If(varTheme = "Other", C_Accent, C_Line)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =If(varTheme = "Other", C_AccentSoft, C_White)
+                              Height: =Round(44 * UI, 0)
+                              RadiusBottomLeft: =Round(22 * UI, 0)
+                              RadiusBottomRight: =Round(22 * UI, 0)
+                              RadiusTopLeft: =Round(22 * UI, 0)
+                              RadiusTopRight: =Round(22 * UI, 0)
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(274 * UI, 0)
+                            Children:
+                              - btnTh4_Cap:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =If(varTheme = "Other", C_Accent, C_Ink2)
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Parent.Height
+                                    OnSelect: =Set(varTheme, "Other")
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(22 * UI, 0)
+                                    RadiusBottomRight: =Round(22 * UI, 0)
+                                    RadiusTopLeft: =Round(22 * UI, 0)
+                                    RadiusTopRight: =Round(22 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: ="Other"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                        - txtThemeOther_Cap:
+                            Control: Classic/TextInput@2.3.2
+                            Properties:
+                              BorderColor: =RGBA(14, 42, 70, 0.22)
+                              BorderThickness: =1
+                              Color: =C_Ink
+                              Default: =""
+                              FocusedBorderColor: =C_Accent
+                              FocusedBorderThickness: =2
+                              Font: =AppFont
+                              Height: =Round(52 * UI, 0)
+                              HintText: ="What kind of theme? (short)"
+                              RadiusBottomLeft: =Round(12 * UI, 0)
+                              RadiusBottomRight: =Round(12 * UI, 0)
+                              RadiusTopLeft: =Round(12 * UI, 0)
+                              RadiusTopRight: =Round(12 * UI, 0)
+                              Size: =Round(12 * UI, 0)
+                              Visible: =varTheme = "Other"
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(330 * UI, 0)
+                  - conIdea_Cap:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =C_Line
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round((278) * UI, 0)
+                        LayoutMinHeight: =Round((278) * UI, 0)
+                        RadiusBottomLeft: =Round(20 * UI, 0)
+                        RadiusBottomRight: =Round(20 * UI, 0)
+                        RadiusTopLeft: =Round(20 * UI, 0)
+                        RadiusTopRight: =Round(20 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - cap_Idea:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Muted
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(22 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="4  ·  THE IDEA"
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              Wrap: =false
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(14 * UI, 0)
+                        - q_Idea:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(28 * UI, 0)
+                              Size: =Round(13 * UI, 0)
+                              Text: ="What is the idea?"
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              Wrap: =false
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(38 * UI, 0)
+                        - txtIdea_Cap:
+                            Control: Classic/TextInput@2.3.2
+                            Properties:
+                              BorderColor: =RGBA(14, 42, 70, 0.22)
+                              BorderThickness: =1
+                              Color: =C_Ink
+                              Default: =""
+                              FocusedBorderColor: =C_Accent
+                              FocusedBorderThickness: =2
+                              Font: =AppFont
+                              Height: =Round(160 * UI, 0)
+                              HintText: ="What happens now, and what would make it better?"
+                              Mode: =TextMode.MultiLine
+                              RadiusBottomLeft: =Round(12 * UI, 0)
+                              RadiusBottomRight: =Round(12 * UI, 0)
+                              RadiusTopLeft: =Round(12 * UI, 0)
+                              RadiusTopRight: =Round(12 * UI, 0)
+                              Size: =Round(12 * UI, 0)
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(74 * UI, 0)
+                        - lblIdeaHint_Cap:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Muted
+                              Font: =AppFont
+                              Height: =Round(20 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="Include the screen or form name if you know it."
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              Wrap: =false
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(240 * UI, 0)
+                  - conPri_Cap:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =C_Line
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round((140) * UI, 0)
+                        LayoutMinHeight: =Round((140) * UI, 0)
+                        RadiusBottomLeft: =Round(20 * UI, 0)
+                        RadiusBottomRight: =Round(20 * UI, 0)
+                        RadiusTopLeft: =Round(20 * UI, 0)
+                        RadiusTopRight: =Round(20 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - cap_Pri:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Muted
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(22 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="5  ·  PRIORITY"
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              Wrap: =false
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(14 * UI, 0)
+                        - q_Pri:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(28 * UI, 0)
+                              Size: =Round(13 * UI, 0)
+                              Text: ="How much impact would it have?"
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              Wrap: =false
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(38 * UI, 0)
+                        - conPriLow_Cap:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =If(varPri = "Low", Switch("Low", "High", RGBA(176, 52, 40, 1), "Medium", C_Amber, C_Teal), C_Line)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =If(varPri = "Low", Switch("Low", "High", RGBA(176, 52, 40, 1), "Medium", C_Amber, C_Teal), C_White)
+                              Height: =Round(48 * UI, 0)
+                              RadiusBottomLeft: =Round(24 * UI, 0)
+                              RadiusBottomRight: =Round(24 * UI, 0)
+                              RadiusTopLeft: =Round(24 * UI, 0)
+                              RadiusTopRight: =Round(24 * UI, 0)
+                              Width: =Round((Parent.Width - Round(36 * UI, 0) - 2 * Round(10 * UI, 0)) / 3, 0)
+                              X: =Round(18 * UI, 0) + 0 * (Round((Parent.Width - Round(36 * UI, 0) - 2 * Round(10 * UI, 0)) / 3, 0) + Round(10 * UI, 0))
+                              Y: =Round(74 * UI, 0)
+                            Children:
+                              - btnPriLow_Cap:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =If(varPri = "Low", C_White, C_Ink2)
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Parent.Height
+                                    OnSelect: =Set(varPri, "Low")
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(24 * UI, 0)
+                                    RadiusBottomRight: =Round(24 * UI, 0)
+                                    RadiusTopLeft: =Round(24 * UI, 0)
+                                    RadiusTopRight: =Round(24 * UI, 0)
+                                    Size: =Round(12 * UI, 0)
+                                    Text: ="Low"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                        - conPriMedium_Cap:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =If(varPri = "Medium", Switch("Medium", "High", RGBA(176, 52, 40, 1), "Medium", C_Amber, C_Teal), C_Line)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =If(varPri = "Medium", Switch("Medium", "High", RGBA(176, 52, 40, 1), "Medium", C_Amber, C_Teal), C_White)
+                              Height: =Round(48 * UI, 0)
+                              RadiusBottomLeft: =Round(24 * UI, 0)
+                              RadiusBottomRight: =Round(24 * UI, 0)
+                              RadiusTopLeft: =Round(24 * UI, 0)
+                              RadiusTopRight: =Round(24 * UI, 0)
+                              Width: =Round((Parent.Width - Round(36 * UI, 0) - 2 * Round(10 * UI, 0)) / 3, 0)
+                              X: =Round(18 * UI, 0) + 1 * (Round((Parent.Width - Round(36 * UI, 0) - 2 * Round(10 * UI, 0)) / 3, 0) + Round(10 * UI, 0))
+                              Y: =Round(74 * UI, 0)
+                            Children:
+                              - btnPriMedium_Cap:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =If(varPri = "Medium", C_White, C_Ink2)
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Parent.Height
+                                    OnSelect: =Set(varPri, "Medium")
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(24 * UI, 0)
+                                    RadiusBottomRight: =Round(24 * UI, 0)
+                                    RadiusTopLeft: =Round(24 * UI, 0)
+                                    RadiusTopRight: =Round(24 * UI, 0)
+                                    Size: =Round(12 * UI, 0)
+                                    Text: ="Medium"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                        - conPriHigh_Cap:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =If(varPri = "High", Switch("High", "High", RGBA(176, 52, 40, 1), "Medium", C_Amber, C_Teal), C_Line)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =If(varPri = "High", Switch("High", "High", RGBA(176, 52, 40, 1), "Medium", C_Amber, C_Teal), C_White)
+                              Height: =Round(48 * UI, 0)
+                              RadiusBottomLeft: =Round(24 * UI, 0)
+                              RadiusBottomRight: =Round(24 * UI, 0)
+                              RadiusTopLeft: =Round(24 * UI, 0)
+                              RadiusTopRight: =Round(24 * UI, 0)
+                              Width: =Round((Parent.Width - Round(36 * UI, 0) - 2 * Round(10 * UI, 0)) / 3, 0)
+                              X: =Round(18 * UI, 0) + 2 * (Round((Parent.Width - Round(36 * UI, 0) - 2 * Round(10 * UI, 0)) / 3, 0) + Round(10 * UI, 0))
+                              Y: =Round(74 * UI, 0)
+                            Children:
+                              - btnPriHigh_Cap:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =If(varPri = "High", C_White, C_Ink2)
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Parent.Height
+                                    OnSelect: =Set(varPri, "High")
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(24 * UI, 0)
+                                    RadiusBottomRight: =Round(24 * UI, 0)
+                                    RadiusTopLeft: =Round(24 * UI, 0)
+                                    RadiusTopRight: =Round(24 * UI, 0)
+                                    Size: =Round(12 * UI, 0)
+                                    Text: ="High"
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                  - conPhoto_Cap:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =C_Line
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round((If(IsBlank(addPhoto_Cap.Media), 140, 262)) * UI, 0)
+                        LayoutMinHeight: =Round((If(IsBlank(addPhoto_Cap.Media), 140, 262)) * UI, 0)
+                        RadiusBottomLeft: =Round(20 * UI, 0)
+                        RadiusBottomRight: =Round(20 * UI, 0)
+                        RadiusTopLeft: =Round(20 * UI, 0)
+                        RadiusTopRight: =Round(20 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - cap_Photo:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Muted
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(22 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="6  ·  PHOTO (OPTIONAL)"
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              Wrap: =false
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(14 * UI, 0)
+                        - q_Photo:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(28 * UI, 0)
+                              Size: =Round(13 * UI, 0)
+                              Text: ="No patient details in the photo"
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              Wrap: =false
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(38 * UI, 0)
+                        - conAddPhoto_Cap:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =C_Accent
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =C_White
+                              Height: =Round(48 * UI, 0)
+                              RadiusBottomLeft: =Round(24 * UI, 0)
+                              RadiusBottomRight: =Round(24 * UI, 0)
+                              RadiusTopLeft: =Round(24 * UI, 0)
+                              RadiusTopRight: =Round(24 * UI, 0)
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(74 * UI, 0)
+                            Children:
+                              - lblAddPhoto_Cap:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Align: =Align.Center
+                                    Color: =C_Accent
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(48 * UI, 0)
+                                    Size: =Round(12 * UI, 0)
+                                    Text: =If(IsBlank(addPhoto_Cap.Media), "Add Photo", "Change Photo")
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                        - imgPhoto_Cap:
+                            Control: Image@2.2.3
+                            Properties:
+                              Height: =Round(110 * UI, 0)
+                              Image: =addPhoto_Cap.Media
+                              ImagePosition: =ImagePosition.Fit
+                              Visible: =!IsBlank(addPhoto_Cap.Media)
+                              Width: =Round(110 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(134 * UI, 0)
+                        - lblRemovePhoto_Cap:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =RGBA(176, 52, 40, 1)
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(26 * UI, 0)
+                              Size: =Round(12 * UI, 0)
+                              Text: ="Remove Photo"
+                              Visible: =!IsBlank(addPhoto_Cap.Media)
+                              Width: =Parent.Width - Round(36 * UI, 0) - Round(126 * UI, 0)
+                              Wrap: =false
+                              X: =Round(18 * UI, 0) + Round(126 * UI, 0)
+                              Y: =Round(176 * UI, 0)
+                        - btnRemovePhoto_Cap:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              BorderStyle: =BorderStyle.None
+                              FontWeight: =""
+                              Height: =Round(46 * UI, 0)
+                              OnSelect: =Reset(addPhoto_Cap)
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =4
+                              RadiusBottomRight: =4
+                              RadiusTopLeft: =4
+                              RadiusTopRight: =4
+                              Text: =""
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width - Round(36 * UI, 0) - Round(116 * UI, 0)
+                              X: =Round(18 * UI, 0) + Round(116 * UI, 0)
+                              Y: =Round(166 * UI, 0)
+                        - addPhoto_Cap:
+                            Control: AddMedia@2.2.1
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 0)
+                              BorderStyle: =BorderStyle.None
+                              BorderThickness: =0
+                              Color: =RGBA(0, 0, 0, 0)
+                              DisabledColor: =RGBA(0, 0, 0, 0)
+                              DisabledFill: =RGBA(0, 0, 0, 0)
+                              Fill: =RGBA(0, 0, 0, 0)
+                              Font: =AppFont
+                              Height: =Round(48 * UI, 0)
+                              HoverBorderColor: =RGBA(0, 0, 0, 0)
+                              HoverColor: =RGBA(0, 0, 0, 0)
+                              HoverFill: =RGBA(0, 0, 0, 0)
+                              PressedBorderColor: =RGBA(0, 0, 0, 0)
+                              PressedColor: =RGBA(0, 0, 0, 0)
+                              PressedFill: =RGBA(0, 0, 0, 0)
+                              Size: =Round(12 * UI, 0)
+                              Width: =Parent.Width - Round(36 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(74 * UI, 0)
+                  - conEnd_Cap:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =Round(16 * UI, 0)
+                        LayoutMinHeight: =Round(16 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+            - conFoot_Cap:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  BorderColor: =C_Line
+                  BorderThickness: =1
+                  DropShadow: =DropShadow.None
+                  Fill: =C_White
+                  FillPortions: =0
+                  Height: =Round(84 * UI, 0)
+                  LayoutMinHeight: =Round(84 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                  - conSubmit_Cap:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =If(btnSubmit_Cap.DisplayMode = DisplayMode.Edit, C_Accent, RGBA(160, 174, 180, 1))
+                        Height: =Round(60 * UI, 0)
+                        RadiusBottomLeft: =Round(28 * UI, 0)
+                        RadiusBottomRight: =Round(28 * UI, 0)
+                        RadiusTopLeft: =Round(28 * UI, 0)
+                        RadiusTopRight: =Round(28 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                        X: =Gutter + Round(20 * UI, 0)
+                        Y: =Round(12 * UI, 0)
+                      Children:
+                        - lblSubmit_Cap:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Center
+                              Color: =C_White
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(60 * UI, 0)
+                              Size: =If(btnSubmit_Cap.DisplayMode = DisplayMode.Edit || varSaving, Round(15 * UI, 0), Round(12 * UI, 0))
+                              Text: =If(varSaving, "Saving...", btnSubmit_Cap.DisplayMode = DisplayMode.Edit, "Submit Idea", "Add a theme, idea and priority")
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+                              Wrap: =false
+                        - btnSubmit_Cap:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              BorderStyle: =BorderStyle.None
+                              DisplayMode: =If(!IsBlank(varTheme) && (!varTheme = "Other" || !IsBlank(Trim(txtThemeOther_Cap.Text))) && !IsBlank(Trim(txtIdea_Cap.Text)) && !IsBlank(varPri) && !varSaving, DisplayMode.Edit, DisplayMode.Disabled)
+                              FontWeight: =""
+                              Height: =Parent.Height
+                              OnSelect: |-
+                                =Set(varSaving, true);
+                                With(
+                                    {
+                                        rec: Patch(
+                                            Floorwalk_Ideas,
+                                            Defaults(Floorwalk_Ideas),
+                                            {
+                                                Title: Left(Trim(txtIdea_Cap.Text), 120),
+                                                Idea: Trim(txtIdea_Cap.Text),
+                                                Service: varSvc.Service,
+                                                ServiceLine: varSvc.Line,
+                                                Stream: Coalesce(varStream, "Other"),
+                                                Location: Trim(txtLoc_Cap.Text),
+                                                StakeholderName: If(varStakeMode = "Dir", varStake.Name, varStakeMode = "Manual", Trim(txtStakeName_Cap.Text), Blank()),
+                                                StakeholderEmail: If(varStakeMode = "Dir", varStake.Email, Blank()),
+                                                StakeholderJobTitle: If(varStakeMode = "Dir", varStake.Job, Blank()),
+                                                StakeholderDept: If(varStakeMode = "Dir", varStake.Dept, Blank()),
+                                                FollowUp: If(((varStakeMode = "Dir" && !IsBlank(varStake.Name)) || (varStakeMode = "Manual" && !IsBlank(Trim(txtStakeName_Cap.Text)))) && varFollow = "Yes", "Yes", "No"),
+                                                Theme: varTheme,
+                                                ThemeOther: If(varTheme = "Other", Trim(txtThemeOther_Cap.Text), Blank()),
+                                                Priority: varPri,
+                                                Status: "New"
+                                            }
+                                        )
+                                    },
+                                    If(
+                                        IsEmpty(Errors(Floorwalk_Ideas)),
+                                        // record is saved; the photo goes on second, so a failed photo never loses the idea
+                                        If(
+                                            !IsBlank(addPhoto_Cap.Media),
+                                            Patch(Floorwalk_Ideas, rec, { Photo: imgPhoto_Cap.Image });
+                                            If(!IsEmpty(Errors(Floorwalk_Ideas, rec)), Notify("Idea saved, but the photo could not be attached.", NotificationType.Warning))
+                                        );
+                                        Set(varSaving, false);
+                                        Set(varShowDone, true),
+                                        Set(varSaving, false);
+                                        Notify("Could not save. Check your connection and try again.", NotificationType.Error)
+                                    )
+                                )
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =4
+                              RadiusBottomRight: =4
+                              RadiusTopLeft: =4
+                              RadiusTopRight: =4
+                              Text: =""
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+      - conOverlaySvc_Cap:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =RGBA(14, 28, 42, 0.45)
+            Height: =App.Height
+            Visible: =varShowSvc
+            Width: =App.Width
+            X: =0
+            Y: =0
+          Children:
+            - btnVeilSvc_Cap:
+                Control: ModernButton@1.0.0
+                Properties:
+                  Align: =Align.Center
+                  Appearance: =ButtonAppearance.Transparent
+                  BorderStyle: =BorderStyle.None
+                  FontWeight: =""
+                  Height: =Parent.Height
+                  OnSelect: =Set(varShowSvc, false)
+                  PaddingBottom: =5
+                  PaddingLeft: =12
+                  PaddingRight: =12
+                  PaddingTop: =5
+                  RadiusBottomLeft: =4
+                  RadiusBottomRight: =4
+                  RadiusTopLeft: =4
+                  RadiusTopRight: =4
+                  Text: =""
+                  VerticalAlign: =VerticalAlign.Middle
+                  Width: =Parent.Width
+            - conSheetSvc_Cap:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =C_White
+                  Height: =Min(App.Height - Round(50 * UI, 0), Round(640 * UI, 0))
+                  RadiusBottomLeft: =Round(24 * UI, 0)
+                  RadiusBottomRight: =Round(24 * UI, 0)
+                  RadiusTopLeft: =Round(24 * UI, 0)
+                  RadiusTopRight: =Round(24 * UI, 0)
+                  Width: =Min(App.Width, SheetW)
+                  X: =(App.Width - Min(App.Width, SheetW)) / 2
+                  Y: =If(App.Width >= 720, (App.Height - Min(App.Height - Round(50 * UI, 0), Round(640 * UI, 0))) / 2, App.Height - Min(App.Height - Round(50 * UI, 0), Round(640 * UI, 0)))
+                Children:
+                  - conHandleSvc_Cap:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =C_Line
+                        Height: =Round(5 * UI, 0)
+                        RadiusBottomLeft: =Round(3 * UI, 0)
+                        RadiusBottomRight: =Round(3 * UI, 0)
+                        RadiusTopLeft: =Round(3 * UI, 0)
+                        RadiusTopRight: =Round(3 * UI, 0)
+                        Width: =Round(44 * UI, 0)
+                        X: =(Parent.Width - Round(44 * UI, 0)) / 2
+                        Y: =Round(8 * UI, 0)
+                  - lblSheetSvc_Cap:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_Ink
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(34 * UI, 0)
+                        Size: =Round(18 * UI, 0)
+                        Text: ="Pick a Service"
+                        Width: =Parent.Width - Round(90 * UI, 0)
+                        Wrap: =false
+                        X: =Round(20 * UI, 0)
+                        Y: =Round(20 * UI, 0)
+                  - btnCloseSvc_Cap:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        Appearance: =ButtonAppearance.Transparent
+                        Color: =C_Ink2
+                        FontWeight: =""
+                        Height: =Round(56 * UI, 0)
+                        Icon: ="DismissCircle"
+                        OnSelect: =Set(varShowSvc, false)
+                        PaddingBottom: =5
+                        PaddingLeft: =12
+                        PaddingRight: =12
+                        PaddingTop: =5
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =Round(24 * UI, 0)
+                        Text: =""
+                        VerticalAlign: =VerticalAlign.Middle
+                        Width: =Round(56 * UI, 0)
+                        X: =Parent.Width - Round(66 * UI, 0)
+                        Y: =Round(10 * UI, 0)
+                  - conSvcSearch_Cap:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        BorderColor: =RGBA(14, 42, 70, 0.22)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        Height: =Round(52 * UI, 0)
+                        RadiusBottomLeft: =Round(14 * UI, 0)
+                        RadiusBottomRight: =Round(14 * UI, 0)
+                        RadiusTopLeft: =Round(14 * UI, 0)
+                        RadiusTopRight: =Round(14 * UI, 0)
+                        Width: =Parent.Width - Round(40 * UI, 0)
+                        X: =Round(20 * UI, 0)
+                        Y: =Round(64 * UI, 0)
+                      Children:
+                        - icoSvcSearch_Cap:
+                            Control: ModernIcon@1.1.1
+                            Properties:
+                              Height: =Round(24 * UI, 0)
+                              Icon: ="Search"
+                              IconColor: =C_Muted
+                              Width: =Round(24 * UI, 0)
+                              X: =Round(14 * UI, 0)
+                              Y: =Round(14 * UI, 0)
+                        - txtSvcSearch_Cap:
+                            Control: Classic/TextInput@2.3.2
+                            Properties:
+                              BorderStyle: =BorderStyle.None
+                              Color: =C_Ink
+                              Default: =""
+                              DelayOutput: =true
+                              Fill: =RGBA(0, 0, 0, 0)
+                              Font: =AppFont
+                              Height: =Parent.Height
+                              HintText: ="Search e.g. physio, 7B, cardiology"
+                              Size: =Round(13 * UI, 0)
+                              Width: =Parent.Width - Round(54 * UI, 0)
+                              X: =Round(46 * UI, 0)
+                  - lblSvcCount_Cap:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_Muted
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(22 * UI, 0)
+                        Size: =Round(11 * UI, 0)
+                        Text: =CountRows(galSvc_Cap.AllItems) & If(CountRows(galSvc_Cap.AllItems) = 1, " service", " services") & "  ·  Allied Health is split by profession"
+                        Width: =Parent.Width - Round(40 * UI, 0)
+                        Wrap: =false
+                        X: =Round(20 * UI, 0)
+                        Y: =Round(122 * UI, 0)
+                  - lblSvcNone_Cap:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        Color: =C_Muted
+                        Font: =AppFont
+                        Height: =Round(50 * UI, 0)
+                        Size: =Round(12 * UI, 0)
+                        Text: ="No service matches. Close this and leave Service blank."
+                        Visible: =CountRows(galSvc_Cap.AllItems) = 0
+                        Width: =Parent.Width - Round(40 * UI, 0)
+                        X: =Round(20 * UI, 0)
+                        Y: =Round(200 * UI, 0)
+                  - galSvc_Cap:
+                      Control: Gallery@2.15.0
+                      Variant: Vertical
+                      Properties:
+                        Height: =Parent.Height - Round(160 * UI, 0)
+                        Items: |-
+                          =SortByColumns(
+                              Filter(
+                                  ServiceMap,
+                                  IsBlank(Trim(txtSvcSearch_Cap.Text))
+                                  || Lower(Trim(txtSvcSearch_Cap.Text)) in Lower(Service & " " & Line & " " & Stream)
+                              ),
+                              "Line",
+                              SortOrder.Ascending,
+                              "Service",
+                              SortOrder.Ascending
+                          )
+                        TemplatePadding: =0
+                        TemplateSize: =Round(64 * UI, 0)
+                        Width: =Parent.Width - Round(24 * UI, 0)
+                        X: =Round(12 * UI, 0)
+                        Y: =Round(150 * UI, 0)
+                      Children:
+                        - conSvcRow_Cap:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Height: =Parent.TemplateHeight
+                              Width: =Parent.TemplateWidth
+                              X: =0
+                              Y: =0
+                            Children:
+                              - conSvcSel_Cap:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =If(ThisItem.Service = varSvc.Service, C_AccentSoft, RGBA(0, 0, 0, 0))
+                                    Height: =Round(60 * UI, 0)
+                                    RadiusBottomLeft: =Round(12 * UI, 0)
+                                    RadiusBottomRight: =Round(12 * UI, 0)
+                                    RadiusTopLeft: =Round(12 * UI, 0)
+                                    RadiusTopRight: =Round(12 * UI, 0)
+                                    Width: =Parent.Width
+                                    X: =0
+                                    Y: =Round(2 * UI, 0)
+                              - lblSvcRowT_Cap:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(26 * UI, 0)
+                                    Size: =Round(13 * UI, 0)
+                                    Text: =ThisItem.Service
+                                    Width: =Parent.Width - Round(24 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(12 * UI, 0)
+                                    Y: =Round(8 * UI, 0)
+                              - lblSvcRowS_Cap:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    Height: =Round(22 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: =ThisItem.Line & "  ·  " & ThisItem.Stream
+                                    Width: =Parent.Width - Round(24 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(12 * UI, 0)
+                                    Y: =Round(34 * UI, 0)
+                              - conSvcLn_Cap:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =C_Line
+                                    Height: =1
+                                    Width: =Parent.Width - Round(24 * UI, 0)
+                                    X: =Round(12 * UI, 0)
+                                    Y: =Parent.Height - 1
+                              - btnSvcRow_Cap:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    BorderStyle: =BorderStyle.None
+                                    FontWeight: =""
+                                    Height: =Parent.Height
+                                    OnSelect: |-
+                                      =Set(varSvc, ThisItem);
+                                      Set(varStream, ThisItem.Stream);
+                                      Set(varShowSvc, false)
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =4
+                                    RadiusBottomRight: =4
+                                    RadiusTopLeft: =4
+                                    RadiusTopRight: =4
+                                    Text: =""
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+      - conOverlayStk_Cap:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =RGBA(14, 28, 42, 0.45)
+            Height: =App.Height
+            Visible: =varShowStake
+            Width: =App.Width
+            X: =0
+            Y: =0
+          Children:
+            - btnVeilStk_Cap:
+                Control: ModernButton@1.0.0
+                Properties:
+                  Align: =Align.Center
+                  Appearance: =ButtonAppearance.Transparent
+                  BorderStyle: =BorderStyle.None
+                  FontWeight: =""
+                  Height: =Parent.Height
+                  OnSelect: =Set(varShowStake, false)
+                  PaddingBottom: =5
+                  PaddingLeft: =12
+                  PaddingRight: =12
+                  PaddingTop: =5
+                  RadiusBottomLeft: =4
+                  RadiusBottomRight: =4
+                  RadiusTopLeft: =4
+                  RadiusTopRight: =4
+                  Text: =""
+                  VerticalAlign: =VerticalAlign.Middle
+                  Width: =Parent.Width
+            - conSheetStk_Cap:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =C_White
+                  Height: =Min(App.Height - Round(50 * UI, 0), Round(640 * UI, 0))
+                  RadiusBottomLeft: =Round(24 * UI, 0)
+                  RadiusBottomRight: =Round(24 * UI, 0)
+                  RadiusTopLeft: =Round(24 * UI, 0)
+                  RadiusTopRight: =Round(24 * UI, 0)
+                  Width: =Min(App.Width, SheetW)
+                  X: =(App.Width - Min(App.Width, SheetW)) / 2
+                  Y: =If(App.Width >= 720, (App.Height - Min(App.Height - Round(50 * UI, 0), Round(640 * UI, 0))) / 2, App.Height - Min(App.Height - Round(50 * UI, 0), Round(640 * UI, 0)))
+                Children:
+                  - conHandleStk_Cap:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =C_Line
+                        Height: =Round(5 * UI, 0)
+                        RadiusBottomLeft: =Round(3 * UI, 0)
+                        RadiusBottomRight: =Round(3 * UI, 0)
+                        RadiusTopLeft: =Round(3 * UI, 0)
+                        RadiusTopRight: =Round(3 * UI, 0)
+                        Width: =Round(44 * UI, 0)
+                        X: =(Parent.Width - Round(44 * UI, 0)) / 2
+                        Y: =Round(8 * UI, 0)
+                  - lblSheetStk_Cap:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_Ink
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(34 * UI, 0)
+                        Size: =Round(18 * UI, 0)
+                        Text: ="Find a Stakeholder"
+                        Width: =Parent.Width - Round(90 * UI, 0)
+                        Wrap: =false
+                        X: =Round(20 * UI, 0)
+                        Y: =Round(20 * UI, 0)
+                  - btnCloseStk_Cap:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        Appearance: =ButtonAppearance.Transparent
+                        Color: =C_Ink2
+                        FontWeight: =""
+                        Height: =Round(56 * UI, 0)
+                        Icon: ="DismissCircle"
+                        OnSelect: =Set(varShowStake, false)
+                        PaddingBottom: =5
+                        PaddingLeft: =12
+                        PaddingRight: =12
+                        PaddingTop: =5
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =Round(24 * UI, 0)
+                        Text: =""
+                        VerticalAlign: =VerticalAlign.Middle
+                        Width: =Round(56 * UI, 0)
+                        X: =Parent.Width - Round(66 * UI, 0)
+                        Y: =Round(10 * UI, 0)
+                  - conStkSearch_Cap:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        BorderColor: =RGBA(14, 42, 70, 0.22)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        Height: =Round(52 * UI, 0)
+                        RadiusBottomLeft: =Round(14 * UI, 0)
+                        RadiusBottomRight: =Round(14 * UI, 0)
+                        RadiusTopLeft: =Round(14 * UI, 0)
+                        RadiusTopRight: =Round(14 * UI, 0)
+                        Width: =Parent.Width - Round(40 * UI, 0)
+                        X: =Round(20 * UI, 0)
+                        Y: =Round(64 * UI, 0)
+                      Children:
+                        - icoStkSearch_Cap:
+                            Control: ModernIcon@1.1.1
+                            Properties:
+                              Height: =Round(24 * UI, 0)
+                              Icon: ="Search"
+                              IconColor: =C_Muted
+                              Width: =Round(24 * UI, 0)
+                              X: =Round(14 * UI, 0)
+                              Y: =Round(14 * UI, 0)
+                        - txtStakeSearch_Cap:
+                            Control: Classic/TextInput@2.3.2
+                            Properties:
+                              BorderStyle: =BorderStyle.None
+                              Color: =C_Ink
+                              Default: =""
+                              DelayOutput: =true
+                              Fill: =RGBA(0, 0, 0, 0)
+                              Font: =AppFont
+                              Height: =Parent.Height
+                              HintText: ="Type a name (3+ letters)"
+                              Size: =Round(13 * UI, 0)
+                              Width: =Parent.Width - Round(54 * UI, 0)
+                              X: =Round(46 * UI, 0)
+                  - lblStkCount_Cap:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_Muted
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(22 * UI, 0)
+                        Size: =Round(11 * UI, 0)
+                        Text: =If(Len(Trim(txtStakeSearch_Cap.Text)) < 3, "Type at least 3 letters of their name", CountRows(galStake_Cap.AllItems) & If(CountRows(galStake_Cap.AllItems) = 1, " person", " people") & " found  ·  shows job title")
+                        Width: =Parent.Width - Round(40 * UI, 0)
+                        Wrap: =false
+                        X: =Round(20 * UI, 0)
+                        Y: =Round(122 * UI, 0)
+                  - lblStkNone_Cap:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        Color: =C_Muted
+                        Font: =AppFont
+                        Height: =Round(50 * UI, 0)
+                        Size: =Round(12 * UI, 0)
+                        Text: ="No one found. Try the surname, or type the name below."
+                        Visible: =!Len(Trim(txtStakeSearch_Cap.Text)) < 3 && CountRows(galStake_Cap.AllItems) = 0
+                        Width: =Parent.Width - Round(40 * UI, 0)
+                        X: =Round(20 * UI, 0)
+                        Y: =Round(200 * UI, 0)
+                  - galStake_Cap:
+                      Control: Gallery@2.15.0
+                      Variant: Vertical
+                      Properties:
+                        Height: =Parent.Height - Round(160 * UI, 0) - Round(80 * UI, 0)
+                        Items: |-
+                          =Filter(
+                              Office365Users.SearchUserV2(
+                                  {
+                                      searchTerm: If(Len(Trim(txtStakeSearch_Cap.Text)) >= 3, Trim(txtStakeSearch_Cap.Text), ""),
+                                      top: 25,
+                                      isSearchTermRequired: true
+                                  }
+                              ).value,
+                              !IsBlank(Mail)
+                          )
+                        TemplatePadding: =0
+                        TemplateSize: =Round(70 * UI, 0)
+                        Width: =Parent.Width - Round(24 * UI, 0)
+                        X: =Round(12 * UI, 0)
+                        Y: =Round(150 * UI, 0)
+                      Children:
+                        - conStkRow_Cap:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Height: =Parent.TemplateHeight
+                              Width: =Parent.TemplateWidth
+                              X: =0
+                              Y: =0
+                            Children:
+                              - lblStkRowT_Cap:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(26 * UI, 0)
+                                    Size: =Round(13 * UI, 0)
+                                    Text: =ThisItem.DisplayName
+                                    Width: =Parent.Width - Round(24 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(12 * UI, 0)
+                                    Y: =Round(6 * UI, 0)
+                              - lblStkRowJ_Cap:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink2
+                                    Font: =AppFont
+                                    Height: =Round(20 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: =Coalesce(ThisItem.JobTitle, "No job title listed") & If(IsBlank(ThisItem.Department), "", "  ·  " & ThisItem.Department)
+                                    Width: =Parent.Width - Round(24 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(12 * UI, 0)
+                                    Y: =Round(31 * UI, 0)
+                              - lblStkRowM_Cap:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    Height: =Round(18 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: =Lower(ThisItem.Mail)
+                                    Width: =Parent.Width - Round(24 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(12 * UI, 0)
+                                    Y: =Round(50 * UI, 0)
+                              - conStkLn_Cap:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =C_Line
+                                    Height: =1
+                                    Width: =Parent.Width - Round(24 * UI, 0)
+                                    X: =Round(12 * UI, 0)
+                                    Y: =Parent.Height - 1
+                              - btnStkRow_Cap:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    BorderStyle: =BorderStyle.None
+                                    FontWeight: =""
+                                    Height: =Parent.Height
+                                    OnSelect: |-
+                                      =Set(varStake, { Name: ThisItem.DisplayName, Email: Lower(ThisItem.Mail), Job: ThisItem.JobTitle, Dept: ThisItem.Department });
+                                      Set(varStakeMode, "Dir");
+                                      Set(varShowStake, false)
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =4
+                                    RadiusBottomRight: =4
+                                    RadiusTopLeft: =4
+                                    RadiusTopRight: =4
+                                    Text: =""
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                  - conStkType_Cap:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        BorderColor: =C_Accent
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        Height: =Round(52 * UI, 0)
+                        RadiusBottomLeft: =Round(26 * UI, 0)
+                        RadiusBottomRight: =Round(26 * UI, 0)
+                        RadiusTopLeft: =Round(26 * UI, 0)
+                        RadiusTopRight: =Round(26 * UI, 0)
+                        Width: =Parent.Width - Round(40 * UI, 0)
+                        X: =Round(20 * UI, 0)
+                        Y: =Parent.Height - Round(68 * UI, 0)
+                      Children:
+                        - btnStkType_Cap:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              Color: =C_Accent
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Parent.Height
+                              OnSelect: |-
+                                =Set(varStakeDefault, Trim(txtStakeSearch_Cap.Text));
+                                Set(varStakeMode, "Manual");
+                                Set(varShowStake, false);
+                                Reset(txtStakeName_Cap)
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =Round(26 * UI, 0)
+                              RadiusBottomRight: =Round(26 * UI, 0)
+                              RadiusTopLeft: =Round(26 * UI, 0)
+                              RadiusTopRight: =Round(26 * UI, 0)
+                              Size: =Round(12 * UI, 0)
+                              Text: ="Not Listed? Type the Name"
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+      - conOverlayDone_Cap:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =RGBA(14, 28, 42, 0.45)
+            Height: =App.Height
+            Visible: =varShowDone
+            Width: =App.Width
+            X: =0
+            Y: =0
+          Children:
+            - conDone_Cap:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =C_White
+                  Height: =Round(340 * UI, 0)
+                  RadiusBottomLeft: =Round(24 * UI, 0)
+                  RadiusBottomRight: =Round(24 * UI, 0)
+                  RadiusTopLeft: =Round(24 * UI, 0)
+                  RadiusTopRight: =Round(24 * UI, 0)
+                  Width: =Min(App.Width - Round(40 * UI, 0), Round(420 * UI, 0))
+                  X: =(App.Width - Min(App.Width - Round(40 * UI, 0), Round(420 * UI, 0))) / 2
+                  Y: =(App.Height - Round(340 * UI, 0)) / 2
+                Children:
+                  - conDoneIc_Cap:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =C_GoodBg
+                        Height: =Round(72 * UI, 0)
+                        RadiusBottomLeft: =Round(36 * UI, 0)
+                        RadiusBottomRight: =Round(36 * UI, 0)
+                        RadiusTopLeft: =Round(36 * UI, 0)
+                        RadiusTopRight: =Round(36 * UI, 0)
+                        Width: =Round(72 * UI, 0)
+                        X: =(Parent.Width - Round(72 * UI, 0)) / 2
+                        Y: =Round(28 * UI, 0)
+                      Children:
+                        - icoDone_Cap:
+                            Control: ModernIcon@1.1.1
+                            Properties:
+                              Height: =Round(40 * UI, 0)
+                              Icon: ="CheckmarkCircle"
+                              IconColor: =RGBA(30, 122, 80, 1)
+                              IconStyle: =IconStyle.Filled
+                              Width: =Round(40 * UI, 0)
+                              X: =Round(16 * UI, 0)
+                              Y: =Round(16 * UI, 0)
+                  - lblDoneT_Cap:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        Color: =C_Ink
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(36 * UI, 0)
+                        Size: =Round(19 * UI, 0)
+                        Text: ="Idea Saved"
+                        Width: =Parent.Width - Round(40 * UI, 0)
+                        Wrap: =false
+                        X: =Round(20 * UI, 0)
+                        Y: =Round(112 * UI, 0)
+                  - lblDoneS_Cap:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        Color: =C_Ink2
+                        Font: =AppFont
+                        Height: =Round(24 * UI, 0)
+                        Size: =Round(12 * UI, 0)
+                        Text: ="Thanks. It is on the dashboard now."
+                        Width: =Parent.Width - Round(40 * UI, 0)
+                        Wrap: =false
+                        X: =Round(20 * UI, 0)
+                        Y: =Round(150 * UI, 0)
+                  - conDoneAgain_Cap:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =C_Accent
+                        Height: =Round(56 * UI, 0)
+                        RadiusBottomLeft: =Round(28 * UI, 0)
+                        RadiusBottomRight: =Round(28 * UI, 0)
+                        RadiusTopLeft: =Round(28 * UI, 0)
+                        RadiusTopRight: =Round(28 * UI, 0)
+                        Width: =Parent.Width - Round(48 * UI, 0)
+                        X: =Round(24 * UI, 0)
+                        Y: =Round(196 * UI, 0)
+                      Children:
+                        - btnDoneAgain_Cap:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              Color: =C_White
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Parent.Height
+                              OnSelect: =Select(btnReset_Cap)
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =Round(28 * UI, 0)
+                              RadiusBottomRight: =Round(28 * UI, 0)
+                              RadiusTopLeft: =Round(28 * UI, 0)
+                              RadiusTopRight: =Round(28 * UI, 0)
+                              Size: =Round(14 * UI, 0)
+                              Text: ="Capture Another"
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+                  - conDoneHome_Cap:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        BorderColor: =C_Accent
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        Height: =Round(56 * UI, 0)
+                        RadiusBottomLeft: =Round(28 * UI, 0)
+                        RadiusBottomRight: =Round(28 * UI, 0)
+                        RadiusTopLeft: =Round(28 * UI, 0)
+                        RadiusTopRight: =Round(28 * UI, 0)
+                        Width: =Parent.Width - Round(48 * UI, 0)
+                        X: =Round(24 * UI, 0)
+                        Y: =Round(262 * UI, 0)
+                      Children:
+                        - btnDoneHome_Cap:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              Color: =C_Accent
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Parent.Height
+                              OnSelect: |-
+                                =Set(varShowDone, false);
+                                Navigate(Home, ScreenTransition.UnCoverRight)
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =Round(28 * UI, 0)
+                              RadiusBottomRight: =Round(28 * UI, 0)
+                              RadiusTopLeft: =Round(28 * UI, 0)
+                              RadiusTopRight: =Round(28 * UI, 0)
+                              Size: =Round(14 * UI, 0)
+                              Text: ="Back to Home"
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+      - btnReset_Cap:
+          Control: ModernButton@1.0.0
+          Properties:
+            Align: =Align.Center
+            FontWeight: =""
+            Height: =1
+            OnSelect: |-
+              =// RESET: clear every answer (screen opens, and "Capture Another")
+              Set(varSvc, Blank());
+              Set(varStream, "Other");
+              Set(varStake, Blank());
+              Set(varStakeMode, Blank());
+              Set(varStakeDefault, "");
+              Set(varFollow, Blank());
+              Set(varTheme, Blank());
+              Set(varPri, Blank());
+              Set(varSaving, false);
+              Set(varShowSvc, false);
+              Set(varShowStake, false);
+              Set(varShowDone, false);
+              Reset(txtLoc_Cap);
+              Reset(txtStakeName_Cap);
+              Reset(txtThemeOther_Cap);
+              Reset(txtIdea_Cap);
+              Reset(addPhoto_Cap)
+            PaddingBottom: =5
+            PaddingLeft: =12
+            PaddingRight: =12
+            PaddingTop: =5
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Size: =Round(11 * UI, 0)
+            Text: =""
+            VerticalAlign: =VerticalAlign.Middle
+            Visible: =false
+            Width: =1

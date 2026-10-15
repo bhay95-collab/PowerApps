@@ -104,3 +104,12 @@ Master lists are built from the DTK kit-list Word document by `tools/kits/build_
 
 Rules learned from the scan test (9 Oct 2026): form barcodes contain exactly the form number (SW1171, SW626, MN383); no version in the barcode (versions are not checked); one code per scan.
 **No Choice columns in any kit list.** Values shown in brackets are what the app writes as text. A Choice column needs `{ Value: ... }` and makes the save red (Status in `Kit_Audit_Items` caught this, Oct 2026). Keep every column as text when importing.
+
+---
+
+## Floorwalking Ideas (CITTA site, Oct 2026)
+
+Site: `https://healthqld.sharepoint.com/teams/CITTA`. One list, `Floorwalk_Ideas`, one row per idea. **All text columns, no Choice.** Full column table + steps: `powerapps/floorwalk/README.md` §1.
+Columns: Title, Idea (multi, plain), Service, ServiceLine, Stream, Location, StakeholderName, StakeholderEmail, StakeholderJobTitle, StakeholderDept, FollowUp, Theme, ThemeOther, Priority, Status, ReviewNotes (multi, plain), StatusBy, StatusOn (Date and time), Photo (Image). Who/when = Created By / Created.
+Services + streams are not a list: they are the `ServiceMap` named formula (from `tools/floorwalk_generator/services.py`).
+Dashboard reads the newest 2000 rows; add a date window if it grows past ~1500.

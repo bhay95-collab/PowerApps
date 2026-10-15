@@ -1,0 +1,793 @@
+# Floorwalking Ideas app (RBWH post go-live optimisation): builds every screen + App Formulas.
+#   cd tools/floorwalk_generator && python3 fwbuild.py   -> powerapps/floorwalk/*
+# Phone + desktop: forms use UI/PageW/Gutter (column stops at 720 wide), the dashboard uses DashW/DashWide.
+# Data: SharePoint list Floorwalk_Ideas (CITTA site) + Office 365 Users (stakeholder search).
+import os, sys
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'dtv_generator'))
+from dtvgen import *
+from services import SERVICES, LINE_STREAM
+
+OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'powerapps', 'floorwalk') + os.sep
+os.makedirs(OUT, exist_ok=True)
+LIST = 'Floorwalk_Ideas'
+GREEN = "RGBA(30, 122, 80, 1)"; RED = "RGBA(176, 52, 40, 1)"; LINE = "RGBA(14, 42, 70, 0.22)"; TR = "RGBA(0, 0, 0, 0)"
+W = f"PageW - {r(40)}"; PADX = r(18); IW = f"Parent.Width - {r(36)}"
+NOSB = {k: v for k, v in SBOX.items() if not k.startswith('Radius')}
+STREAMS = [("Surgical & Critical Care", "Surg & CC"), ("Women's, Cancer & Mental Health", "WCMH"), ("Internal Medicine & Emergency", "IM & ED"), ("Other", "Other")]
+THEMES = ["Workflow/Business Rules", "Functionality", "Downtime", "Resource Development", "Other"]
+STATUSES = ["New", "Under Review", "Actioned", "Not Progressing"]
+PRIS = ["Low", "Medium", "High"]
+PRI_COL = f'Switch({{p}}, "High", {RED}, "Medium", C_Amber, C_Teal)'
+STAT_COL = f'Switch({{s}}, "New", C_Accent, "Under Review", C_Amber, "Actioned", {GREEN}, C_Muted)'
+STAT_SOFT = 'Switch({s}, "New", RGBA(26, 90, 153, 0.12), "Under Review", RGBA(178, 105, 0, 0.12), "Actioned", RGBA(30, 122, 80, 0.12), RGBA(140, 155, 174, 0.18))'
+def pcol(e): return PRI_COL.replace('{p}', e)
+def scol(e): return STAT_COL.replace('{s}', e)
+def ssoft(e): return STAT_SOFT.replace('{s}', e)
+
+def pillbtn(name, text, onsel, color, size=15, radius=24, display=None):
+    p = dict({'Align': 'Align.Center', 'Appearance': 'ButtonAppearance.Transparent', 'Color': color, 'Font': 'AppFont', 'FontWeight': 'FontWeight.Bold', 'Height': 'Parent.Height', 'OnSelect': onsel, 'Size': r(F(size)), 'Text': text, 'VerticalAlign': 'VerticalAlign.Middle', 'Width': 'Parent.Width'}, **rad(r(radius)), **NOSB)
+    if display: p['DisplayMode'] = display
+    return N(name, 'ModernButton@1.0.0', props=p)
+def tin(name, hint, x, y, w, h, multi=False, default='""', vis=None, size=15):
+    p = {'BorderColor': LINE, 'BorderThickness': '1', 'Color': 'C_Ink', 'Default': default, 'FocusedBorderColor': 'C_Accent', 'FocusedBorderThickness': '2', 'Font': 'AppFont', 'Height': h, 'HintText': f'"{hint}"', 'Size': r(F(size)), 'Width': w, 'X': x, 'Y': y}
+    if multi: p['Mode'] = 'TextMode.MultiLine'
+    p.update(rad(r(12)))
+    if vis: p['Visible'] = vis
+    return N(name, 'Classic/TextInput@2.3.2', props=p)
+def search_input(name, hint, size=16):
+    return N(name, 'Classic/TextInput@2.3.2', props={'BorderStyle': 'BorderStyle.None', 'Color': 'C_Ink', 'Default': '""', 'DelayOutput': 'true', 'Fill': TR, 'Font': 'AppFont', 'Height': 'Parent.Height', 'HintText': f'"{hint}"', 'Size': r(F(size)), 'Width': f'Parent.Width - {r(54)}', 'X': r(46)})
+def card(name, h, children, vis=None):
+    return inflow(name, f'Round(({h}) * UI, 0)', fill='C_White', border='C_Line', radius=r(20), children=children, visible=vis)
+def cap(name, text, y=r(14), x=PADX, w=IW):
+    return lbl(name, f'"{text}"', x=x, y=y, w=w, h=r(22), size=14, color='C_Muted', bold=True)
+def ques(name, text, y=r(38)):
+    return lbl(name, f'"{text}"', x=PADX, y=y, w=IW, h=r(28), size=16, color='C_Ink', bold=True)
+def sublbl(name, text, y, vis=None):
+    return lbl(name, f'"{text}"', x=PADX, y=y, w=IW, h=r(24), size=15, color='C_Ink2', bold=True, visible=vis)
+def choice(name, var, val, x, y, w, h=44, vis=None, label=None, size=14):
+    sel = f'{var} = "{val}"'
+    return box(f'con{name}', x=x, y=y, w=w, h=r(h), fill=f'If({sel}, C_AccentSoft, C_White)', border=f'If({sel}, C_Accent, C_Line)', radius=r(h // 2), visible=vis, children=[
+        pillbtn(f'btn{name}', label or f'"{val}"', f'Set({var}, "{val}")', f'If({sel}, C_Accent, C_Ink2)', size=size, radius=h // 2)])
+def colorpill(name, var, val, x, y, w, col, h=48, onsel=None, size=15):
+    sel = f'{var} = "{val}"'
+    return box(f'con{name}', x=x, y=y, w=w, h=r(h), fill=f'If({sel}, {col}, C_White)', border=f'If({sel}, {col}, C_Line)', radius=r(h // 2), children=[
+        pillbtn(f'btn{name}', f'"{val}"', onsel or f'Set({var}, "{val}")', f'If({sel}, C_White, C_Ink2)', size=size, radius=h // 2)])
+def hidden(name, onselect):
+    return N(name, 'ModernButton@1.0.0', props=dict({'Align': 'Align.Center', 'FontWeight': '""', 'Height': '1', 'OnSelect': onselect, 'Size': r(11), 'Text': '""', 'VerticalAlign': 'VerticalAlign.Middle', 'Visible': 'false', 'Width': '1'}, **SBOX))
+def iconbtn(name, icon, onsel, x, y, size=56, color='C_Ink2', isize=24):
+    return N(name, 'ModernButton@1.0.0', props=dict({'Align': 'Align.Center', 'Appearance': 'ButtonAppearance.Transparent', 'Color': color, 'FontWeight': '""', 'Height': r(size), 'Icon': f'"{icon}"', 'OnSelect': onsel, 'Size': r(isize), 'Text': '""', 'VerticalAlign': 'VerticalAlign.Middle', 'Width': r(size), 'X': x, 'Y': y}, **SBOX))
+def wrap(g, rowname):
+    """gallery rows: everything inside ONE container (controls placed straight in a template land at X = 0 in Studio)"""
+    for k in g.children:
+        for pk, pv in list(k.props.items()):
+            k.props[pk] = str(pv).replace('Parent.TemplateWidth', 'Parent.Width').replace('Parent.TemplateHeight', 'Parent.Height')
+    g.children = [box(rowname, x='0', y='0', w='Parent.TemplateWidth', h='Parent.TemplateHeight', children=g.children)]
+    return g
+
+# a pop-up: bottom sheet on phones, centred dialog from 720 wide. Children are placed inside the sheet.
+SHW = 'Min(App.Width, SheetW)'
+def sheet(sfx, key, visvar, title, children, h=640):
+    SH = f'Min(App.Height - {r(50)}, {r(h)})'
+    sh = box(f'conSheet{key}_{sfx}', x=f'(App.Width - {SHW}) / 2', y=f'If(App.Width >= 720, (App.Height - {SH}) / 2, App.Height - {SH})', w=SHW, h=SH, fill='C_White', radius=r(24), children=[
+        box(f'conHandle{key}_{sfx}', x=f'(Parent.Width - {r(44)}) / 2', y=r(8), w=r(44), h=r(5), fill='C_Line', radius=r(3)),
+        lbl(f'lblSheet{key}_{sfx}', f'"{title}"', x=r(20), y=r(20), w=f'Parent.Width - {r(90)}', h=r(34), size=22, color='C_Ink', bold=True),
+        iconbtn(f'btnClose{key}_{sfx}', 'DismissCircle', f'Set({visvar}, false)', f'Parent.Width - {r(66)}', r(10)),
+    ] + children)
+    return box(f'conOverlay{key}_{sfx}', x='0', y='0', w='App.Width', h='App.Height', fill='RGBA(14, 28, 42, 0.45)', visible=visvar, children=[
+        tbtn(f'btnVeil{key}_{sfx}', f'Set({visvar}, false)'), sh])
+
+# ================================================================== APP FORMULAS
+svc_rows = ',\n    '.join('{ Service: "%s", Line: "%s", Stream: "%s" }' % (s.replace('"', "'"), l, LINE_STREAM.get(l, 'Other')) for l, s in SERVICES)
+FORMULAS = f'''// =====================================================================
+// Floorwalking Ideas app > App > Formulas  (paste the whole file)
+// Same colours, font, header art and sizing as every other STARS app.
+// Generated by tools/floorwalk_generator/fwbuild.py: change it there, not here.
+// =====================================================================
+// ---- colours
+C_Ink = RGBA(14, 28, 42, 1);
+C_Ink2 = RGBA(58, 80, 104, 1);
+C_Muted = RGBA(140, 155, 174, 1);
+C_Bg = RGBA(235, 242, 248, 1);
+C_Bg2 = RGBA(244, 249, 252, 1);
+C_Line = RGBA(14, 42, 70, 0.12);
+C_White = RGBA(255, 255, 255, 1);
+C_Accent = RGBA(26, 90, 153, 1);
+C_AccentDark = RGBA(18, 64, 112, 1);
+C_AccentSoft = RGBA(26, 90, 153, 0.10);
+C_Good = RGBA(12, 122, 82, 1);
+C_GoodBg = RGBA(232, 246, 240, 1);
+C_Danger = RGBA(180, 26, 26, 1);
+C_DangerBg = RGBA(254, 242, 242, 1);
+C_Amber = RGBA(178, 105, 0, 1);
+C_AmberBg = RGBA(255, 246, 229, 1);
+C_Teal = RGBA(0, 144, 153, 1);
+
+// ---- font and header art
+AppFont = Font.'Segoe UI';
+HeaderImage = "data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' width='400' height='80' viewBox='0 0 400 80' preserveAspectRatio='none'><defs><linearGradient id='a' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='#001D46'/><stop offset='0.48' stop-color='#075F73'/><stop offset='1' stop-color='#00838A'/></linearGradient></defs><rect width='400' height='80' fill='url(#a)'/></svg>");
+
+// ---- screen size (phone, tablet and desktop browser)
+// UI scales every text size, button, row and gap (0.9 to 1.25).
+UI = Max(0.9, Min(1.25, Min(App.Width, App.Height * 0.55) / 390));
+// Capture + Home: one column, stops growing at 720 wide (centred on desktop)
+PageW = Min(App.Width, 720);
+Gutter = (App.Width - PageW) / 2;
+SheetW = Min(App.Width, 600);
+// Dashboard: content up to 1400 wide; panels side by side from 1000 wide, one column on phones
+DashW = Min(App.Width - Round(48 * UI, 0), 1400);
+DashX = (App.Width - DashW) / 2;
+DashWide = App.Width >= 1000;
+DashGap = Round(16 * UI, 0);
+
+// ---- who is using the app (the floorwalker). SharePoint also records Created By on every idea.
+MeEmail = Lower(User().Email);
+MeName = User().FullName;
+MeFirst = With({{ n: User().FullName }}, If("," in n, Trim(Last(Split(n, ",")).Value), First(Split(n, " ")).Value));
+
+// ---- choices (the app writes these exact words into the list)
+StreamList = Table(
+    {', '.join('{ Key: "%s", Short: "%s" }' % s for s in STREAMS)}
+);
+ThemeList = [{', '.join(f'"{t}"' for t in THEMES)}];
+StatusList = [{', '.join(f'"{t}"' for t in STATUSES)}];
+
+// ---- RBWH services (from the RBWH Service Map, Sept 2025) and the BAU stream each one belongs to.
+// Service lines that are not one of the three BAU streams (Allied Health, Nursing, Operations...) go to Other.
+// To add a service: add a row here (Service, Line, Stream). Stream must match StreamList exactly.
+ServiceMap = Table(
+    {svc_rows}
+);
+'''
+open(OUT + 'App_Formulas.txt', 'w').write(FORMULAS)
+
+# ================================================================== HOME
+hdrH = inflow('conHdr_Hm', r(165), w='App.Width', fill=HDR_FILL, radius='0', children=[
+    N('imgHdr_Hm', 'Image@2.2.3', props={'Height': 'Parent.Height', 'Image': 'HeaderImage', 'ImagePosition': 'ImagePosition.Fill', 'Width': 'Parent.Width'}),
+    lbl('lblKicker_Hm', '"RBWH POST GO-LIVE"', x=f"Gutter + {r(25)}", y=r(33), w=f"PageW - {r(50)}", h=r(23), size=14, color='RGBA(255, 255, 255, 0.8)', bold=True),
+    lbl('lblTitle_Hm', '"Floorwalking Ideas"', x=f"Gutter + {r(25)}", y=r(45), w=f"PageW - {r(50)}", h=r(70), size=36, color='C_White', bold=True),
+    lbl('lblHello_Hm', '"Hi " & MeFirst & "  ·  " & Text(Today(), "dddd d mmmm")', x=f"Gutter + {r(25)}", y=r(110), w=f"PageW - {r(50)}", h=r(28), size=16, color='RGBA(255, 255, 255, 0.9)'),
+])
+heroH = inflow('conHero_Hm', r(120), fill='C_Accent', radius=r(25), children=[
+    box('conHeroIc_Hm', x=r(20), y=r(32), w=r(56), h=r(56), fill='RGBA(255, 255, 255, 0.16)', radius=r(28), children=[ico('icoHero_Hm', 'Edit', r(11), r(11), 34, 'C_White', True)]),
+    lbl('lblHeroT_Hm', '"Capture an Idea"', x=r(92), y=r(32), w=f"Parent.Width - {r(108)}", h=r(32), size=24, color='C_White', bold=True),
+    lbl('lblHeroS_Hm', '"Takes under a minute"', x=r(92), y=r(66), w=f"Parent.Width - {r(108)}", h=r(22), size=15, color='RGBA(255, 255, 255, 0.85)'),
+    tbtn('btnHero_Hm', 'Navigate(Capture, ScreenTransition.Cover)'),
+])
+todayH = inflow('conToday_Hm', r(112), fill='C_White', border='C_Line', radius=r(20), children=[
+    lbl('lblTodayCap_Hm', '"TODAY"', x=r(20), y=r(12), w=f"Parent.Width - {r(40)}", h=r(18), size=13, color='C_Muted', bold=True),
+    lbl('lblTodayT_Hm', 'If(varHmLoading, "Loading...", varHmTeamN & If(varHmTeamN = 1, " idea", " ideas") & " captured")', x=r(20), y=r(32), w=f"Parent.Width - {r(40)}", h=r(32), size=22, color='C_Ink', bold=True),
+    lbl('lblTodayS_Hm', '"You: " & varHmMineN & "  ·  All floorwalkers: " & varHmTeamN & "  ·  All time: " & varHmAllN', x=r(20), y=r(68), w=f"Parent.Width - {r(40)}", h=r(22), size=15, color='C_Ink2'),
+])
+capH = lbl('capOther_Hm', '"SEE WHAT IS COMING IN"', w=W, h=r(23), size=14, color='C_Muted', bold=True, extra={'AlignInContainer': 'AlignInContainer.SetByContainer', 'LayoutMinHeight': r(23)})
+def tileH(k, icon, title, subtitle, onsel, amber=False):
+    return inflow(f'conTile{k}_Hm', r(90), fill='C_White', border='C_Line', radius=r(20), children=[
+        box(f'conTileIc{k}_Hm', x=r(18), y=r(18), w=r(55), h=r(55), fill='C_AmberBg' if amber else 'C_AccentSoft', radius=r(28), children=[ico(f'icoTile{k}_Hm', icon, r(13), r(13), 30, 'C_Amber' if amber else 'C_Accent', True)]),
+        lbl(f'lblTileT{k}_Hm', f'"{title}"', x=r(88), y=r(18), w=f"Parent.Width - {r(130)}", h=r(26), size=19, color='C_Ink', bold=True),
+        lbl(f'lblTileS{k}_Hm', subtitle, x=r(88), y=r(46), w=f"Parent.Width - {r(130)}", h=r(22), size=15, color='C_Muted'),
+        ico(f'icoTileGo{k}_Hm', 'ChevronRight', f"Parent.Width - {r(38)}", r(33), 24, 'C_Muted'),
+        tbtn(f'btnTile{k}_Hm', onsel)])
+t1 = tileH('Dash', 'AppsList', 'Ideas Dashboard', '"Overview and every idea"', 'Set(varDashMine, false);\nNavigate(Dashboard, ScreenTransition.Cover)')
+t2 = tileH('Mine', 'Person', 'My Ideas', 'varHmMineAllN & If(varHmMineAllN = 1, " idea", " ideas") & " captured by you"', 'Set(varDashMine, true);\nNavigate(Dashboard, ScreenTransition.Cover)', amber=True)
+endH = inflow('conEnd_Hm', r(16), extra={'DropShadow': 'DropShadow.None'})
+bodyH = vbody('conBody_Hm', [heroH, todayH, capH, t1, t2, endH], gap=15, top=20, bottom=30, scroll=True)
+ONV_H = f'''Set(varHmLoading, true);
+Refresh({LIST});
+// today's ideas only (delegable date filter), counted on the device
+ClearCollect(colToday_Hm, Filter({LIST}, Created >= Today()));
+Set(varHmTeamN, CountRows(colToday_Hm));
+Set(varHmMineN, CountIf(colToday_Hm, Lower('Created By'.Email) = MeEmail));
+// all-time counts (fine up to the 2000 row limit; see docs/05)
+ClearCollect(colMine_Hm, Filter({LIST}, 'Created By'.Email = User().Email));
+Set(varHmMineAllN, CountRows(colMine_Hm));
+Set(varHmAllN, CountRows({LIST}));
+Set(varHmLoading, false)'''
+open(OUT + 'FW_Home.pa.yaml', 'w').write(screen('Home', {'Fill': 'C_Bg', 'OnVisible': ONV_H}, [vroot('conRoot_Hm', [hdrH, bodyH])]))
+
+# ================================================================== CAPTURE
+S = 'Cap'
+# ---- 1 · where: service (search sheet), BAU stream (auto from service), location
+hasSvc = '!IsBlank(varSvc.Service)'
+svcField = box('conSvcField_Cap', x=PADX, y=r(66), w=IW, h=r(52), fill='C_White', border=LINE, radius=r(14), children=[
+    ico('icoSvc_Cap', 'Search', r(14), r(14), 24, 'C_Muted'),
+    lbl('lblSvc_Cap', f'If({hasSvc}, varSvc.Service, "Search services")', x=r(48), w=f'Parent.Width - {r(100)}', h=r(52), size=16, color=f'If({hasSvc}, C_Ink, C_Muted)', bold=hasSvc != '', extra={'VerticalAlign': 'VerticalAlign.Middle', 'FontWeight': f'If({hasSvc}, FontWeight.Bold, FontWeight.Normal)'}),
+    ico('icoSvcGo_Cap', 'ChevronRight', f'Parent.Width - {r(38)}', r(14), 24, 'C_Muted'),
+    tbtn('btnSvc_Cap', 'Reset(txtSvcSearch_Cap);\nSet(varShowSvc, true)'),
+    N('btnSvcClear_Cap', 'ModernButton@1.0.0', props=dict({'Align': 'Align.Center', 'Appearance': 'ButtonAppearance.Transparent', 'Color': 'C_Muted', 'FontWeight': '""', 'Height': r(50), 'Icon': '"DismissCircle"', 'OnSelect': 'Set(varSvc, Blank());\nSet(varStream, "Other")', 'Size': r(22), 'Text': '""', 'VerticalAlign': 'VerticalAlign.Middle', 'Visible': hasSvc, 'Width': r(50), 'X': f'Parent.Width - {r(51)}', 'Y': '0'}, **SBOX)),
+])
+streamPills = [choice(f'Str{i}_Cap', 'varStream', k, PADX, r(156 + 46 * i), IW, h=40) for i, (k, _) in enumerate(STREAMS)]
+where = card('conWhere_Cap', '466', [
+    cap('cap_Where', '1  ·  WHERE'),
+    sublbl('lblSvcQ_Cap', 'Service (optional)', r(40)),
+    svcField,
+    sublbl('lblStrQ_Cap', 'BAU stream', r(130)),
+] + streamPills + [
+    lbl('lblStrHint_Cap', f'If({hasSvc}, "Set from " & varSvc.Line & ". Tap to change.", "Not sure? Leave it as Other.")', x=PADX, y=r(338), w=IW, h=r(20), size=13, color='C_Muted'),
+    sublbl('lblLocQ_Cap', 'Location', r(370)),
+    tin('txtLoc_Cap', 'Ward, unit or area (e.g. 7B North)', PADX, r(396), IW, r(52)),
+])
+
+# ---- 2 · stakeholder: Office 365 directory search, or type a name
+DIR = 'varStakeMode = "Dir"'; MAN = 'varStakeMode = "Manual"'; NONE = 'IsBlank(varStakeMode)'
+HASSTAKE = f'(({DIR} && !IsBlank(varStake.Name)) || ({MAN} && !IsBlank(Trim(txtStakeName_Cap.Text))))'
+hw = f"Round((Parent.Width - {r(36)} - {r(12)}) / 2, 0)"
+def ynp(val, col, x):
+    sel = f'varFollow = "{val}"'
+    return box(f'conFol{val}_Cap', x=x, y=r(198), w=hw, h=r(48), fill=f'If({sel}, {col}, C_White)', border=f'If({sel}, {col}, C_Line)', radius=r(24), visible=f'!{NONE}', children=[
+        pillbtn(f'btnFol{val}_Cap', f'"{val}"', f'Set(varFollow, "{val}")', f'If({sel}, C_White, C_Muted)')])
+stakeField = box('conStakeField_Cap', x=PADX, y=r(74), w=IW, h=r(52), fill='C_White', border=LINE, radius=r(14), visible=NONE, children=[
+    ico('icoStake_Cap', 'People', r(14), r(14), 24, 'C_Muted'),
+    lbl('lblStakeHint_Cap', '"Search the staff directory"', x=r(48), w=f'Parent.Width - {r(100)}', h=r(52), size=16, color='C_Muted', extra={'VerticalAlign': 'VerticalAlign.Middle'}),
+    ico('icoStakeGo_Cap', 'ChevronRight', f'Parent.Width - {r(38)}', r(14), 24, 'C_Muted'),
+    tbtn('btnStake_Cap', 'Reset(txtStakeSearch_Cap);\nSet(varShowStake, true)')])
+typeName = box('conTypeName_Cap', x=PADX, y=r(136), w=IW, h=r(44), fill='C_White', border='C_Accent', radius=r(22), visible=NONE, children=[
+    pillbtn('btnTypeName_Cap', '"Not in the Directory? Type a Name"', 'Set(varStakeDefault, "");\nSet(varStakeMode, "Manual");\nReset(txtStakeName_Cap)', 'C_Accent', size=14, radius=22)])
+person = box('conPerson_Cap', x=PADX, y=r(74), w=IW, h=r(84), fill='C_AccentSoft', border='C_Accent', radius=r(16), visible=DIR, children=[
+    lbl('lblPerName_Cap', 'varStake.Name', x=r(16), y=r(8), w=f'Parent.Width - {r(76)}', h=r(26), size=17, color='C_Ink', bold=True),
+    lbl('lblPerJob_Cap', 'Coalesce(varStake.Job, "No job title listed") & If(IsBlank(varStake.Dept), "", "  ·  " & varStake.Dept)', x=r(16), y=r(34), w=f'Parent.Width - {r(76)}', h=r(22), size=14, color='C_Ink2'),
+    lbl('lblPerMail_Cap', 'varStake.Email', x=r(16), y=r(56), w=f'Parent.Width - {r(76)}', h=r(20), size=13, color='C_Muted'),
+    iconbtn('btnPerClear_Cap', 'DismissCircle', 'Set(varStake, Blank());\nSet(varStakeMode, Blank());\nSet(varFollow, Blank())', f'Parent.Width - {r(58)}', r(14), size=56, color='C_Ink2')])
+manName = tin('txtStakeName_Cap', 'Name and role (e.g. Jo Smith, NUM 7B)', PADX, r(74), IW, r(52), default='varStakeDefault', vis=MAN)
+backDir = box('conBackDir_Cap', x=PADX, y=r(132), w=IW, h=r(30), visible=MAN, children=[
+    lbl('lblBackDir_Cap', '"Search the directory instead"', w='Parent.Width', h=r(30), size=14, color='C_Accent', bold=True, extra={'VerticalAlign': 'VerticalAlign.Middle'}),
+    tbtn('btnBackDir_Cap', 'Set(varStakeMode, Blank());\nSet(varFollow, Blank());\nReset(txtStakeSearch_Cap);\nSet(varShowStake, true)')])
+stake = card('conStake_Cap', f'If({DIR}, 264, {MAN}, If(varFollow = "Yes", 292, 264), 198)', [
+    cap('cap_Stake', '2  ·  STAKEHOLDER (OPTIONAL)'),
+    ques('q_Stake', 'Who raised it?'),
+    stakeField, typeName, person, manName, backDir,
+    sublbl('lblFolQ_Cap', 'Do they want follow-up?', r(170), vis=f'!{NONE}'),
+    ynp('Yes', GREEN, PADX), ynp('No', RED, f'{PADX} + {hw} + {r(12)}'),
+    lbl('lblFolWarn_Cap', '"No email for them. Put contact details in the idea."', x=PADX, y=r(254), w=IW, h=r(20), size=13, color='C_Amber', bold=True, visible=f'{MAN} && varFollow = "Yes"'),
+])
+
+# ---- 3 · theme
+OTH = 'varTheme = "Other"'
+themes = card('conTheme_Cap', f'If({OTH}, 400, 336)', [cap('cap_Theme', '3  ·  THEME'), ques('q_Theme', 'What kind of uplift is it?')]
+    + [choice(f'Th{i}_Cap', 'varTheme', t, PADX, r(74 + 50 * i), IW) for i, t in enumerate(THEMES)]
+    + [tin('txtThemeOther_Cap', 'What kind of theme? (short)', PADX, r(330), IW, r(52), vis=OTH)])
+
+# ---- 4 · the idea
+idea = card('conIdea_Cap', '278', [
+    cap('cap_Idea', '4  ·  THE IDEA'), ques('q_Idea', 'What is the idea?'),
+    tin('txtIdea_Cap', 'What happens now, and what would make it better?', PADX, r(74), IW, r(160), multi=True),
+    lbl('lblIdeaHint_Cap', '"Include the screen or form name if you know it."', x=PADX, y=r(240), w=IW, h=r(20), size=13, color='C_Muted')])
+
+# ---- 5 · priority
+pw = f"Round((Parent.Width - {r(36)} - 2 * {r(10)}) / 3, 0)"
+pri = card('conPri_Cap', '140', [cap('cap_Pri', '5  ·  PRIORITY'), ques('q_Pri', 'How much impact would it have?')]
+    + [colorpill(f'Pri{p}_Cap', 'varPri', p, f'{PADX} + {i} * ({pw} + {r(10)})', r(74), pw, pcol(f'"{p}"')) for i, p in enumerate(PRIS)])
+
+# ---- 6 · photo (optional) — same pattern as the DTV audit
+nophoto = 'IsBlank(addPhoto_Cap.Media)'
+photo = card('conPhoto_Cap', f'If({nophoto}, 140, 262)', [
+    cap('cap_Photo', '6  ·  PHOTO (OPTIONAL)'),
+    ques('q_Photo', 'No patient details in the photo'),
+    box('conAddPhoto_Cap', x=PADX, y=r(74), w=IW, h=r(48), fill='C_White', border='C_Accent', radius=r(24), children=[
+        lbl('lblAddPhoto_Cap', f'If({nophoto}, "Add Photo", "Change Photo")', w='Parent.Width', h=r(48), size=15, color='C_Accent', bold=True, align='Align.Center', extra={'VerticalAlign': 'VerticalAlign.Middle'})]),
+    N('imgPhoto_Cap', 'Image@2.2.3', props={'Height': r(110), 'Image': 'addPhoto_Cap.Media', 'ImagePosition': 'ImagePosition.Fit', 'Visible': f'!{nophoto}', 'Width': r(110), 'X': PADX, 'Y': r(134)}),
+    lbl('lblRemovePhoto_Cap', '"Remove Photo"', x=f"{PADX} + {r(126)}", y=r(176), w=f"Parent.Width - {r(36)} - {r(126)}", h=r(26), size=15, color=RED, bold=True, visible=f'!{nophoto}'),
+    tbtn('btnRemovePhoto_Cap', 'Reset(addPhoto_Cap)', x=f"{PADX} + {r(116)}", y=r(166), w=f"Parent.Width - {r(36)} - {r(116)}", h=r(46)),
+    N('addPhoto_Cap', 'AddMedia@2.2.1', props={'BorderColor': TR, 'BorderStyle': 'BorderStyle.None', 'BorderThickness': '0', 'Color': TR, 'DisabledColor': TR, 'DisabledFill': TR, 'Fill': TR, 'Font': 'AppFont', 'Height': r(48), 'HoverBorderColor': TR, 'HoverColor': TR, 'HoverFill': TR, 'PressedBorderColor': TR, 'PressedColor': TR, 'PressedFill': TR, 'Size': r(F(15)), 'Width': IW, 'X': PADX, 'Y': r(74)}),
+])
+endC = inflow('conEnd_Cap', r(16), extra={'DropShadow': 'DropShadow.None'})
+bodyC = vbody('conBody_Cap', [where, stake, themes, idea, pri, photo, endC], gap=12, top=15, bottom=0, scroll=True)
+
+# ---- sticky submit
+READY = f'!IsBlank(varTheme) && (!{OTH} || !IsBlank(Trim(txtThemeOther_Cap.Text))) && !IsBlank(Trim(txtIdea_Cap.Text)) && !IsBlank(varPri)'
+ok = 'btnSubmit_Cap.DisplayMode = DisplayMode.Edit'
+SAVE = f'''Set(varSaving, true);
+With(
+    {{
+        rec: Patch(
+            {LIST},
+            Defaults({LIST}),
+            {{
+                Title: Left(Trim(txtIdea_Cap.Text), 120),
+                Idea: Trim(txtIdea_Cap.Text),
+                Service: varSvc.Service,
+                ServiceLine: varSvc.Line,
+                Stream: Coalesce(varStream, "Other"),
+                Location: Trim(txtLoc_Cap.Text),
+                StakeholderName: If({DIR}, varStake.Name, {MAN}, Trim(txtStakeName_Cap.Text), Blank()),
+                StakeholderEmail: If({DIR}, varStake.Email, Blank()),
+                StakeholderJobTitle: If({DIR}, varStake.Job, Blank()),
+                StakeholderDept: If({DIR}, varStake.Dept, Blank()),
+                FollowUp: If({HASSTAKE} && varFollow = "Yes", "Yes", "No"),
+                Theme: varTheme,
+                ThemeOther: If({OTH}, Trim(txtThemeOther_Cap.Text), Blank()),
+                Priority: varPri,
+                Status: "New"
+            }}
+        )
+    }},
+    If(
+        IsEmpty(Errors({LIST})),
+        // record is saved; the photo goes on second, so a failed photo never loses the idea
+        If(
+            !{nophoto},
+            Patch({LIST}, rec, {{ Photo: imgPhoto_Cap.Image }});
+            If(!IsEmpty(Errors({LIST}, rec)), Notify("Idea saved, but the photo could not be attached.", NotificationType.Warning))
+        );
+        Set(varSaving, false);
+        Set(varShowDone, true),
+        Set(varSaving, false);
+        Notify("Could not save. Check your connection and try again.", NotificationType.Error)
+    )
+)'''
+submit = box('conSubmit_Cap', x=f"Gutter + {r(20)}", y=r(12), w=W, h=r(60), fill=f'If({ok}, C_Accent, RGBA(160, 174, 180, 1))', radius=r(28), children=[
+    lbl('lblSubmit_Cap', f'If(varSaving, "Saving...", {ok}, "Submit Idea", "Add a theme, idea and priority")', w='Parent.Width', h=r(60), size=19, color='C_White', bold=True, align='Align.Center', extra={'Size': f'If({ok} || varSaving, {r(F(19))}, {r(F(15))})', 'VerticalAlign': 'VerticalAlign.Middle'}),
+    tbtn('btnSubmit_Cap', SAVE, display=f'If({READY} && !varSaving, DisplayMode.Edit, DisplayMode.Disabled)')])
+footC = inflow('conFoot_Cap', r(84), w='App.Width', fill='C_White', border='C_Line', radius='0', children=[submit])
+hdrC = header('Cap', '"Capture an Idea"', '"Floorwalker: " & MeName', 'Navigate(Home, ScreenTransition.UnCoverRight)')
+
+# ---- service picker sheet
+SVC_ITEMS = '''SortByColumns(
+    Filter(
+        ServiceMap,
+        IsBlank(Trim(txtSvcSearch_Cap.Text))
+        || Lower(Trim(txtSvcSearch_Cap.Text)) in Lower(Service & " " & Line & " " & Stream)
+    ),
+    "Line",
+    SortOrder.Ascending,
+    "Service",
+    SortOrder.Ascending
+)'''
+RH = 64
+selSv = 'ThisItem.Service = varSvc.Service'
+galSvc = wrap(N('galSvc_Cap', 'Gallery@2.15.0', 'Vertical', {'Height': f'Parent.Height - {r(160)}', 'Items': SVC_ITEMS, 'TemplatePadding': '0', 'TemplateSize': r(RH), 'Width': f'Parent.Width - {r(24)}', 'X': r(12), 'Y': r(150)}, [
+    box('conSvcSel_Cap', x='0', y=r(2), w='Parent.TemplateWidth', h=r(RH - 4), fill=f'If({selSv}, C_AccentSoft, RGBA(0, 0, 0, 0))', radius=r(12)),
+    lbl('lblSvcRowT_Cap', 'ThisItem.Service', x=r(12), y=r(8), w=f'Parent.TemplateWidth - {r(24)}', h=r(26), size=16, color='C_Ink', bold=True),
+    lbl('lblSvcRowS_Cap', 'ThisItem.Line & "  ·  " & ThisItem.Stream', x=r(12), y=r(34), w=f'Parent.TemplateWidth - {r(24)}', h=r(22), size=14, color='C_Muted'),
+    box('conSvcLn_Cap', x=r(12), y=f'Parent.TemplateHeight - 1', w=f'Parent.TemplateWidth - {r(24)}', h='1', fill='C_Line'),
+    tbtn('btnSvcRow_Cap', 'Set(varSvc, ThisItem);\nSet(varStream, ThisItem.Stream);\nSet(varShowSvc, false)')]), 'conSvcRow_Cap')
+svcSheet = sheet('Cap', 'Svc', 'varShowSvc', 'Pick a Service', [
+    box('conSvcSearch_Cap', x=r(20), y=r(64), w=f'Parent.Width - {r(40)}', h=r(52), fill='C_White', border=LINE, radius=r(14), children=[
+        ico('icoSvcSearch_Cap', 'Search', r(14), r(14), 24, 'C_Muted'), search_input('txtSvcSearch_Cap', 'Search e.g. physio, 7B, cardiology')]),
+    lbl('lblSvcCount_Cap', 'CountRows(galSvc_Cap.AllItems) & If(CountRows(galSvc_Cap.AllItems) = 1, " service", " services") & "  ·  Allied Health is split by profession"', x=r(20), y=r(122), w=f'Parent.Width - {r(40)}', h=r(22), size=13, color='C_Muted', bold=True),
+    lbl('lblSvcNone_Cap', '"No service matches. Close this and leave Service blank."', x=r(20), y=r(200), w=f'Parent.Width - {r(40)}', h=r(50), size=15, color='C_Muted', align='Align.Center', wrap=True, visible='CountRows(galSvc_Cap.AllItems) = 0'),
+    galSvc])
+
+# ---- stakeholder picker sheet (Office 365 Users). Searches once 3+ letters are typed.
+STK_ITEMS = '''Filter(
+    Office365Users.SearchUserV2(
+        {
+            searchTerm: If(Len(Trim(txtStakeSearch_Cap.Text)) >= 3, Trim(txtStakeSearch_Cap.Text), ""),
+            top: 25,
+            isSearchTermRequired: true
+        }
+    ).value,
+    !IsBlank(Mail)
+)'''
+galStake = wrap(N('galStake_Cap', 'Gallery@2.15.0', 'Vertical', {'Height': f'Parent.Height - {r(160)} - {r(80)}', 'Items': STK_ITEMS, 'TemplatePadding': '0', 'TemplateSize': r(RH + 6), 'Width': f'Parent.Width - {r(24)}', 'X': r(12), 'Y': r(150)}, [
+    lbl('lblStkRowT_Cap', 'ThisItem.DisplayName', x=r(12), y=r(6), w=f'Parent.TemplateWidth - {r(24)}', h=r(26), size=16, color='C_Ink', bold=True),
+    lbl('lblStkRowJ_Cap', 'Coalesce(ThisItem.JobTitle, "No job title listed") & If(IsBlank(ThisItem.Department), "", "  ·  " & ThisItem.Department)', x=r(12), y=r(31), w=f'Parent.TemplateWidth - {r(24)}', h=r(20), size=14, color='C_Ink2'),
+    lbl('lblStkRowM_Cap', 'Lower(ThisItem.Mail)', x=r(12), y=r(50), w=f'Parent.TemplateWidth - {r(24)}', h=r(18), size=13, color='C_Muted'),
+    box('conStkLn_Cap', x=r(12), y=f'Parent.TemplateHeight - 1', w=f'Parent.TemplateWidth - {r(24)}', h='1', fill='C_Line'),
+    tbtn('btnStkRow_Cap', 'Set(varStake, { Name: ThisItem.DisplayName, Email: Lower(ThisItem.Mail), Job: ThisItem.JobTitle, Dept: ThisItem.Department });\nSet(varStakeMode, "Dir");\nSet(varShowStake, false)')]), 'conStkRow_Cap')
+short = 'Len(Trim(txtStakeSearch_Cap.Text)) < 3'
+stakeSheet = sheet('Cap', 'Stk', 'varShowStake', 'Find a Stakeholder', [
+    box('conStkSearch_Cap', x=r(20), y=r(64), w=f'Parent.Width - {r(40)}', h=r(52), fill='C_White', border=LINE, radius=r(14), children=[
+        ico('icoStkSearch_Cap', 'Search', r(14), r(14), 24, 'C_Muted'), search_input('txtStakeSearch_Cap', 'Type a name (3+ letters)')]),
+    lbl('lblStkCount_Cap', f'If({short}, "Type at least 3 letters of their name", CountRows(galStake_Cap.AllItems) & If(CountRows(galStake_Cap.AllItems) = 1, " person", " people") & " found  ·  shows job title")', x=r(20), y=r(122), w=f'Parent.Width - {r(40)}', h=r(22), size=13, color='C_Muted', bold=True),
+    lbl('lblStkNone_Cap', '"No one found. Try the surname, or type the name below."', x=r(20), y=r(200), w=f'Parent.Width - {r(40)}', h=r(50), size=15, color='C_Muted', align='Align.Center', wrap=True, visible=f'!{short} && CountRows(galStake_Cap.AllItems) = 0'),
+    galStake,
+    box('conStkType_Cap', x=r(20), y=f'Parent.Height - {r(68)}', w=f'Parent.Width - {r(40)}', h=r(52), fill='C_White', border='C_Accent', radius=r(26), children=[
+        pillbtn('btnStkType_Cap', '"Not Listed? Type the Name"', 'Set(varStakeDefault, Trim(txtStakeSearch_Cap.Text));\nSet(varStakeMode, "Manual");\nSet(varShowStake, false);\nReset(txtStakeName_Cap)', 'C_Accent', size=15, radius=26)])])
+
+# ---- saved: confirmation pop-up
+DW = f'Min(App.Width - {r(40)}, {r(420)})'
+done = box('conOverlayDone_Cap', x='0', y='0', w='App.Width', h='App.Height', fill='RGBA(14, 28, 42, 0.45)', visible='varShowDone', children=[
+    box('conDone_Cap', x=f'(App.Width - {DW}) / 2', y=f'(App.Height - {r(340)}) / 2', w=DW, h=r(340), fill='C_White', radius=r(24), children=[
+        box('conDoneIc_Cap', x=f'(Parent.Width - {r(72)}) / 2', y=r(28), w=r(72), h=r(72), fill='C_GoodBg', radius=r(36), children=[ico('icoDone_Cap', 'CheckmarkCircle', r(16), r(16), 40, GREEN, True)]),
+        lbl('lblDoneT_Cap', '"Idea Saved"', x=r(20), y=r(112), w=f'Parent.Width - {r(40)}', h=r(36), size=24, color='C_Ink', bold=True, align='Align.Center'),
+        lbl('lblDoneS_Cap', '"Thanks. It is on the dashboard now."', x=r(20), y=r(150), w=f'Parent.Width - {r(40)}', h=r(24), size=15, color='C_Ink2', align='Align.Center'),
+        box('conDoneAgain_Cap', x=r(24), y=r(196), w=f'Parent.Width - {r(48)}', h=r(56), fill='C_Accent', radius=r(28), children=[
+            pillbtn('btnDoneAgain_Cap', '"Capture Another"', 'Select(btnReset_Cap)', 'C_White', size=17, radius=28)]),
+        box('conDoneHome_Cap', x=r(24), y=r(262), w=f'Parent.Width - {r(48)}', h=r(56), fill='C_White', border='C_Accent', radius=r(28), children=[
+            pillbtn('btnDoneHome_Cap', '"Back to Home"', 'Set(varShowDone, false);\nNavigate(Home, ScreenTransition.UnCoverRight)', 'C_Accent', size=17, radius=28)])])])
+
+RESET = '''// RESET: clear every answer (screen opens, and "Capture Another")
+Set(varSvc, Blank());
+Set(varStream, "Other");
+Set(varStake, Blank());
+Set(varStakeMode, Blank());
+Set(varStakeDefault, "");
+Set(varFollow, Blank());
+Set(varTheme, Blank());
+Set(varPri, Blank());
+Set(varSaving, false);
+Set(varShowSvc, false);
+Set(varShowStake, false);
+Set(varShowDone, false);
+Reset(txtLoc_Cap);
+Reset(txtStakeName_Cap);
+Reset(txtThemeOther_Cap);
+Reset(txtIdea_Cap);
+Reset(addPhoto_Cap)'''
+open(OUT + 'FW_Capture.pa.yaml', 'w').write(screen('Capture', {'Fill': 'C_Bg', 'OnVisible': 'Select(btnReset_Cap)'},
+    [vroot('conRoot_Cap', [hdrC, bodyC, footC]), svcSheet, stakeSheet, done, hidden('btnReset_Cap', RESET)]))
+
+# ================================================================== DASHBOARD
+WIDE = 'DashWide'; GAP = 'DashGap'
+def panel(name, title, children, sub=None):
+    ch = [lbl(f'cap{name}_Dsh', f'"{title}"', x=r(20), y=r(16), w=f'Parent.Width - {r(40)}', h=r(22), size=14, color='C_Muted', bold=True)]
+    if sub: ch.append(lbl(f'sub{name}_Dsh', sub, x=r(20), y=r(38), w=f'Parent.Width - {r(40)}', h=r(20), size=13, color='C_Muted'))
+    return box(f'con{name}_Dsh', fill='C_White', border='C_Line', radius=r(20), children=ch + children)
+def row(name, specs):
+    n = len(specs); avail = f'(DashW - {n - 1} * {GAP})'
+    acc = 0.0; yacc = []
+    for i, (p, frac, h) in enumerate(specs):
+        p.props['X'] = f'If({WIDE}, {avail} * {round(acc, 4)} + {i} * {GAP}, 0)' if i else '0'
+        p.props['Width'] = f'If({WIDE}, {avail} * {frac}, DashW)'
+        p.props['Height'] = r(h)
+        p.props['Y'] = '0' if i == 0 else f'If({WIDE}, 0, {" + ".join(r(x) for x in yacc)} + {i} * {GAP})'
+        acc += frac; yacc.append(h)
+    hmax = max(h for _, _, h in specs)
+    total = f'If({WIDE}, {r(hmax)}, {" + ".join(r(h) for _, _, h in specs)} + {n - 1} * {GAP})'
+    return inflow(f'conRow{name}_Dsh', total, w='DashW', children=[s[0] for s in specs], extra={'DropShadow': 'DropShadow.None'})
+def bar(name, x, y, w, h, frac, color):
+    return box(f'conTrk{name}_Dsh', x=x, y=y, w=w, h=h, fill='C_Line', radius=r(6), children=[
+        box(f'conBar{name}_Dsh', w=f'Parent.Width * Min(1, Max(0, {frac}))', h='Parent.Height', fill=color, radius=r(6))])
+
+STREAMLBL = 'If(varDashStream = "ALL", "All streams", varDashStream)'
+PERLBL = 'Switch(varDashPeriod, "Today", "Today", "7", "Last 7 days", "30", "Last 30 days", "All time")'
+hdrD = inflow('conHdr_Dsh', r(95), w='App.Width', fill=HDR_FILL, radius='0', extra={'DropShadow': 'DropShadow.None'}, children=[
+    N('imgHdr_Dsh', 'Image@2.2.3', props={'Height': 'Parent.Height', 'Image': 'HeaderImage', 'ImagePosition': 'ImagePosition.Fill', 'Width': 'Parent.Width'}),
+    N('btnBack_Dsh', 'ModernButton@1.0.0', props=dict({'Align': 'Align.Center', 'Appearance': 'ButtonAppearance.Transparent', 'Color': 'C_White', 'FontWeight': '""', 'Height': r(60), 'Icon': '"ChevronLeft"', 'OnSelect': 'Navigate(Home, ScreenTransition.UnCoverRight)', 'Size': r(24), 'Text': '""', 'VerticalAlign': 'VerticalAlign.Middle', 'Width': r(60), 'X': f'DashX - {r(10)}', 'Y': r(18)}, **SBOX)),
+    lbl('lblHdrT_Dsh', 'If(varDashMine, "My Ideas", "Ideas Dashboard")', x=f'DashX + {r(55)}', y=r(12), w=f'DashW - {r(55)} - If({WIDE}, {r(190)}, {r(70)})', h=r(42), size=24, color='C_White', bold=True),
+    lbl('lblHdrS_Dsh', f'{STREAMLBL} & "  ·  " & {PERLBL} & "  ·  " & varDashN & If(varDashN = 1, " idea", " ideas")', x=f'DashX + {r(55)}', y=r(53), w=f'DashW - {r(55)} - If({WIDE}, {r(190)}, {r(70)})', h=r(25), size=15, color='RGBA(255, 255, 255, 0.85)'),
+    box('conRefresh_Dsh', x=f'DashX + DashW - If({WIDE}, {r(170)}, {r(56)})', y=r(22), w=f'If({WIDE}, {r(170)}, {r(56)})', h=r(50), fill='RGBA(255, 255, 255, 0.16)', border='RGBA(255, 255, 255, 0.45)', radius=r(25), children=[
+        N('btnRefresh_Dsh', 'ModernButton@1.0.0', props=dict({'Align': 'Align.Center', 'Appearance': 'ButtonAppearance.Transparent', 'Color': 'C_White', 'DisplayMode': 'If(varDashLoading, DisplayMode.Disabled, DisplayMode.Edit)', 'Font': 'AppFont', 'FontWeight': 'FontWeight.Bold', 'Height': 'Parent.Height', 'Icon': '"ArrowClockwise"', 'OnSelect': 'Select(btnLoad_Dsh)', 'Size': r(F(15)), 'Text': f'If({WIDE}, "Refresh", "")', 'VerticalAlign': 'VerticalAlign.Middle', 'Width': 'Parent.Width'}, **rad(r(25)), **NOSB))]),
+])
+
+# ---- filters: stream pills; period pills + Mine
+def pillgal(name, items, selexpr, onsel, label, w, x, y):
+    return N(f'gal{name}_Dsh', 'Gallery@2.15.0', 'Horizontal', {'Height': r(52), 'Items': items, 'ShowScrollbar': 'false', 'TemplatePadding': '0',
+        'TemplateSize': f'({w}) / Max(1, CountRows({items}))', 'Width': w, 'X': x, 'Y': y}, [
+        box(f'con{name}P_Dsh', x='3', y=r(2), w=f'Parent.TemplateWidth - {r(6)}', h=r(48), fill=f'If({selexpr}, C_Accent, C_White)', border=f'If({selexpr}, C_Accent, C_Line)', radius=r(24), children=[
+            lbl(f'lbl{name}P_Dsh', label, x=r(4), w=f'Parent.Width - {r(8)}', h=r(48), size=14, color=f'If({selexpr}, C_White, C_Ink2)', bold=True, align='Align.Center', extra={'VerticalAlign': 'VerticalAlign.Middle'}),
+            tbtn(f'btn{name}P_Dsh', onsel)])])
+galStr = pillgal('Str', 'colDashPills', 'ThisItem.Key = varDashStream', 'Set(varDashStream, ThisItem.Key);\nSelect(btnCalc_Dsh)', f'If({WIDE}, ThisItem.Full, ThisItem.Label)', f'Parent.Width - {r(32)}', r(16), r(12))
+galPer = pillgal('Per', 'colDashPer', 'ThisItem.Key = varDashPeriod', 'Set(varDashPeriod, ThisItem.Key);\nSelect(btnCalc_Dsh)', 'ThisItem.Label', f'Parent.Width - {r(32)} - {r(110)}', r(16), r(70))
+mine = box('conMine_Dsh', x=f'Parent.Width - {r(16)} - {r(104)}', y=r(72), w=r(104), h=r(48), fill='If(varDashMine, C_Accent, C_White)', border='If(varDashMine, C_Accent, C_Line)', radius=r(24), children=[
+    pillbtn('btnMine_Dsh', 'If(varDashMine, "✓  Mine", "Mine")', 'Set(varDashMine, !varDashMine);\nSelect(btnCalc_Dsh)', 'If(varDashMine, C_White, C_Ink2)', size=14, radius=24)])
+filters = inflow('conFilters_Dsh', r(134), w='DashW', fill='C_White', border='C_Line', radius=r(20), children=[galStr, galPer, mine])
+
+# ---- KPI tiles: tap to list those ideas
+pc = lambda v: f'Round((If(varDashN > 0, {v} / varDashN, 0)) * 100, 0) & "% of " & varDashN'
+KPIS = [('All', 'IDEAS', 'varDashN', PERLBL, 'C_Ink', '', ''),
+        ('New', 'NEW', 'varDashNewN', '"Not yet reviewed"', 'C_Accent', 'Status', 'New'),
+        ('High', 'HIGH PRIORITY', 'varDashHighN', pc('varDashHighN'), RED, 'Priority', 'High'),
+        ('Fol', 'FOLLOW-UP', 'varDashFolN', '"Wants contact"', 'C_Amber', 'Follow', 'Yes'),
+        ('Act', 'ACTIONED', 'varDashActN', pc('varDashActN'), GREEN, 'Status', 'Actioned')]
+TH = 112
+twW = f'(DashW - 4 * {GAP}) / 5'; twN = f'(DashW - {GAP}) / 2'
+tiles = []
+for i, (k, capt, val, sub, col, fk, fv_) in enumerate(KPIS):
+    sel = f'varDashFKind = "{fk}" && varDashFVal = "{fv_}"' if fk else 'false'
+    onsel = (f'If({sel}, Set(varDashFKind, ""); Set(varDashFVal, ""), Set(varDashFKind, "{fk}"); Set(varDashFVal, "{fv_}"))' if fk else 'Set(varDashFKind, "");\nSet(varDashFVal, "")')
+    tiles.append(box(f'conK{k}_Dsh', x=f'If({WIDE}, {i} * ({twW} + {GAP}), {i % 2} * ({twN} + {GAP}))', y=f'If({WIDE}, 0, {i // 2} * ({r(TH)} + {GAP}))', w=f'If({WIDE}, {twW}, {twN})', h=r(TH),
+        fill=f'If({sel}, C_AccentSoft, C_White)', border=f'If({sel}, C_Accent, C_Line)', radius=r(20), children=[
+        lbl(f'lblK{k}C_Dsh', f'"{capt}"', x=r(18), y=r(14), w=f'Parent.Width - {r(36)}', h=r(20), size=13, color='C_Muted', bold=True),
+        lbl(f'lblK{k}V_Dsh', val, x=r(18), y=r(34), w=f'Parent.Width - {r(36)}', h=r(46), size=36, color=col, bold=True),
+        lbl(f'lblK{k}S_Dsh', sub, x=r(18), y=r(80), w=f'Parent.Width - {r(36)}', h=r(20), size=13, color='C_Ink2'),
+        tbtn(f'btnK{k}_Dsh', onsel)]))
+kpi = inflow('conKpi_Dsh', f'If({WIDE}, {r(TH)}, 3 * {r(TH)} + 2 * {GAP})', w='DashW', children=tiles, extra={'DropShadow': 'DropShadow.None'})
+
+# ---- bar panels
+SH_ = 56
+def listpanel(name, title, sub, items, label, value, frac, color, rows, onsel=None, selexpr=None, empty=None):
+    ch = []
+    if selexpr: ch.append(box(f'con{name}Sel_Dsh', x='0', y=r(2), w='Parent.TemplateWidth', h=r(SH_ - 4), fill=f'If({selexpr}, C_AccentSoft, RGBA(0, 0, 0, 0))', radius=r(12)))
+    ch += [lbl(f'lbl{name}_Dsh', label, x=r(10), y=r(4), w=f'Parent.TemplateWidth - {r(120)}', h=r(24), size=14, color='C_Ink', bold=True),
+           lbl(f'lbl{name}N_Dsh', value, x=f'Parent.TemplateWidth - {r(110)}', y=r(4), w=r(100), h=r(24), size=14, color='C_Ink2', bold=True, align='Align.Right'),
+           bar(name, r(10), r(32), f'Parent.TemplateWidth - {r(20)}', r(12), frac, color)]
+    if onsel: ch.append(tbtn(f'btn{name}_Dsh', onsel))
+    g = wrap(N(f'gal{name}_Dsh', 'Gallery@2.15.0', 'Vertical', {'Height': f'{rows} * {r(SH_)}', 'Items': items, 'ShowScrollbar': 'false', 'TemplatePadding': '0', 'TemplateSize': r(SH_), 'Width': f'Parent.Width - {r(20)}', 'X': r(10), 'Y': r(62)}, ch), f'con{name}Row_Dsh')
+    kids = [g]
+    if empty: kids.append(lbl(f'lbl{name}None_Dsh', f'"{empty}"', x=r(20), y=r(150), w=f'Parent.Width - {r(40)}', h=r(30), size=15, color='C_Muted', align='Align.Center', visible=f'Sum(gal{name}_Dsh.AllItems, N) = 0'))
+    return panel(name, title, kids, sub=sub)
+def focus(kind, key='ThisItem.Key'):
+    sel = f'varDashFKind = "{kind}" && varDashFVal = {key}'
+    return (f'If({sel}, Set(varDashFKind, ""); Set(varDashFVal, ""), Set(varDashFKind, "{kind}"); Set(varDashFVal, {key}))', sel)
+share = lambda tot: f'ThisItem.N & "  ·  " & Round((If({tot} > 0, ThisItem.N / {tot}, 0)) * 100, 0) & "%"'
+pStr = listpanel('ByStr', 'BY BAU STREAM', '"Tap to show one stream"', 'colDashStr', 'ThisItem.Key', share('varDashBaseN'), 'If(varDashBaseN > 0, ThisItem.N / varDashBaseN, 0)', 'C_Accent', 4,
+                 onsel='Set(varDashStream, If(varDashStream = ThisItem.Key, "ALL", ThisItem.Key));\nSelect(btnCalc_Dsh)', selexpr='varDashStream = ThisItem.Key', empty='No ideas yet')
+o, s_ = focus('Theme'); pTh = listpanel('ByTheme', 'BY THEME', '"Tap a theme to list those ideas"', 'colDashTheme', 'ThisItem.Key', share('varDashN'), 'If(varDashN > 0, ThisItem.N / varDashN, 0)', 'C_Teal', 5, onsel=o, selexpr=s_, empty='No ideas yet')
+o, s_ = focus('Status'); pSt = listpanel('ByStat', 'BY STATUS', '"Where each idea is up to"', 'colDashStat', 'ThisItem.Key', share('varDashN'), 'If(varDashN > 0, ThisItem.N / varDashN, 0)', scol('ThisItem.Key'), 4, onsel=o, selexpr=s_, empty='No ideas yet')
+o, s_ = focus('Service'); pSv = listpanel('BySvc', 'TOP SERVICES', 'varDashNoSvcN & If(varDashNoSvcN = 1, " idea", " ideas") & " with no service recorded"', 'colDashSvc', 'ThisItem.Key', 'ThisItem.N', 'If(varDashMaxSvc > 0, ThisItem.N / varDashMaxSvc, 0)', 'C_Accent', 6, onsel=o, selexpr=s_, empty='No services recorded yet')
+o, s_ = focus('Walker'); pWk = listpanel('ByWalk', 'FLOORWALKERS', '"Ideas captured by each person"', 'colDashWalk', 'ThisItem.Key', 'ThisItem.N', 'If(varDashMaxWalk > 0, ThisItem.N / varDashMaxWalk, 0)', 'C_Teal', 6, onsel=o, selexpr=s_, empty='No ideas yet')
+
+# ---- idea list
+nf = '!IsBlank(varDashFKind)'
+FOCUSLBL = 'Switch(varDashFKind, "Follow", "Follow-up wanted", "Priority", varDashFVal & " priority", "Walker", "Captured by " & varDashFVal, varDashFVal)'
+SEARCH = 'Lower(Trim(txtSearch_Dsh.Text))'
+ITEMS = f'''SortByColumns(
+    Filter(
+        colDash,
+        Switch(
+            varDashFKind,
+            "Status", Status = varDashFVal,
+            "Theme", Theme = varDashFVal,
+            "Priority", Priority = varDashFVal,
+            "Follow", Follow,
+            "Service", Service = varDashFVal,
+            "Walker", Walker = varDashFVal,
+            true
+        )
+        && (IsBlank({SEARCH}) || {SEARCH} in Lower(Idea & " " & Service & " " & Loc & " " & Stake & " " & Walker & " " & Theme & " " & ThemeOther))
+    ),
+    "When",
+    SortOrder.Descending
+)'''
+LH = 142
+lrow = box('conRow_Dsh', x='1', y=r(5), w=f'Parent.TemplateWidth - {r(12)}', h=r(LH - 10), fill='C_White', border='C_Line', radius=r(16), children=[
+    box('conStripe_Dsh', w=r(8), h='Parent.Height', fill=pcol('ThisItem.Priority'), extra={'RadiusTopLeft': r(16), 'RadiusBottomLeft': r(16), 'RadiusTopRight': '0', 'RadiusBottomRight': '0'}),
+    lbl('lblRowT_Dsh', 'ThisItem.Idea', x=r(22), y=r(10), w=f'Parent.Width - {r(66)}', h=r(44), size=15, color='C_Ink', bold=True, wrap=True),
+    lbl('lblRowS_Dsh', 'ThisItem.Theme & "  ·  " & If(IsBlank(ThisItem.Service), "No service", ThisItem.Service) & "  ·  " & ThisItem.StreamShort', x=r(22), y=r(58), w=f'Parent.Width - {r(66)}', h=r(20), size=13, color='C_Ink2'),
+    lbl('lblRowM_Dsh', 'ThisItem.Walker & "  ·  " & Text(ThisItem.When, "d mmm, h:mm AM/PM") & If(IsBlank(ThisItem.Loc), "", "  ·  " & ThisItem.Loc)', x=r(22), y=r(80), w=f'Parent.Width - {r(66)}', h=r(20), size=13, color='C_Muted'),
+    box('conRowSt_Dsh', x=r(22), y=r(102), w=r(120), h=r(24), fill=ssoft('ThisItem.Status'), radius=r(12), children=[
+        lbl('lblRowSt_Dsh', 'ThisItem.Status', w='Parent.Width', h=r(24), size=13, color=scol('ThisItem.Status'), bold=True, align='Align.Center', extra={'VerticalAlign': 'VerticalAlign.Middle'})]),
+    lbl('lblRowP_Dsh', 'If(ThisItem.Follow, ThisItem.Priority & "  ·  Follow-up", ThisItem.Priority & " priority")', x=r(152), y=r(102), w=f'Parent.Width - {r(170)}', h=r(24), size=13, color=pcol('ThisItem.Priority'), bold=True, extra={'VerticalAlign': 'VerticalAlign.Middle'}),
+    ico('icoRowGo_Dsh', 'ChevronRight', f'Parent.Width - {r(40)}', r(54), 24, 'C_Muted'),
+    tbtn('btnRow_Dsh', 'Set(varDashSel, ThisItem);\nSet(varDetStatus, ThisItem.Status);\nSet(varDetPri, ThisItem.Priority);\nReset(txtRevNotes_Dsh);\nSet(varDashShowDet, true)'),
+])
+GY = f'If({WIDE}, {r(118)}, If({nf}, {r(170)}, {r(120)}))'
+galList = N('galList_Dsh', 'Gallery@2.15.0', 'Vertical', {'Height': f'Parent.Height - {GY} - {r(10)}', 'Items': ITEMS, 'TemplatePadding': '0', 'TemplateSize': r(LH), 'Width': f'Parent.Width - {r(28)}', 'X': r(16), 'Y': GY}, [lrow])
+wrap(galList, 'conRowWrap_Dsh')
+cntL = 'CountRows(galList_Dsh.AllItems)'
+pList = panel('List', 'IDEAS', [
+    lbl('lblListN_Dsh', f'{cntL} & If({cntL} = 1, " idea", " ideas") & If({nf} || !IsBlank({SEARCH}), " match", "") & ", newest first. Tap one for detail."', x=r(20), y=r(38), w=f'If({WIDE}, Parent.Width - {r(400)}, Parent.Width - {r(40)})', h=r(22), size=14, color='C_Ink2', bold=True),
+    box('conSearch_Dsh', x=f'If({WIDE}, Parent.Width - {r(360)}, {r(20)})', y=f'If({WIDE}, {r(14)}, {r(66)})', w=f'If({WIDE}, {r(340)}, Parent.Width - {r(40)})', h=r(44), fill='C_White', border=LINE, radius=r(14), children=[
+        ico('icoSearch_Dsh', 'Search', r(12), r(11), 22, 'C_Muted'),
+        N('txtSearch_Dsh', 'Classic/TextInput@2.3.2', props={'BorderStyle': 'BorderStyle.None', 'Color': 'C_Ink', 'Default': '""', 'DelayOutput': 'true', 'Fill': TR, 'Font': 'AppFont', 'Height': 'Parent.Height', 'HintText': '"Search idea, service, location, people"', 'Size': r(F(14)), 'Width': f'Parent.Width - {r(44)}', 'X': r(40)})]),
+    box('conFocus_Dsh', x=r(20), y=f'If({WIDE}, {r(66)}, {r(118)})', w=f'If({WIDE}, Parent.Width - {r(400)}, Parent.Width - {r(40)})', h=r(40), fill='C_AccentSoft', border='C_Accent', radius=r(20), visible=nf, children=[
+        lbl('lblFocus_Dsh', '"Showing: " & ' + FOCUSLBL, x=r(16), w=f'Parent.Width - {r(130)}', h=r(40), size=14, color='C_Accent', bold=True, extra={'VerticalAlign': 'VerticalAlign.Middle'}),
+        lbl('lblFocusX_Dsh', '"Clear  ✕"', x=f'Parent.Width - {r(110)}', w=r(96), h=r(40), size=14, color='C_Accent', bold=True, align='Align.Right', extra={'VerticalAlign': 'VerticalAlign.Middle'}),
+        tbtn('btnFocusX_Dsh', 'Set(varDashFKind, "");\nSet(varDashFVal, "")')]),
+    lbl('lblListNone_Dsh', 'If(varDashN = 0, "No ideas in this view yet", "No ideas match")', x=r(20), y=r(220), w=f'Parent.Width - {r(40)}', h=r(30), size=16, color='C_Muted', align='Align.Center', visible=f'{cntL} = 0'),
+    galList])
+pList.props.update({'Width': 'DashW', 'Height': r(780), 'AlignInContainer': 'AlignInContainer.SetByContainer', 'FillPortions': '0', 'LayoutMinHeight': r(780)})
+
+loading = lbl('lblLoading_Dsh', '"Loading ideas..."', w='DashW', h=r(26), size=15, color='C_Muted', align='Align.Center', visible='varDashLoading', extra={'AlignInContainer': 'AlignInContainer.SetByContainer', 'LayoutMinHeight': r(26)})
+endD = inflow('conEnd_Dsh', r(16), w='DashW', extra={'DropShadow': 'DropShadow.None'})
+bodyP = {'AlignInContainer': 'AlignInContainer.SetByContainer', 'DropShadow': 'DropShadow.None', 'LayoutAlignItems': 'LayoutAlignItems.Start', 'LayoutDirection': 'LayoutDirection.Vertical', 'LayoutGap': GAP,
+         'LayoutMinHeight': r(250), 'LayoutOverflowY': 'LayoutOverflow.Scroll', 'PaddingBottom': r(10), 'PaddingLeft': 'DashX', 'PaddingRight': 'DashX', 'PaddingTop': r(18), 'Width': 'App.Width'}
+bodyP.update(rad('0'))
+bodyD = N('conBody_Dsh', 'GroupContainer@1.5.0', 'AutoLayout', bodyP, [
+    filters, loading, kpi,
+    row('A', [(pStr, 1 / 3, 300), (pTh, 1 / 3, 300 + 56), (pSt, 1 / 3, 300)]),
+    row('B', [(pSv, 0.5, 412), (pWk, 0.5, 412)]),
+    pList, endD])
+# row A: same height side by side (theme has 5 rows)
+for p_ in (pStr, pSt):
+    p_.props['Height'] = f'If({WIDE}, {r(356)}, {r(300)})'
+rowA = bodyD.children[3]
+rowA.props['Height'] = rowA.props['LayoutMinHeight'] = f'If({WIDE}, {r(356)}, {r(300)} + {r(356)} + {r(300)} + 2 * {GAP})'
+pTh.props['Y'] = f'If({WIDE}, 0, {r(300)} + {GAP})'
+pSt.props['Y'] = f'If({WIDE}, 0, {r(300)} + {r(356)} + 2 * {GAP})'
+
+# ---- idea detail (pop-up) + review (status, priority, notes)
+SEL = 'varDashSel'
+DETW = f'Min(App.Width - {r(24)}, {r(900)})'
+IW2 = f'{DETW} - {r(40)}'
+def dl(name, text, h, size=15, color='C_Ink', bold=False, wrap=False, auto=False, visible=None):
+    x = {'AlignInContainer': 'AlignInContainer.SetByContainer', 'FillPortions': '0', 'LayoutMinHeight': r(h)}
+    if auto: x['AutoHeight'] = 'true'
+    return lbl(name, text, w=IW2, h=r(h), size=size, color=color, bold=bold, wrap=wrap, visible=visible, extra=x)
+def dcap(name, text, visible=None):
+    return dl(name, f'"{text}"', 30, size=13, color='C_Muted', bold=True, visible=visible)
+INFO = [('Svc', 'SERVICE', f'If(IsBlank({SEL}.Service), "Not recorded", {SEL}.Service)'), ('Line', 'SERVICE LINE', f'If(IsBlank({SEL}.Line), "Not recorded", {SEL}.Line)'),
+        ('Str', 'BAU STREAM', f'{SEL}.Stream'), ('Loc', 'LOCATION', f'If(IsBlank({SEL}.Loc), "Not recorded", {SEL}.Loc)'),
+        ('Thm', 'THEME', f'{SEL}.Theme & If(IsBlank({SEL}.ThemeOther), "", ": " & {SEL}.ThemeOther)'), ('Fol', 'FOLLOW-UP WANTED', f'If({SEL}.Follow, "Yes", "No")')]
+IH = 56
+ninfo = len(INFO)
+# wide: two columns of 3; phone: one column of 6
+cw = f'If({WIDE}, ({IW2}) / 2, {IW2})'
+info_kids = []
+for i, (k, c, v) in enumerate(INFO):
+    xx = f'If({WIDE}, {i % 2} * ({IW2}) / 2, 0)'
+    yy = f'If({WIDE}, {i // 2} * {r(IH)}, {i} * {r(IH)})'
+    info_kids += [lbl(f'lblI{k}C_Dsh', f'"{c}"', x=f'{xx} + {r(16)}', y=f'{yy} + {r(8)}', w=f'{cw} - {r(32)}', h=r(20), size=13, color='C_Muted', bold=True),
+                  lbl(f'lblI{k}V_Dsh', v, x=f'{xx} + {r(16)}', y=f'{yy} + {r(28)}', w=f'{cw} - {r(32)}', h=r(24), size=15, color='C_Ink', bold=True)]
+info = inflow('conDetInfo_Dsh', f'If({WIDE}, {r(3 * IH + 8)}, {r(ninfo * IH + 8)})', w=IW2, fill='C_Bg', radius=r(14), children=info_kids)
+HASST = f'!IsBlank({SEL}.Stake)'
+HASEM = f'!IsBlank({SEL}.StakeEmail)'
+stk = inflow('conDetStake_Dsh', f'If({HASEM}, {r(150)}, {r(92)})', w=IW2, fill='C_White', border='C_Line', radius=r(14), visible=HASST, children=[
+    lbl('lblDStkN_Dsh', f'{SEL}.Stake', x=r(16), y=r(10), w=f'Parent.Width - {r(32)}', h=r(26), size=17, color='C_Ink', bold=True),
+    lbl('lblDStkJ_Dsh', f'If(IsBlank({SEL}.StakeJob), "Typed in (not from the directory)", {SEL}.StakeJob & If(IsBlank({SEL}.StakeDept), "", "  ·  " & {SEL}.StakeDept))', x=r(16), y=r(38), w=f'Parent.Width - {r(32)}', h=r(22), size=14, color='C_Ink2'),
+    lbl('lblDStkM_Dsh', f'{SEL}.StakeEmail', x=r(16), y=r(60), w=f'Parent.Width - {r(32)}', h=r(22), size=14, color='C_Muted', visible=HASEM),
+    box('conDStkMail_Dsh', x=r(16), y=r(92), w=f'Min(Parent.Width - {r(32)}, {r(260)})', h=r(44), fill='C_White', border='C_Accent', radius=r(22), visible=HASEM, children=[
+        N('btnDStkMail_Dsh', 'ModernButton@1.0.0', props=dict({'Align': 'Align.Center', 'Appearance': 'ButtonAppearance.Transparent', 'Color': 'C_Accent', 'Font': 'AppFont', 'FontWeight': 'FontWeight.Bold', 'Height': 'Parent.Height', 'Icon': '"Mail"',
+            'OnSelect': f'Launch("mailto:" & {SEL}.StakeEmail & "?subject=" & EncodeUrl("Your ieMR improvement idea") & "&body=" & EncodeUrl("Hi " & First(Split({SEL}.Stake, " ")).Value & "," & Char(10) & Char(10) & "Following up on your idea: " & {SEL}.Idea & Char(10) & Char(10)))',
+            'Size': r(F(14)), 'Text': '"Email Stakeholder"', 'VerticalAlign': 'VerticalAlign.Middle', 'Width': 'Parent.Width'}, **rad(r(22)), **NOSB))])])
+noStk = dl('lblDetNoStk_Dsh', '"No stakeholder recorded"', 30, size=15, color='C_Muted', visible=f'!{HASST}')
+HASPH = f'!IsBlank(LookUp(colDashSrc, ID = {SEL}.ID).Photo)'
+photoD = inflow('conDetPhoto_Dsh', r(380), w=IW2, fill='C_Bg', radius=r(14), visible=HASPH, children=[
+    N('imgDetPhoto_Dsh', 'Image@2.2.3', props={'Height': f'Parent.Height - {r(16)}', 'Image': f'LookUp(colDashSrc, ID = {SEL}.ID).Photo', 'ImagePosition': 'ImagePosition.Fit', 'Width': f'Parent.Width - {r(16)}', 'X': r(8), 'Y': r(8)})])
+# review pills: status 4 (row when wide, 2 x 2 on phones), priority 3
+sw = f'If({WIDE}, (Parent.Width - 3 * {r(10)}) / 4, (Parent.Width - {r(10)}) / 2)'
+st_kids = [colorpill(f'DSt{i}_Dsh', 'varDetStatus', s, f'If({WIDE}, {i} * ({sw} + {r(10)}), {i % 2} * ({sw} + {r(10)}))', f'If({WIDE}, 0, {i // 2} * {r(58)})', sw, scol(f'"{s}"'), size=14)
+           for i, s in enumerate(STATUSES)]
+stPills = inflow('conDetSt_Dsh', f'If({WIDE}, {r(48)}, {r(106)})', w=IW2, children=st_kids, extra={'DropShadow': 'DropShadow.None'})
+pw2 = f'(Parent.Width - 2 * {r(10)}) / 3'
+prPills = inflow('conDetPr_Dsh', r(48), w=IW2, extra={'DropShadow': 'DropShadow.None'}, children=[
+    colorpill(f'DPr{p}_Dsh', 'varDetPri', p, f'{i} * ({pw2} + {r(10)})', '0', pw2, pcol(f'"{p}"'), size=14) for i, p in enumerate(PRIS)])
+revNotes = tin('txtRevNotes_Dsh', 'What was decided, who owns it, next step', '0', '0', IW2, r(110), multi=True, default=f'{SEL}.ReviewNotes')
+revNotes.props.update({'AlignInContainer': 'AlignInContainer.SetByContainer', 'FillPortions': '0', 'LayoutMinHeight': r(110)})
+del revNotes.props['X']; del revNotes.props['Y']
+CHANGED = f'(varDetStatus <> {SEL}.Status || varDetPri <> {SEL}.Priority || Trim(txtRevNotes_Dsh.Text) <> Coalesce({SEL}.ReviewNotes, ""))'
+okD = 'btnDetSave_Dsh.DisplayMode = DisplayMode.Edit'
+SAVE_D = f'''Set(varSaving, true);
+With(
+    {{ fresh: LookUp({LIST}, ID = {SEL}.ID) }},
+    If(
+        IsBlank(fresh),
+        Set(varSaving, false);
+        Notify("This idea could not be found. Tap Refresh.", NotificationType.Error),
+        // someone else saved this idea after the dashboard loaded: don't overwrite their change
+        fresh.Modified > {SEL}.Modified,
+        Set(varSaving, false);
+        Notify("Someone updated this idea a moment ago. Tap Refresh, then try again.", NotificationType.Warning),
+        With(
+            {{
+                rec: Patch(
+                    {LIST},
+                    fresh,
+                    {{
+                        Status: varDetStatus,
+                        Priority: varDetPri,
+                        ReviewNotes: Trim(txtRevNotes_Dsh.Text),
+                        StatusBy: MeName,
+                        StatusOn: Now()
+                    }}
+                )
+            }},
+            If(
+                IsEmpty(Errors({LIST})),
+                Patch(
+                    colDashRows,
+                    LookUp(colDashRows, ID = rec.ID),
+                    {{ Status: rec.Status, Priority: rec.Priority, ReviewNotes: Coalesce(rec.ReviewNotes, ""), StatusBy: rec.StatusBy, StatusOn: rec.StatusOn, Modified: rec.Modified }}
+                );
+                Set({SEL}, LookUp(colDashRows, ID = rec.ID));
+                Select(btnCalc_Dsh);
+                Set(varSaving, false);
+                Notify("Saved.", NotificationType.Success),
+                Set(varSaving, false);
+                Notify("Could not save. Check your connection and try again.", NotificationType.Error)
+            )
+        )
+    )
+)'''
+saveD = inflow('conDetSave_Dsh', r(56), w=IW2, fill=f'If({okD}, C_Accent, RGBA(160, 174, 180, 1))', radius=r(28), children=[
+    lbl('lblDetSave_Dsh', f'If(varSaving, "Saving...", {okD}, "Save Changes", "No changes to save")', w='Parent.Width', h=r(56), size=17, color='C_White', bold=True, align='Align.Center', extra={'VerticalAlign': 'VerticalAlign.Middle'}),
+    tbtn('btnDetSave_Dsh', SAVE_D, display=f'If({CHANGED} && !varSaving, DisplayMode.Edit, DisplayMode.Disabled)')])
+lastUp = dl('lblDetLast_Dsh', f'If(IsBlank({SEL}.StatusBy), "Not reviewed yet", "Last updated by " & {SEL}.StatusBy & " on " & Text({SEL}.StatusOn, "d mmm yyyy, h:mm AM/PM"))', 24, size=13, color='C_Muted')
+endDet = inflow('conDetEnd_Dsh', r(16), w=IW2, extra={'DropShadow': 'DropShadow.None'})
+detP = {'AlignInContainer': 'AlignInContainer.SetByContainer', 'DropShadow': 'DropShadow.None', 'Height': f'Parent.Height - {r(100)}', 'LayoutAlignItems': 'LayoutAlignItems.Start',
+        'LayoutDirection': 'LayoutDirection.Vertical', 'LayoutGap': r(8), 'LayoutOverflowY': 'LayoutOverflow.Scroll', 'PaddingBottom': r(8), 'PaddingLeft': r(20), 'PaddingRight': r(20),
+        'PaddingTop': r(10), 'Width': 'Parent.Width', 'X': '0', 'Y': r(100)}
+detP.update(rad('0'))
+detBody = N('conDetBody_Dsh', 'GroupContainer@1.5.0', 'AutoLayout', detP, [
+    dcap('capDetIdea_Dsh', 'THE IDEA'), dl('lblDetIdea_Dsh', f'{SEL}.Idea', 28, size=17, color='C_Ink', wrap=True, auto=True),
+    info,
+    dcap('capDetStk_Dsh', 'STAKEHOLDER'), stk, noStk,
+    dcap('capDetPh_Dsh', 'PHOTO', visible=HASPH), photoD,
+    box('conDetLn2_Dsh', w=IW2, h='1', fill='C_Line', extra={'AlignInContainer': 'AlignInContainer.SetByContainer', 'FillPortions': '0', 'LayoutMinHeight': '1'}),
+    dcap('capDetSt_Dsh', 'REVIEW  ·  STATUS'), stPills,
+    dcap('capDetPr_Dsh', 'PRIORITY'), prPills,
+    dcap('capDetNote_Dsh', 'REVIEW NOTES'), revNotes,
+    saveD, lastUp, endDet])
+cardD = box('conDetCard_Dsh', x=f'(App.Width - {DETW}) / 2', y=r(24), w=DETW, h=f'App.Height - {r(48)}', fill='C_White', radius=r(22), extra={'DropShadow': 'DropShadow.Bold'}, children=[
+    box('conDetStripe_Dsh', w=r(10), h=r(100), fill=pcol(f'{SEL}.Priority'), extra={'RadiusTopLeft': r(22), 'RadiusBottomLeft': '0', 'RadiusTopRight': '0', 'RadiusBottomRight': '0'}),
+    lbl('lblDetT_Dsh', f'{SEL}.Theme', x=r(28), y=r(16), w=f'Parent.Width - {r(110)}', h=r(36), size=19, color='C_Ink', bold=True),
+    lbl('lblDetS_Dsh', f'Text({SEL}.When, "d mmm, h:mm AM/PM") & "  ·  " & {SEL}.Walker', x=r(28), y=r(54), w=f'Parent.Width - {r(110)}', h=r(26), size=15, color='C_Ink2'),
+    iconbtn('btnDetClose_Dsh', 'DismissCircle', 'Set(varDashShowDet, false)', f'Parent.Width - {r(72)}', r(20)),
+    box('conDetLine_Dsh', x='0', y=r(99), w='Parent.Width', h='1', fill='C_Line'),
+    detBody])
+overlayD = box('conOverlayDet_Dsh', x='0', y='0', w='App.Width', h='App.Height', fill='RGBA(14, 28, 42, 0.45)', visible='varDashShowDet', children=[
+    tbtn('btnDetVeil_Dsh', 'Set(varDashShowDet, false)'), cardD])
+
+LOAD = f'''// LOAD: newest 2000 ideas, flattened to plain columns once (the screen then works on the device)
+Set(varDashLoading, true);
+Refresh({LIST});
+ClearCollect(colDashSrc, Sort({LIST}, Created, SortOrder.Descending));
+ClearCollect(
+    colDashRows,
+    ForAll(
+        colDashSrc As a,
+        {{
+            ID: a.ID,
+            When: a.Created,
+            Modified: a.Modified,
+            Walker: a.'Created By'.DisplayName,
+            WalkerEmail: Lower(a.'Created By'.Email),
+            Idea: Coalesce(a.Idea, a.Title),
+            Service: a.Service,
+            Line: a.ServiceLine,
+            Stream: If(IsBlank(a.Stream), "Other", a.Stream),
+            StreamShort: Coalesce(LookUp(StreamList, Key = a.Stream).Short, "Other"),
+            Loc: a.Location,
+            Stake: a.StakeholderName,
+            StakeEmail: a.StakeholderEmail,
+            StakeJob: a.StakeholderJobTitle,
+            StakeDept: a.StakeholderDept,
+            Follow: a.FollowUp = "Yes",
+            Theme: Coalesce(a.Theme, "Other"),
+            ThemeOther: a.ThemeOther,
+            Priority: Coalesce(a.Priority, "Medium"),
+            Status: Coalesce(a.Status, "New"),
+            ReviewNotes: Coalesce(a.ReviewNotes, ""),
+            StatusBy: a.StatusBy,
+            StatusOn: a.StatusOn
+        }}
+    )
+);
+Set(varDashLoading, false);
+Select(btnCalc_Dsh)'''
+CALC = '''// CALC: apply Mine + period + stream, then every number and bar on the screen
+ClearCollect(
+    colDashBase,
+    Filter(
+        colDashRows,
+        (!varDashMine || WalkerEmail = MeEmail)
+        && Switch(
+            varDashPeriod,
+            "Today", When >= Today(),
+            "7", When >= DateAdd(Today(), -6, TimeUnit.Days),
+            "30", When >= DateAdd(Today(), -29, TimeUnit.Days),
+            true
+        )
+    )
+);
+ClearCollect(colDash, Filter(colDashBase, varDashStream = "ALL" || Stream = varDashStream));
+Set(varDashBaseN, CountRows(colDashBase));
+Set(varDashN, CountRows(colDash));
+Set(varDashNewN, CountIf(colDash, Status = "New"));
+Set(varDashHighN, CountIf(colDash, Priority = "High"));
+Set(varDashFolN, CountIf(colDash, Follow));
+Set(varDashActN, CountIf(colDash, Status = "Actioned"));
+// by stream ignores the stream filter, so every stream stays visible
+ClearCollect(colDashStr, ForAll(StreamList As s, { Key: s.Key, N: CountIf(colDashBase, Stream = s.Key) }));
+ClearCollect(colDashTheme, ForAll(ThemeList As t, { Key: t.Value, N: CountIf(colDash, Theme = t.Value) }));
+ClearCollect(colDashStat, ForAll(StatusList As t, { Key: t.Value, N: CountIf(colDash, Status = t.Value) }));
+ClearCollect(
+    colDashSvc,
+    FirstN(
+        SortByColumns(
+            ForAll(Filter(Distinct(colDash, Service), !IsBlank(Value)) As s, { Key: s.Value, N: CountIf(colDash, Service = s.Value) }),
+            "N",
+            SortOrder.Descending
+        ),
+        6
+    )
+);
+Set(varDashMaxSvc, Max(colDashSvc, N));
+Set(varDashNoSvcN, CountIf(colDash, IsBlank(Service)));
+ClearCollect(
+    colDashWalk,
+    FirstN(
+        SortByColumns(
+            ForAll(Filter(Distinct(colDash, Walker), !IsBlank(Value)) As s, { Key: s.Value, N: CountIf(colDash, Walker = s.Value) }),
+            "N",
+            SortOrder.Descending
+        ),
+        6
+    )
+);
+Set(varDashMaxWalk, Max(colDashWalk, N))'''
+ONV_D = '''If(IsBlank(varDashStream), Set(varDashStream, "ALL"));
+If(IsBlank(varDashPeriod), Set(varDashPeriod, "All"));
+If(IsBlank(varDashMine), Set(varDashMine, false));
+Set(varDashFKind, "");
+Set(varDashFVal, "");
+Set(varSaving, false);
+Set(varDashShowDet, false);
+Reset(txtSearch_Dsh);
+ClearCollect(colDashPills, { Label: "All", Full: "All Streams", Key: "ALL" });
+ForAll(StreamList As s, Collect(colDashPills, { Label: s.Short, Full: s.Key, Key: s.Key }));
+ClearCollect(colDashPer, { Label: "Today", Key: "Today" }, { Label: "7 Days", Key: "7" }, { Label: "30 Days", Key: "30" }, { Label: "All Time", Key: "All" });
+Select(btnLoad_Dsh)'''
+open(OUT + 'FW_Dashboard.pa.yaml', 'w').write(screen('Dashboard', {'Fill': 'C_Bg', 'OnVisible': ONV_D},
+    [vroot('conRoot_Dsh', [hdrD, bodyD]), overlayD, hidden('btnLoad_Dsh', LOAD), hidden('btnCalc_Dsh', CALC)]))
+print('built App_Formulas.txt, FW_Home, FW_Capture, FW_Dashboard ->', os.path.normpath(OUT))
