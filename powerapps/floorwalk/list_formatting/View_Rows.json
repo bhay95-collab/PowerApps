@@ -1,0 +1,4 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/row-formatting.schema.json",
+  "additionalRowClass": "=if([$Priority] == 'High' && [$Status] == 'New', 'sp-field-severity--severeWarning', if(@rowIndex % 2 == 0, 'sp-css-backgroundColor-BgLightGray30', ''))"
+}

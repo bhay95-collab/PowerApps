@@ -1,0 +1,16 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+  "elmType": "div",
+  "txtContent": "@currentField",
+  "style": {
+    "white-space": "normal",
+    "max-height": "60px",
+    "overflow": "hidden",
+    "line-height": "20px",
+    "color": "#0E1C2A",
+    "font-weight": "600"
+  },
+  "attributes": {
+    "title": "@currentField"
+  }
+}

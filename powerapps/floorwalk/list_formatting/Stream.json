@@ -1,0 +1,15 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+  "elmType": "div",
+  "txtContent": "@currentField",
+  "style": {
+    "display": "=if(@currentField == '', 'none', 'inline-block')",
+    "padding": "3px 12px",
+    "border-radius": "12px",
+    "font-weight": "600",
+    "font-size": "12px",
+    "white-space": "nowrap",
+    "color": "=if(@currentField == 'Surgical & Critical Care', '#1A5A99', if(@currentField == 'Women's, Cancer & Mental Health', '#009099', if(@currentField == 'Internal Medicine & Emergency', '#0C7A52', if(@currentField == 'Operational Support Services', '#3A5068', '#3A5068'))))",
+    "background-color": "=if(@currentField == 'Surgical & Critical Care', '#E3ECF5', if(@currentField == 'Women's, Cancer & Mental Health', '#E5F4F5', if(@currentField == 'Internal Medicine & Emergency', '#E8F6F0', if(@currentField == 'Operational Support Services', '#EEF1F4', '#EEF1F4'))))"
+  }
+}

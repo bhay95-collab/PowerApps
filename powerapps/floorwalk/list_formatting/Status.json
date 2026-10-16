@@ -1,0 +1,15 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+  "elmType": "div",
+  "txtContent": "@currentField",
+  "style": {
+    "display": "=if(@currentField == '', 'none', 'inline-block')",
+    "padding": "3px 12px",
+    "border-radius": "12px",
+    "font-weight": "600",
+    "font-size": "12px",
+    "white-space": "nowrap",
+    "color": "=if(@currentField == 'New', '#1A5A99', if(@currentField == 'Under Review', '#B26900', if(@currentField == 'Actioned', '#1E7A50', if(@currentField == 'Not Progressing', '#5A6B7E', '#3A5068'))))",
+    "background-color": "=if(@currentField == 'New', '#E3ECF5', if(@currentField == 'Under Review', '#FFF6E5', if(@currentField == 'Actioned', '#E8F6F0', if(@currentField == 'Not Progressing', '#EEF1F4', '#EEF1F4'))))"
+  }
+}

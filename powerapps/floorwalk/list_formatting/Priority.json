@@ -1,0 +1,15 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+  "elmType": "div",
+  "txtContent": "@currentField",
+  "style": {
+    "display": "=if(@currentField == '', 'none', 'inline-block')",
+    "padding": "3px 12px",
+    "border-radius": "12px",
+    "font-weight": "600",
+    "font-size": "12px",
+    "white-space": "nowrap",
+    "color": "=if(@currentField == 'High', '#B03428', if(@currentField == 'Medium', '#B26900', if(@currentField == 'Low', '#00838A', '#3A5068')))",
+    "background-color": "=if(@currentField == 'High', '#FEF2F2', if(@currentField == 'Medium', '#FFF6E5', if(@currentField == 'Low', '#E5F4F5', '#EEF1F4')))"
+  }
+}
