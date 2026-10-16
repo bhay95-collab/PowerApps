@@ -77,7 +77,7 @@ Target timings per section. Write the slides below; you may split a slide into t
 ### A. Opening (3 min)
 1. **Title slide.** "SharePoint, Lists and Power Apps: from problem to app". Subtitle: "Digital Metro North · CIO inservice · January 2027". Presenter: Ben (placeholder I can edit).
 2. **The hook.** "Every one of us has a spreadsheet, a paper sheet, or a Teams chat doing a job a small app could do better." Three icons: paper floorwalking sheet → Excel on a shared drive → app on a phone. Notes: ask the room "Who has a spreadsheet that more than 3 people edit?"
-3. **Today's map.** 4 blocks with times: SharePoint basics (10) · Lists (15) · Thinking before building (15) · Build it live (12) · wrap (5).
+3. **Today's map.** Blocks with times: SharePoint basics (10) · Lists + archiving (17) · Thinking before building (15) · Build it live (12) · Wrap (3).
 
 ### B. SharePoint basics (10 min)
 4. **Every Team has a SharePoint site behind it.** Diagram: a Teams team → its SharePoint site → Documents library (= the Files tab) + Lists + Pages. Channels = folders in Documents. Private and shared channels get their own separate site. Notes: open a Team → Files → "Open in SharePoint" to show it live.
@@ -92,7 +92,7 @@ Target timings per section. Write the slides below; you may split a slide into t
    - **Edit in grid view** on a list = edit like Excel; **Export to Excel** for a quick report.
 8. **Quick check (interactive).** 3 multiple-choice questions, click to reveal answer + one-line explanation (green/red). E.g. "Where do you find a list you can't see in the menu?" → Site contents.
 
-### C. Lists (15 min)
+### C. Lists (17 min)
 9. **What a list gives you for free.** ID, Title, **Created**, **Created By**, Modified, Modified By, version history, views, filters, permissions, mobile access, works with Power Apps and Power Automate. Key point: **never make your own "Date entered" or "Entered by" column — SharePoint already records Created and Created By.** Use Created, not Modified (Modified changes on every edit).
 10. **Column types (interactive explorer).** Left: a grid of type tiles. Click one → right panel shows: what it stores, a clinical example, ✅ good for, ⚠ watch out (Power Apps gotcha). Cover:
 
@@ -121,16 +121,38 @@ Target timings per section. Write the slides below; you may split a slide into t
     - **Rules** ("Automate → Create a rule") for simple email notifications when something changes — no Power Automate needed.
     - **Conditional formatting** ("Format this column") to colour severity or status.
 13. **The 5,000 rule (interactive).** Slider: number of rows in a list (0 → 50,000). Show what happens: under 2,000 = fine everywhere; over 2,000 = Power Apps can silently miss rows unless filters "delegate" to SharePoint; over 5,000 = SharePoint views can fail unless the filter/sort column is **indexed**. Text: "Index the columns you filter or sort by (status, date, location). Max 20 indexes per list. Add indexes **before** the list gets big." Path: List settings → Indexed columns → Create a new index.
-14. **Big list habits.** Archive old rows (a scheduled flow can move rows older than X to a CSV), soft delete (`IsActive = No`) instead of deleting, keep history in a separate log list.
+14. **Big list habits.** Archive old rows (next slide), soft delete (`IsActive = No`) instead of deleting, keep history in a separate log list.
+15. **Power Automate: archive old rows automatically (interactive click-through flow).** Title: "Keep the list fast, keep the history." Intro line: "A scheduled flow runs every night, saves old rows to a CSV file (opens in Excel), then deletes them from the list."
+    - **Myth box (amber), show first:** "2,000 is not a SharePoint limit. A list can hold millions of rows. 2,000 is the most rows **Power Apps** will read when a filter can't run on SharePoint. 5,000 is when **SharePoint views** struggle without an index. So archive by **age**, with a row-count safety net. Don't cut at 2,000 and lose recent data people still need."
+    - **The flow as 8 clickable step cards** in a left-to-right chain (wrap to 2 rows if needed). Clicking a card opens a panel: *What it does* · *Setting to use* · ⚠ *Trap*.
+
+| # | Step (Power Automate action) | What it does | Setting to use | ⚠ Trap |
+|---|---|---|---|---|
+| 1 | **Recurrence** (trigger) | Runs the flow every night | Every 1 day, 02:30, time zone **(UTC+10:00) Brisbane** | Default time zone is UTC: it would run at 12:30 pm |
+| 2 | **Initialize variable** ×4 | Settings in one place | `MonthsToKeep` = 12, `SafetyCount` = 4999, `BatchSize` = 1000, `ArchiveFolder` = `/Shared Documents/Archive` | Hard-coding numbers inside later steps means hunting for them later |
+| 3 | **Get items** (SharePoint) | Finds rows older than 12 months | Filter Query: `Created lt '@{addToTime(utcNow(), -12, 'Month')}'` · Order By: `Created asc` · Top Count: 1000 · Settings → **Pagination on**, threshold 5000 | Without Top Count + Pagination it quietly returns only the first 100 rows. `Created` is always indexed, so this filter is safe on big lists |
+| 4 | **Condition: safety net** | If the list is still over 4,999 rows, archive the oldest 1,000 anyway | SharePoint **Send an HTTP request**: GET `_api/web/lists/getbytitle('FW_Issues')/ItemCount` → compare with `SafetyCount` | List title must be exact, e.g. `FW_Issues`, not "FW Issues" |
+| 5 | **Select** (Data Operation) | Picks the columns to keep and gives them readable headers | Map e.g. Summary → `Title`, Status → `Status/Value`, Logged By → `Author/Email`, Logged At → `Created` | Choice and Person columns come out as messy `{ "Value": … }` text unless you pick the inner value |
+| 6 | **Create CSV table** | Turns the rows into CSV text | From = output of Select | — |
+| 7 | **Create file** (SharePoint) | Saves the CSV to a document library | Folder = `ArchiveFolder`, File name = `FW_Issues_@{formatDateTime(utcNow(),'yyyy-MM-dd')}.csv` | The archive library must have the **same or tighter** permissions as the list |
+| 8 | **Apply to each → Delete item** | Removes the archived rows from the list | Runs **only after Create file succeeds** (Configure run after: is successful) | Deleting before the file is saved = data gone. Deleted rows sit in the recycle bin for 93 days |
+
+    - **Extra card, red outline: "If it fails, tell someone."** Last action **Send an email (V2)** to the list owner, with **Configure run after → has failed / has timed out** ticked. "Scheduled flows fail silently. Nobody notices until the list is full."
+    - **Why CSV, not an Excel file (small compare box):**
+      - CSV: one step for 1,000 rows, fast, nothing to set up first, opens in Excel.
+      - Excel file ("Add a row into a table"): needs a table made in advance, one action per row (1,000 rows = 1,000 actions, slow and can be throttled), and fails if someone has the file open.
+    - **Long-term use tip (good box):** "To report across every archive file at once: Excel → Data → Get Data → From File → **From SharePoint Folder** → point it at the Archive folder → **Combine**. New CSVs are picked up when you Refresh."
+    - **Footer line:** "Test on a copy of the list first. Real example: my Data Cleanup flow archives 4 lists every night at 02:30."
+    - Speaker notes: ~2 min. Don't build it live; click through the cards. Main message: archive by age, CSV, delete last, email on failure.
 
 ### D. Thinking before building (15 min) — the heart of the session
-15. **Section divider:** "Don't open Power Apps first. Open a notepad."
-16. **The 4 steps.** Problem → Data → Lists & columns → Screens. One line each:
+16. **Section divider:** "Don't open Power Apps first. Open a notepad."
+17. **The 4 steps.** Problem → Data → Lists & columns → Screens. One line each:
     1. **Problem**: what decision or task does this make faster? What happens today instead?
     2. **Data**: what must we know to make that decision? Who enters it, who reads it?
     3. **Lists & columns**: "One row = one ___." Then each column: name, type, required, who fills it.
     4. **Screens**: what does each person need to see first? Enter → list → detail → dashboard.
-17. **The design questions (interactive checklist).** A clickable checklist I walk through. These are the exact questions I use when designing a list:
+18. **The design questions (interactive checklist).** A clickable checklist I walk through. These are the exact questions I use when designing a list:
 
 **Purpose**
 - Who uses it: everyone, managers only, auditors, one person?
@@ -160,20 +182,20 @@ Target timings per section. Write the slides below; you may split a slide into t
 - No signal on the ward? Double tap on Save? Two people editing the same row?
 - Anything destructive (delete, close, return)? → confirm step.
 
-18. **Patterns I keep reusing.** 6 cards, each with a tiny diagram:
+19. **Patterns I keep reusing.** 6 cards, each with a tiny diagram:
     - **Register + Log**: thing list + event list (device register + audit results).
     - **Current state on the item, history in a log**: item has `Status`; every change adds a log row.
     - **Snapshot for trends**: save a daily/weekly value (e.g. acuity score per ward) so you can chart change over time.
     - **Store exceptions only**: record only missing/extra items, not every item that was fine.
     - **Soft delete**: `IsActive = No` instead of deleting.
     - **A people/roles list**: one list of staff with their role → app shows manager tools only to the right people.
-19. **Case study 1 — DTV audit (they know this).** Problem: prove every downtime viewer works and is ready. Show:
+20. **Case study 1 — DTV audit (they know this).** Problem: prove every downtime viewer works and is ready. Show:
     - `DTV_Register` — one row = one DTV. Columns: Title (asset tag), DisplayName, Department, Location, Building, Floor, Stream.
     - `Audit_Results` — one row = one audit. Columns: Title (asset tag), Stream, DTVFound, LoginWorked, LoginFailReason, PatientListWorked, PrintWorked, PrintFailReason, KitMatched, MissingItems, EducationGiven (multi-choice), Notes, AuditPhoto, ReAudit. Auditor and time = Created By / Created (not columns).
     - Screens that came from it: pick a DTV (hides ones audited in the last month) → audit form in 6 steps → done → dashboard (latest audit per DTV, failures by reason, coverage by stream, follow-up: fixed / still failing).
     - Lesson boxes: "Imported from Excel → `field_2` internal names." "Reason columns only filled when a check fails."
-20. **Case study 2 — Downtime kit check (next round).** Shows the "register + contents + exceptions" pattern: `Kit_Register` (one row per kit, QR code), `Kit_Items` (one row per item type), `Kit_Contents` (which items belong in which kit), `KitAudits` (one row per kit check), `Kit_Audit_Items` (**only** missing or extra items). Lesson: "Every kit list column is text, not Choice, because the app writes the values. A Choice column turned the save red."
-21. **Case study 3 — Physiotherapy dashboard (broader functionality).** One app, many lists. Show as a diagram (mock boxes, **no screenshots, no patient data**):
+21. **Case study 2 — Downtime kit check (next round).** Shows the "register + contents + exceptions" pattern: `Kit_Register` (one row per kit, QR code), `Kit_Items` (one row per item type), `Kit_Contents` (which items belong in which kit), `KitAudits` (one row per kit check), `Kit_Audit_Items` (**only** missing or extra items). Lesson: "Every kit list column is text, not Choice, because the app writes the values. A Choice column turned the save red."
+22. **Case study 3 — Physiotherapy dashboard (broader functionality).** One app, many lists. Show as a diagram (mock boxes, **no screenshots, no patient data**):
     - Ward lists (one row = one bed/patient) → ward board, discharge planner (by expected discharge date), handover.
     - `ClinicianDirectory` (staff + role) → who sees manager tools.
     - `Equipment_Inventory` (current state: Available / Allocated / In Service) + `Equipment_Usage_Log` (every sign-out/return) + `Service_Log` (every service trip) → allocate/return on phone, servicing due list, usage reports.
@@ -181,11 +203,11 @@ Target timings per section. Write the slides below; you may split a slide into t
     - `TrainingSessions` + `TrainingBookings` + `TrainingWaitlist` → booking with capacity, waitlist, reminder emails via Power Automate.
     - Cleanup flow: when a log reaches 4,999 rows, archive oldest 1,000 to CSV.
     - Notes: "The point is not the app, it is that every screen maps to a list with a clear 'one row = one ___'."
-22. **Group task (5 min, interactive).** "Design the lists for this problem" — the room picks one card (click to choose): (a) device loan tracker for go-live (b) go-live readiness checklist per ward (c) training attendance for a new ieMR module (d) ieMR access request tracking. Then the **List Designer** (see §6) is filled in live by me while the room calls out answers. A timer (5:00) shows on screen.
+23. **Group task (5 min, interactive).** "Design the lists for this problem" — the room picks one card (click to choose): (a) device loan tracker for go-live (b) go-live readiness checklist per ward (c) training attendance for a new ieMR module (d) ieMR access request tracking. Then the **List Designer** (see §6) is filled in live by me while the room calls out answers. A timer (5:00) shows on screen.
 
 ### E. Build it live — Floorwalking issue log (12 min)
-23. **The problem.** During a go-live, CIOs floorwalk wards and fix or escalate issues. Today: paper sheets or a Teams chat → no totals, hard to see repeat problems, hard to hand over between shifts.
-24. **Design it first (use the 4 steps).** One row = **one issue raised on the floor**. List `FW_Issues`:
+24. **The problem.** During a go-live, CIOs floorwalk wards and fix or escalate issues. Today: paper sheets or a Teams chat → no totals, hard to see repeat problems, hard to hand over between shifts.
+25. **Design it first (use the 4 steps).** One row = **one issue raised on the floor**. List `FW_Issues`:
 
 | Column (internal name) | Display name | Type | Required | Notes |
 |---|---|---|---|---|
@@ -203,7 +225,7 @@ Target timings per section. Write the slides below; you may split a slide into t
 
 Notes: point out what is NOT a column (logged by, logged at). Index `Status` and `Facility` if it will grow. "Choice is fine here because we'll start with the auto-generated form, which handles Choice for us."
 
-25. **Live build steps (checklist slide I tick as I go — clicking a step ticks it).**
+26. **Live build steps (checklist slide I tick as I go — clicking a step ticks it).**
     1. Open the demo Team → SharePoint → **+ New → List → Blank list** → name `FW_Issues`.
     2. Add the columns from the table (I'll have it pre-built as backup).
     3. Add 3 fake rows in **Edit in grid view**.
@@ -213,26 +235,27 @@ Notes: point out what is NOT a column (logged by, logged at). Index `Status` and
     7. Edit screen: remove fields we don't need, reorder (Summary, Facility, Ward, System, Severity, Status…).
     8. Save → Publish → **Share** with the room.
     9. Room scans the QR code (next slide) and logs a fake issue → I refresh the list → it appears.
-26. **Join the demo (interactive).** A text box where I paste the app link, and a big QR code generated from it **in the page (write a small QR encoder inline — no library)**. If that's not possible reliably, show the link very large instead. Save the last link with try/catch'd localStorage.
-27. **Mock of the finished app.** A phone-shaped frame (CSS) showing the browse screen with 5 fictional issues, status colours, a "+ New" button. Clicking "+ New" shows the form mock; clicking an issue shows the detail mock. Purpose: backup if the live build fails, and a picture of where we're heading.
-28. **Where next.** Short list: a Locations list (Lookup) instead of free text; a dashboard screen (counts by system and severity); a rule or flow that emails the shift lead on "High"; an end-of-shift handover view; Power BI later.
+27. **Join the demo (interactive).** A text box where I paste the app link, and a big QR code generated from it **in the page (write a small QR encoder inline — no library)**. If that's not possible reliably, show the link very large instead. Save the last link with try/catch'd localStorage.
+28. **Mock of the finished app.** A phone-shaped frame (CSS) showing the browse screen with 5 fictional issues, status colours, a "+ New" button. Clicking "+ New" shows the form mock; clicking an issue shows the detail mock. Purpose: backup if the live build fails, and a picture of where we're heading.
+29. **Where next.** Short list: a Locations list (Lookup) instead of free text; a dashboard screen (counts by system and severity); a rule or flow that emails the shift lead on "High"; an end-of-shift handover view; Power BI later.
 
-### F. Wrap (5 min)
-29. **Five things to remember.**
+### F. Wrap (3 min)
+30. **Five things to remember.**
     1. Every Team has a SharePoint site; find lists in Site contents.
     2. One row = one ___. If you can't say it, you need two lists.
     3. Pick column types on purpose; let SharePoint record who and when.
     4. Index what you filter by; plan for 2,000 and 5,000.
     5. Design on paper first; the app is the easy part.
-30. **Questions + cheat sheet.** "Press P to print the cheat sheet" (note for me). Contact placeholder I can edit.
+31. **Questions + cheat sheet.** "Press P to print the cheat sheet" (note for me). Contact placeholder I can edit.
 
 ## 6. Interactive pieces (build all of these)
 
 1. **Quick check quiz** (slide 8): multiple choice, instant feedback, no scoring needed.
 2. **Column type explorer** (slide 10): tile grid → detail panel. Data from the table in slide 10.
 3. **Row-count slider** (slide 13): 0 → 50,000 with thresholds at 2,000 and 5,000; message and colour change (good / amber / danger).
-4. **Design checklist** (slide 17): click to tick questions; "Reset" button.
-5. **List Designer** (slide 22, also reusable): the most important widget.
+3b. **Archive flow click-through** (slide 15): 8 step cards + failure card; click opens What / Setting / Trap panel; ← → inside the panel step through cards without changing slide; expressions shown in monospace with a Copy button.
+4. **Design checklist** (slide 18): click to tick questions; "Reset" button.
+5. **List Designer** (slide 23, also reusable): the most important widget.
    - Fields: problem (text), "One row = one ___" (text), list name.
    - Table of columns: add / remove row; each row has Name, Type (dropdown of the types in slide 10), Required (checkbox), Filled by (Person / App / SharePoint), Index (checkbox), Notes.
    - **Live warnings** under the table (amber), e.g.:
@@ -247,16 +270,16 @@ Notes: point out what is NOT a column (logged by, logged at). Index `Status` and
    - "Load example" button fills it with the `FW_Issues` design.
    - "Print spec" prints just the designed list as a clean table.
    - Save state with try/catch'd localStorage; "Clear" button.
-6. **Group task card picker + 5-min countdown** (slide 22).
-7. **Live build checklist** (slide 25): click to tick.
-8. **QR join slide** (slide 26).
-9. **Phone mock** (slide 27): 3 states (browse / detail / new form), fictional data.
+6. **Group task card picker + 5-min countdown** (slide 23).
+7. **Live build checklist** (slide 26): click to tick.
+8. **QR join slide** (slide 27).
+9. **Phone mock** (slide 28): 3 states (browse / detail / new form), fictional data.
 
 ## 7. Printable cheat sheet (press P)
 
 `@media print` produces a **2-page A4** cheat sheet (not the slides), hidden on screen. Clean, black-on-white friendly, palette accents only. Content:
 - Page 1: Where things live (Team → SharePoint → Site contents; Library vs List; 6 SharePoint tips). Column type table (type · use it for · watch out). List settings paths (Required, Validation, Versioning, Indexed columns, Views, Rules, Formatting).
-- Page 2: The 4 steps. The design questions (§5 slide 17, compact). The 6 patterns. The 2,000 / 5,000 rule + "index what you filter". "Five things to remember".
+- Page 2: The 4 steps. The design questions (§5 slide 18, compact). The 6 patterns. The 2,000 / 5,000 rule + "index what you filter". Archive flow in one line per step (Recurrence → Get items older than 12 months → Select → Create CSV table → Create file → Delete item → email on failure) + the Get items Filter Query expression. "Five things to remember".
 - Footer: "Fictional examples only. Not official QH guidance."
 
 ## 8. Background: how my real apps are structured (use for case studies, do not invent extra detail)
@@ -269,7 +292,7 @@ Notes: point out what is NOT a column (logged by, logged at). Index `Status` and
 ## 9. Quality checks before you give me the file
 
 - [ ] Opens from `file://` in Edge with **no console errors** and **no network requests**.
-- [ ] All 30 slides present, each with speaker notes.
+- [ ] All 31 slides present, each with speaker notes.
 - [ ] Every interactive piece works with mouse; arrow keys don't fire while typing.
 - [ ] Looks right at 1920×1080, 1366×768 and 1280×720 (letterboxed, nothing clipped).
 - [ ] Print preview (P) gives exactly 2 A4 pages of cheat sheet, no slides.
