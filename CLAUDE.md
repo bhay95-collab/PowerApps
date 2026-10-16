@@ -28,6 +28,7 @@ Ben (STARS physiotherapy, Queensland Health). New to coding.
 | `docs/09_TOOLS.md` | Generator, layout simulator, YAML validator. |
 | `docs/OPEN_ITEMS.md` | Work still to do + decisions waiting on Ben. |
 | `docs/HANDOVER_2026-10-08.md` | Original handover (history). |
+| `docs/inservice/HTML_PRESENTATION_PROMPT.md` | Prompt for the Jan 2027 CIO inservice HTML deck (SharePoint, Lists, Power Apps). |
 
 ## Repo map
 ```
