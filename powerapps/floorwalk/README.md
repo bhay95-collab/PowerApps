@@ -10,7 +10,7 @@ Capture ideas while floorwalking; dashboard for everyone to see what is coming i
 | `FW_Capture.pa.yaml` | screen `Capture` |
 | `FW_Dashboard.pa.yaml` | screen `Dashboard` |
 
-Data: SharePoint list `Floorwalk_Ideas` on `https://healthqld.sharepoint.com/teams/CITTA` + **Office 365 Users** connector (stakeholder search).
+Data: SharePoint list `Floorwalk_Ideas` on `https://healthqld.sharepoint.com/teams/CITTA` + **Office 365 Users** (stakeholder search) + **Office 365 Outlook** (patient safety alert email).
 
 ---
 
@@ -23,7 +23,7 @@ Faster: create the list **From CSV** with `Floorwalk_Ideas.csv` (headers + one f
 
 | Column | Type | Notes |
 |---|---|---|
-| Title | (already there) | App writes the first 120 characters of the idea |
+| Title | (already there) | The one-line summary (max 120) |
 | Idea | Multiple lines of text | More options → **plain text** (turn off rich text). Append changes **Off** |
 | Service | Single line of text | |
 | ServiceLine | Single line of text | |
@@ -42,6 +42,10 @@ Faster: create the list **From CSV** with `Floorwalk_Ideas.csv` (headers + one f
 | StatusBy | Single line of text | Who last changed the review |
 | StatusOn | Date and time | Include time **Yes** |
 | Photo | Image | |
+| Module | Single line of text | ieMR area: ESM, OERR, Medicines, Maternity, FirstNet, SAA / SurgiNet, Powertrials, Radiology, Nursing Workflows, Medical Workflows, Pathology, AH Workflows, Community, Devices, Other / Not Sure |
+| SafetyConcern | Single line of text | `Yes` / `No` |
+| Votes | Number | 0 decimal places, default 0. "Me Too" count |
+| Voters | Multiple lines of text | plain text. Emails of people who tapped Me Too (stops double votes) |
 
 **No Choice columns** (writing text to a Choice column turns the whole save red). Who/when = SharePoint's own `Created By` / `Created`.
 
@@ -57,7 +61,8 @@ Size: one row per idea. The dashboard reads the newest **2000** (Settings → Ge
 2. **Settings → Display**: Scale to fit **Off**, Lock aspect ratio **Off**, Lock orientation **Off**.
 3. **Settings → General**: Data row limit **2000**.
 4. **Data** (cylinder) → Add data → **SharePoint** → `https://healthqld.sharepoint.com/teams/CITTA` → tick `Floorwalk_Ideas` → Connect.
-5. Data → Add data → search **Office 365 Users** → add.
+5. Data → Add data → search **Office 365 Users** → add. Then **Office 365 Outlook** → add.
+5b. App > Formulas: put the safety lead's email in `SafetyAlertTo = "...";` (empty = no alert email).
 6. Tree view → **App** → property drop-down → **Formulas** → paste all of `App_Formulas.txt`.
 7. Screens, in this order: **Capture**, **Dashboard**, **Home** (steps in `docs/03_STUDIO_AND_YAML.md` §1: + New screen → Blank → rename exactly → right-click → Paste code).
 8. Drag `Home` to the top of Tree view. Delete the empty `Screen1`.
@@ -76,6 +81,13 @@ Size: one row per idea. The dashboard reads the newest **2000** (Settings → Ge
 8. Dashboard on desktop: tiles + 5 panels side by side; on phone: one column. Tap stream / theme / status / tile → list filters, "Showing: … Clear ✕".
 9. Tap an idea → detail. Email Stakeholder opens Outlook. Change status to Under Review + note → Save Changes → Saved, tile counts change.
 10. Open the same idea on two devices, save on one, then save on the other → "Someone updated this idea…" warning.
+
+## Oct 2026 additions
+- **One-line summary** (Title) is required; detail is optional.
+- **Duplicate check**: as the summary is typed, up to 3 similar ideas show (2+ matching words of 4+ letters, common words ignored). **Me Too** adds a vote (`Votes`, `Voters`) instead of a duplicate; one vote per person; the dashboard detail has the same button.
+- **ieMR area** pills (CITTA Apps and Functions Portfolios). Dashboard panel "ieMR AREAS".
+- **Patient safety**: Yes shows "Report it now" (RiskMan + Service Desk) and emails `SafetyAlertTo` on save. Dashboard tile "SAFETY CONCERN".
+- **Offline**: no signal → Submit says "Save on This Phone"; the idea (and photo) is kept with SaveData and uploaded from Home (auto when Home opens with signal, or Upload Now). Created date = upload time. Works in the Power Apps phone app; the browser can't store offline.
 
 ## Service map
 `tools/floorwalk_generator/services.py`: 262 services at sub-service level (e.g. `Cardiology - Cardiac Cath Lab`, `Pharmacy Services - Oncology Pharmacy`) from the **Service Allocations** sheet of the RBWH Stakeholder Directory & Allocations workbook (Oct 2026). Spelling fixed, duplicates removed. Each row carries its **RBWH CITTA Stream** from that sheet:

@@ -394,8 +394,8 @@ Screens:
                               RadiusBottomRight: =Round(20 * UI, 0)
                               RadiusTopLeft: =Round(20 * UI, 0)
                               RadiusTopRight: =Round(20 * UI, 0)
-                              Width: =If(DashWide, (DashW - 4 * DashGap) / 5, (DashW - DashGap) / 2)
-                              X: =If(DashWide, 0 * ((DashW - 4 * DashGap) / 5 + DashGap), 0 * ((DashW - DashGap) / 2 + DashGap))
+                              Width: =If(DashWide, (DashW - 5 * DashGap) / 6, (DashW - DashGap) / 2)
+                              X: =If(DashWide, 0 * ((DashW - 5 * DashGap) / 6 + DashGap), 0 * ((DashW - DashGap) / 2 + DashGap))
                               Y: =If(DashWide, 0, 0 * (Round(112 * UI, 0) + DashGap))
                             Children:
                               - lblKAllC_Dsh:
@@ -471,8 +471,8 @@ Screens:
                               RadiusBottomRight: =Round(20 * UI, 0)
                               RadiusTopLeft: =Round(20 * UI, 0)
                               RadiusTopRight: =Round(20 * UI, 0)
-                              Width: =If(DashWide, (DashW - 4 * DashGap) / 5, (DashW - DashGap) / 2)
-                              X: =If(DashWide, 1 * ((DashW - 4 * DashGap) / 5 + DashGap), 1 * ((DashW - DashGap) / 2 + DashGap))
+                              Width: =If(DashWide, (DashW - 5 * DashGap) / 6, (DashW - DashGap) / 2)
+                              X: =If(DashWide, 1 * ((DashW - 5 * DashGap) / 6 + DashGap), 1 * ((DashW - DashGap) / 2 + DashGap))
                               Y: =If(DashWide, 0, 0 * (Round(112 * UI, 0) + DashGap))
                             Children:
                               - lblKNewC_Dsh:
@@ -546,8 +546,8 @@ Screens:
                               RadiusBottomRight: =Round(20 * UI, 0)
                               RadiusTopLeft: =Round(20 * UI, 0)
                               RadiusTopRight: =Round(20 * UI, 0)
-                              Width: =If(DashWide, (DashW - 4 * DashGap) / 5, (DashW - DashGap) / 2)
-                              X: =If(DashWide, 2 * ((DashW - 4 * DashGap) / 5 + DashGap), 0 * ((DashW - DashGap) / 2 + DashGap))
+                              Width: =If(DashWide, (DashW - 5 * DashGap) / 6, (DashW - DashGap) / 2)
+                              X: =If(DashWide, 2 * ((DashW - 5 * DashGap) / 6 + DashGap), 0 * ((DashW - DashGap) / 2 + DashGap))
                               Y: =If(DashWide, 0, 1 * (Round(112 * UI, 0) + DashGap))
                             Children:
                               - lblKHighC_Dsh:
@@ -621,8 +621,8 @@ Screens:
                               RadiusBottomRight: =Round(20 * UI, 0)
                               RadiusTopLeft: =Round(20 * UI, 0)
                               RadiusTopRight: =Round(20 * UI, 0)
-                              Width: =If(DashWide, (DashW - 4 * DashGap) / 5, (DashW - DashGap) / 2)
-                              X: =If(DashWide, 3 * ((DashW - 4 * DashGap) / 5 + DashGap), 1 * ((DashW - DashGap) / 2 + DashGap))
+                              Width: =If(DashWide, (DashW - 5 * DashGap) / 6, (DashW - DashGap) / 2)
+                              X: =If(DashWide, 3 * ((DashW - 5 * DashGap) / 6 + DashGap), 1 * ((DashW - DashGap) / 2 + DashGap))
                               Y: =If(DashWide, 0, 1 * (Round(112 * UI, 0) + DashGap))
                             Children:
                               - lblKFolC_Dsh:
@@ -683,6 +683,81 @@ Screens:
                                     Text: =""
                                     VerticalAlign: =VerticalAlign.Middle
                                     Width: =Parent.Width
+                        - conKSafe_Dsh:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =If(varDashFKind = "Safety" && varDashFVal = "Yes", C_Accent, C_Line)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =If(varDashFKind = "Safety" && varDashFVal = "Yes", C_AccentSoft, C_White)
+                              Height: =Round(112 * UI, 0)
+                              RadiusBottomLeft: =Round(20 * UI, 0)
+                              RadiusBottomRight: =Round(20 * UI, 0)
+                              RadiusTopLeft: =Round(20 * UI, 0)
+                              RadiusTopRight: =Round(20 * UI, 0)
+                              Width: =If(DashWide, (DashW - 5 * DashGap) / 6, (DashW - DashGap) / 2)
+                              X: =If(DashWide, 4 * ((DashW - 5 * DashGap) / 6 + DashGap), 0 * ((DashW - DashGap) / 2 + DashGap))
+                              Y: =If(DashWide, 0, 2 * (Round(112 * UI, 0) + DashGap))
+                            Children:
+                              - lblKSafeC_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(20 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: ="SAFETY CONCERN"
+                                    Width: =Parent.Width - Round(36 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(18 * UI, 0)
+                                    Y: =Round(14 * UI, 0)
+                              - lblKSafeV_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =RGBA(176, 52, 40, 1)
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(46 * UI, 0)
+                                    Size: =Round(28 * UI, 0)
+                                    Text: =varDashSafeN
+                                    Width: =Parent.Width - Round(36 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(18 * UI, 0)
+                                    Y: =Round(34 * UI, 0)
+                              - lblKSafeS_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink2
+                                    Font: =AppFont
+                                    Height: =Round(20 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: ="Could harm a patient"
+                                    Width: =Parent.Width - Round(36 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(18 * UI, 0)
+                                    Y: =Round(80 * UI, 0)
+                              - btnKSafe_Dsh:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    BorderStyle: =BorderStyle.None
+                                    FontWeight: =""
+                                    Height: =Parent.Height
+                                    OnSelect: =If(varDashFKind = "Safety" && varDashFVal = "Yes", Set(varDashFKind, ""); Set(varDashFVal, ""), Set(varDashFKind, "Safety"); Set(varDashFVal, "Yes"))
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =4
+                                    RadiusBottomRight: =4
+                                    RadiusTopLeft: =4
+                                    RadiusTopRight: =4
+                                    Text: =""
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
                         - conKAct_Dsh:
                             Control: GroupContainer@1.5.0
                             Variant: ManualLayout
@@ -696,8 +771,8 @@ Screens:
                               RadiusBottomRight: =Round(20 * UI, 0)
                               RadiusTopLeft: =Round(20 * UI, 0)
                               RadiusTopRight: =Round(20 * UI, 0)
-                              Width: =If(DashWide, (DashW - 4 * DashGap) / 5, (DashW - DashGap) / 2)
-                              X: =If(DashWide, 4 * ((DashW - 4 * DashGap) / 5 + DashGap), 0 * ((DashW - DashGap) / 2 + DashGap))
+                              Width: =If(DashWide, (DashW - 5 * DashGap) / 6, (DashW - DashGap) / 2)
+                              X: =If(DashWide, 5 * ((DashW - 5 * DashGap) / 6 + DashGap), 1 * ((DashW - DashGap) / 2 + DashGap))
                               Y: =If(DashWide, 0, 2 * (Round(112 * UI, 0) + DashGap))
                             Children:
                               - lblKActC_Dsh:
@@ -1279,8 +1354,8 @@ Screens:
                         AlignInContainer: =AlignInContainer.SetByContainer
                         DropShadow: =DropShadow.None
                         FillPortions: =0
-                        Height: =If(DashWide, Round(412 * UI, 0), Round(412 * UI, 0) + Round(412 * UI, 0) + 1 * DashGap)
-                        LayoutMinHeight: =If(DashWide, Round(412 * UI, 0), Round(412 * UI, 0) + Round(412 * UI, 0) + 1 * DashGap)
+                        Height: =If(DashWide, Round(412 * UI, 0), Round(412 * UI, 0) + Round(412 * UI, 0) + Round(412 * UI, 0) + 2 * DashGap)
+                        LayoutMinHeight: =If(DashWide, Round(412 * UI, 0), Round(412 * UI, 0) + Round(412 * UI, 0) + Round(412 * UI, 0) + 2 * DashGap)
                         Width: =DashW
                       Children:
                         - conBySvc_Dsh:
@@ -1296,7 +1371,7 @@ Screens:
                               RadiusBottomRight: =Round(20 * UI, 0)
                               RadiusTopLeft: =Round(20 * UI, 0)
                               RadiusTopRight: =Round(20 * UI, 0)
-                              Width: =If(DashWide, (DashW - 1 * DashGap) * 0.5, DashW)
+                              Width: =If(DashWide, (DashW - 2 * DashGap) * 0.3333333333333333, DashW)
                               X: =0
                               Y: =0
                             Children:
@@ -1450,6 +1525,173 @@ Screens:
                                     Wrap: =false
                                     X: =Round(20 * UI, 0)
                                     Y: =Round(150 * UI, 0)
+                        - conByMod_Dsh:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =C_Line
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =C_White
+                              Height: =Round(412 * UI, 0)
+                              RadiusBottomLeft: =Round(20 * UI, 0)
+                              RadiusBottomRight: =Round(20 * UI, 0)
+                              RadiusTopLeft: =Round(20 * UI, 0)
+                              RadiusTopRight: =Round(20 * UI, 0)
+                              Width: =If(DashWide, (DashW - 2 * DashGap) * 0.3333333333333333, DashW)
+                              X: =If(DashWide, (DashW - 2 * DashGap) * 0.3333 + 1 * DashGap, 0)
+                              Y: =If(DashWide, 0, Round(412 * UI, 0) + 1 * DashGap)
+                            Children:
+                              - capByMod_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(22 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: ="ieMR AREAS"
+                                    Width: =Parent.Width - Round(40 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(20 * UI, 0)
+                                    Y: =Round(16 * UI, 0)
+                              - subByMod_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    Height: =Round(20 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: =varDashNoModN & If(varDashNoModN = 1, " idea", " ideas") & " with no area recorded"
+                                    Width: =Parent.Width - Round(40 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(20 * UI, 0)
+                                    Y: =Round(38 * UI, 0)
+                              - galByMod_Dsh:
+                                  Control: Gallery@2.15.0
+                                  Variant: Vertical
+                                  Properties:
+                                    Height: =6 * Round(56 * UI, 0)
+                                    Items: =colDashMod
+                                    ShowScrollbar: =false
+                                    TemplatePadding: =0
+                                    TemplateSize: =Round(56 * UI, 0)
+                                    Width: =Parent.Width - Round(20 * UI, 0)
+                                    X: =Round(10 * UI, 0)
+                                    Y: =Round(62 * UI, 0)
+                                  Children:
+                                    - conByModRow_Dsh:
+                                        Control: GroupContainer@1.5.0
+                                        Variant: ManualLayout
+                                        Properties:
+                                          DropShadow: =DropShadow.None
+                                          Height: =Parent.TemplateHeight
+                                          Width: =Parent.TemplateWidth
+                                          X: =0
+                                          Y: =0
+                                        Children:
+                                          - conByModSel_Dsh:
+                                              Control: GroupContainer@1.5.0
+                                              Variant: ManualLayout
+                                              Properties:
+                                                DropShadow: =DropShadow.None
+                                                Fill: =If(varDashFKind = "Module" && varDashFVal = ThisItem.Key, C_AccentSoft, RGBA(0, 0, 0, 0))
+                                                Height: =Round(52 * UI, 0)
+                                                RadiusBottomLeft: =Round(12 * UI, 0)
+                                                RadiusBottomRight: =Round(12 * UI, 0)
+                                                RadiusTopLeft: =Round(12 * UI, 0)
+                                                RadiusTopRight: =Round(12 * UI, 0)
+                                                Width: =Parent.Width
+                                                X: =0
+                                                Y: =Round(2 * UI, 0)
+                                          - lblByMod_Dsh:
+                                              Control: Label@2.5.1
+                                              Properties:
+                                                Color: =C_Ink
+                                                Font: =AppFont
+                                                FontWeight: =FontWeight.Bold
+                                                Height: =Round(24 * UI, 0)
+                                                Size: =Round(11 * UI, 0)
+                                                Text: =ThisItem.Key
+                                                Width: =Parent.Width - Round(120 * UI, 0)
+                                                Wrap: =false
+                                                X: =Round(10 * UI, 0)
+                                                Y: =Round(4 * UI, 0)
+                                          - lblByModN_Dsh:
+                                              Control: Label@2.5.1
+                                              Properties:
+                                                Align: =Align.Right
+                                                Color: =C_Ink2
+                                                Font: =AppFont
+                                                FontWeight: =FontWeight.Bold
+                                                Height: =Round(24 * UI, 0)
+                                                Size: =Round(11 * UI, 0)
+                                                Text: =ThisItem.N
+                                                Width: =Round(100 * UI, 0)
+                                                Wrap: =false
+                                                X: =Parent.Width - Round(110 * UI, 0)
+                                                Y: =Round(4 * UI, 0)
+                                          - conTrkByMod_Dsh:
+                                              Control: GroupContainer@1.5.0
+                                              Variant: ManualLayout
+                                              Properties:
+                                                DropShadow: =DropShadow.None
+                                                Fill: =C_Line
+                                                Height: =Round(12 * UI, 0)
+                                                RadiusBottomLeft: =Round(6 * UI, 0)
+                                                RadiusBottomRight: =Round(6 * UI, 0)
+                                                RadiusTopLeft: =Round(6 * UI, 0)
+                                                RadiusTopRight: =Round(6 * UI, 0)
+                                                Width: =Parent.Width - Round(20 * UI, 0)
+                                                X: =Round(10 * UI, 0)
+                                                Y: =Round(32 * UI, 0)
+                                              Children:
+                                                - conBarByMod_Dsh:
+                                                    Control: GroupContainer@1.5.0
+                                                    Variant: ManualLayout
+                                                    Properties:
+                                                      DropShadow: =DropShadow.None
+                                                      Fill: =C_Amber
+                                                      Height: =Parent.Height
+                                                      RadiusBottomLeft: =Round(6 * UI, 0)
+                                                      RadiusBottomRight: =Round(6 * UI, 0)
+                                                      RadiusTopLeft: =Round(6 * UI, 0)
+                                                      RadiusTopRight: =Round(6 * UI, 0)
+                                                      Width: =Parent.Width * Min(1, Max(0, If(varDashMaxMod > 0, ThisItem.N / varDashMaxMod, 0)))
+                                          - btnByMod_Dsh:
+                                              Control: ModernButton@1.0.0
+                                              Properties:
+                                                Align: =Align.Center
+                                                Appearance: =ButtonAppearance.Transparent
+                                                BorderStyle: =BorderStyle.None
+                                                FontWeight: =""
+                                                Height: =Parent.Height
+                                                OnSelect: =If(varDashFKind = "Module" && varDashFVal = ThisItem.Key, Set(varDashFKind, ""); Set(varDashFVal, ""), Set(varDashFKind, "Module"); Set(varDashFVal, ThisItem.Key))
+                                                PaddingBottom: =5
+                                                PaddingLeft: =12
+                                                PaddingRight: =12
+                                                PaddingTop: =5
+                                                RadiusBottomLeft: =4
+                                                RadiusBottomRight: =4
+                                                RadiusTopLeft: =4
+                                                RadiusTopRight: =4
+                                                Text: =""
+                                                VerticalAlign: =VerticalAlign.Middle
+                                                Width: =Parent.Width
+                              - lblByModNone_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Align: =Align.Center
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    Height: =Round(30 * UI, 0)
+                                    Size: =Round(12 * UI, 0)
+                                    Text: ="No areas recorded yet"
+                                    Visible: =Sum(galByMod_Dsh.AllItems, N) = 0
+                                    Width: =Parent.Width - Round(40 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(20 * UI, 0)
+                                    Y: =Round(150 * UI, 0)
                         - conByWalk_Dsh:
                             Control: GroupContainer@1.5.0
                             Variant: ManualLayout
@@ -1463,9 +1705,9 @@ Screens:
                               RadiusBottomRight: =Round(20 * UI, 0)
                               RadiusTopLeft: =Round(20 * UI, 0)
                               RadiusTopRight: =Round(20 * UI, 0)
-                              Width: =If(DashWide, (DashW - 1 * DashGap) * 0.5, DashW)
-                              X: =If(DashWide, (DashW - 1 * DashGap) * 0.5 + 1 * DashGap, 0)
-                              Y: =If(DashWide, 0, Round(412 * UI, 0) + 1 * DashGap)
+                              Width: =If(DashWide, (DashW - 2 * DashGap) * 0.3333333333333333, DashW)
+                              X: =If(DashWide, (DashW - 2 * DashGap) * 0.6667 + 2 * DashGap, 0)
+                              Y: =If(DashWide, 0, Round(412 * UI, 0) + Round(412 * UI, 0) + 2 * DashGap)
                             Children:
                               - capByWalk_Dsh:
                                   Control: Label@2.5.1
@@ -1728,7 +1970,7 @@ Screens:
                                     Height: =Round(40 * UI, 0)
                                     Size: =Round(11 * UI, 0)
                                     Text: |-
-                                      ="Showing: " & Switch(varDashFKind, "Follow", "Follow-up wanted", "Priority", varDashFVal & " priority", "Walker", "Captured by " & varDashFVal, varDashFVal)
+                                      ="Showing: " & Switch(varDashFKind, "Follow", "Follow-up wanted", "Priority", varDashFVal & " priority", "Walker", "Captured by " & varDashFVal, "Safety", "Safety concerns", "Module", "ieMR: " & varDashFVal, varDashFVal)
                                     VerticalAlign: =VerticalAlign.Middle
                                     Width: =Parent.Width - Round(130 * UI, 0)
                                     Wrap: =false
@@ -1800,9 +2042,11 @@ Screens:
                                             "Follow", Follow,
                                             "Service", Service = varDashFVal,
                                             "Walker", Walker = varDashFVal,
+                                            "Safety", Safety,
+                                            "Module", Module = varDashFVal,
                                             true
                                         )
-                                        && (IsBlank(Lower(Trim(txtSearch_Dsh.Text))) || Lower(Trim(txtSearch_Dsh.Text)) in Lower(Idea & " " & Service & " " & Loc & " " & Stake & " " & Walker & " " & Theme & " " & ThemeOther))
+                                        && (IsBlank(Lower(Trim(txtSearch_Dsh.Text))) || Lower(Trim(txtSearch_Dsh.Text)) in Lower(Summary & " " & Idea & " " & Module & " " & Service & " " & Loc & " " & Stake & " " & Walker & " " & Theme & " " & ThemeOther))
                                     ),
                                     "When",
                                     SortOrder.Descending
@@ -1860,7 +2104,7 @@ Screens:
                                                 FontWeight: =FontWeight.Bold
                                                 Height: =Round(44 * UI, 0)
                                                 Size: =Round(12 * UI, 0)
-                                                Text: =ThisItem.Idea
+                                                Text: =ThisItem.Summary
                                                 Width: =Parent.Width - Round(66 * UI, 0)
                                                 X: =Round(22 * UI, 0)
                                                 Y: =Round(10 * UI, 0)
@@ -1924,7 +2168,7 @@ Screens:
                                                 FontWeight: =FontWeight.Bold
                                                 Height: =Round(24 * UI, 0)
                                                 Size: =Round(11 * UI, 0)
-                                                Text: =If(ThisItem.Follow, ThisItem.Priority & "  ·  Follow-up", ThisItem.Priority & " priority")
+                                                Text: =ThisItem.Priority & If(ThisItem.Safety, "  ·  ⚠ Safety", "") & If(ThisItem.Votes > 0, "  ·  +" & ThisItem.Votes, "") & If(ThisItem.Follow, "  ·  Follow-up", "")
                                                 VerticalAlign: =VerticalAlign.Middle
                                                 Width: =Parent.Width - Round(170 * UI, 0)
                                                 Wrap: =false
@@ -2129,7 +2373,7 @@ Screens:
                               Text: ="THE IDEA"
                               Width: =Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)
                               Wrap: =false
-                        - lblDetIdea_Dsh:
+                        - lblDetSum_Dsh:
                             Control: Label@2.5.1
                             Properties:
                               AlignInContainer: =AlignInContainer.SetByContainer
@@ -2137,11 +2381,66 @@ Screens:
                               Color: =C_Ink
                               FillPortions: =0
                               Font: =AppFont
-                              Height: =Round(28 * UI, 0)
-                              LayoutMinHeight: =Round(28 * UI, 0)
-                              Size: =Round(14 * UI, 0)
-                              Text: =varDashSel.Idea
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(30 * UI, 0)
+                              LayoutMinHeight: =Round(30 * UI, 0)
+                              Size: =Round(15 * UI, 0)
+                              Text: =varDashSel.Summary
                               Width: =Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)
+                        - lblDetIdea_Dsh:
+                            Control: Label@2.5.1
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              AutoHeight: =true
+                              Color: =C_Ink2
+                              FillPortions: =0
+                              Font: =AppFont
+                              Height: =Round(26 * UI, 0)
+                              LayoutMinHeight: =Round(26 * UI, 0)
+                              Size: =Round(13 * UI, 0)
+                              Text: =varDashSel.Idea
+                              Visible: =!IsBlank(varDashSel.Idea) && varDashSel.Idea <> varDashSel.Summary
+                              Width: =Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)
+                        - conDetVote_Dsh:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              DropShadow: =DropShadow.None
+                              Fill: =If(((";" & MeEmail & ";") in varDashSel.Voters || varDashSel.WalkerEmail = MeEmail), C_GoodBg, C_Accent)
+                              FillPortions: =0
+                              Height: =Round(48 * UI, 0)
+                              LayoutMinHeight: =Round(48 * UI, 0)
+                              RadiusBottomLeft: =Round(24 * UI, 0)
+                              RadiusBottomRight: =Round(24 * UI, 0)
+                              RadiusTopLeft: =Round(24 * UI, 0)
+                              RadiusTopRight: =Round(24 * UI, 0)
+                              Width: =Min(Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0), Round(300 * UI, 0))
+                            Children:
+                              - btnDetVote_Dsh:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =If(((";" & MeEmail & ";") in varDashSel.Voters || varDashSel.WalkerEmail = MeEmail), RGBA(30, 122, 80, 1), C_White)
+                                    DisplayMode: =If(((";" & MeEmail & ";") in varDashSel.Voters || varDashSel.WalkerEmail = MeEmail) || varSaving, DisplayMode.Disabled, DisplayMode.Edit)
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Parent.Height
+                                    OnSelect: =Select(btnVote_Dsh)
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(24 * UI, 0)
+                                    RadiusBottomRight: =Round(24 * UI, 0)
+                                    RadiusTopLeft: =Round(24 * UI, 0)
+                                    RadiusTopRight: =Round(24 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: |-
+                                      =If(((";" & MeEmail & ";") in varDashSel.Voters || varDashSel.WalkerEmail = MeEmail), "✓ You Reported This Too", "Me Too: I Have Seen This")
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
                         - conDetInfo_Dsh:
                             Control: GroupContainer@1.5.0
                             Variant: ManualLayout
@@ -2150,8 +2449,8 @@ Screens:
                               DropShadow: =DropShadow.None
                               Fill: =C_Bg
                               FillPortions: =0
-                              Height: =If(DashWide, Round(176 * UI, 0), Round(344 * UI, 0))
-                              LayoutMinHeight: =If(DashWide, Round(176 * UI, 0), Round(344 * UI, 0))
+                              Height: =If(DashWide, Round(232 * UI, 0), Round(456 * UI, 0))
+                              LayoutMinHeight: =If(DashWide, Round(232 * UI, 0), Round(456 * UI, 0))
                               RadiusBottomLeft: =Round(14 * UI, 0)
                               RadiusBottomRight: =Round(14 * UI, 0)
                               RadiusTopLeft: =Round(14 * UI, 0)
@@ -2184,7 +2483,7 @@ Screens:
                                     Wrap: =false
                                     X: =If(DashWide, 0 * (Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)) / 2, 0) + Round(16 * UI, 0)
                                     Y: =If(DashWide, 0 * Round(56 * UI, 0), 0 * Round(56 * UI, 0)) + Round(28 * UI, 0)
-                              - lblILineC_Dsh:
+                              - lblIModC_Dsh:
                                   Control: Label@2.5.1
                                   Properties:
                                     Color: =C_Muted
@@ -2192,12 +2491,12 @@ Screens:
                                     FontWeight: =FontWeight.Bold
                                     Height: =Round(20 * UI, 0)
                                     Size: =Round(11 * UI, 0)
-                                    Text: ="SERVICE LINE"
+                                    Text: ="ieMR AREA"
                                     Width: =If(DashWide, (Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)) / 2, Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)) - Round(32 * UI, 0)
                                     Wrap: =false
                                     X: =If(DashWide, 1 * (Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)) / 2, 0) + Round(16 * UI, 0)
                                     Y: =If(DashWide, 0 * Round(56 * UI, 0), 1 * Round(56 * UI, 0)) + Round(8 * UI, 0)
-                              - lblILineV_Dsh:
+                              - lblIModV_Dsh:
                                   Control: Label@2.5.1
                                   Properties:
                                     Color: =C_Ink
@@ -2205,7 +2504,7 @@ Screens:
                                     FontWeight: =FontWeight.Bold
                                     Height: =Round(24 * UI, 0)
                                     Size: =Round(12 * UI, 0)
-                                    Text: =If(IsBlank(varDashSel.Line), "Not recorded", varDashSel.Line)
+                                    Text: =If(IsBlank(varDashSel.Module), "Not recorded", varDashSel.Module)
                                     Width: =If(DashWide, (Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)) / 2, Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)) - Round(32 * UI, 0)
                                     Wrap: =false
                                     X: =If(DashWide, 1 * (Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)) / 2, 0) + Round(16 * UI, 0)
@@ -2315,6 +2614,58 @@ Screens:
                                     Wrap: =false
                                     X: =If(DashWide, 1 * (Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)) / 2, 0) + Round(16 * UI, 0)
                                     Y: =If(DashWide, 2 * Round(56 * UI, 0), 5 * Round(56 * UI, 0)) + Round(28 * UI, 0)
+                              - lblISafeC_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(20 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: ="PATIENT SAFETY CONCERN"
+                                    Width: =If(DashWide, (Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)) / 2, Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)) - Round(32 * UI, 0)
+                                    Wrap: =false
+                                    X: =If(DashWide, 0 * (Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)) / 2, 0) + Round(16 * UI, 0)
+                                    Y: =If(DashWide, 3 * Round(56 * UI, 0), 6 * Round(56 * UI, 0)) + Round(8 * UI, 0)
+                              - lblISafeV_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(24 * UI, 0)
+                                    Size: =Round(12 * UI, 0)
+                                    Text: =If(varDashSel.Safety, "Yes", "No")
+                                    Width: =If(DashWide, (Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)) / 2, Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)) - Round(32 * UI, 0)
+                                    Wrap: =false
+                                    X: =If(DashWide, 0 * (Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)) / 2, 0) + Round(16 * UI, 0)
+                                    Y: =If(DashWide, 3 * Round(56 * UI, 0), 6 * Round(56 * UI, 0)) + Round(28 * UI, 0)
+                              - lblIVoteC_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(20 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: ="ALSO SEEN BY"
+                                    Width: =If(DashWide, (Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)) / 2, Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)) - Round(32 * UI, 0)
+                                    Wrap: =false
+                                    X: =If(DashWide, 1 * (Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)) / 2, 0) + Round(16 * UI, 0)
+                                    Y: =If(DashWide, 3 * Round(56 * UI, 0), 7 * Round(56 * UI, 0)) + Round(8 * UI, 0)
+                              - lblIVoteV_Dsh:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(24 * UI, 0)
+                                    Size: =Round(12 * UI, 0)
+                                    Text: =If(varDashSel.Votes = 0, "No one else yet", varDashSel.Votes & If(varDashSel.Votes = 1, " other person", " other people"))
+                                    Width: =If(DashWide, (Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)) / 2, Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)) - Round(32 * UI, 0)
+                                    Wrap: =false
+                                    X: =If(DashWide, 1 * (Min(App.Width - Round(24 * UI, 0), Round(900 * UI, 0)) - Round(40 * UI, 0)) / 2, 0) + Round(16 * UI, 0)
+                                    Y: =If(DashWide, 3 * Round(56 * UI, 0), 7 * Round(56 * UI, 0)) + Round(28 * UI, 0)
                         - capDetStk_Dsh:
                             Control: Label@2.5.1
                             Properties:
@@ -2989,7 +3340,12 @@ Screens:
                           Modified: a.Modified,
                           Walker: a.'Created By'.DisplayName,
                           WalkerEmail: Lower(a.'Created By'.Email),
-                          Idea: Coalesce(a.Idea, a.Title),
+                          Summary: Coalesce(a.Title, Left(a.Idea, 120)),
+                          Idea: a.Idea,
+                          Module: a.Module,
+                          Safety: a.SafetyConcern = "Yes",
+                          Votes: Coalesce(a.Votes, 0),
+                          Voters: Lower(Coalesce(a.Voters, "")),
                           Service: a.Service,
                           Line: a.ServiceLine,
                           // blank stream: no service picked ("No service"), or a service with no stream ("Other")
@@ -3083,7 +3439,64 @@ Screens:
                       6
                   )
               );
-              Set(varDashMaxWalk, Max(colDashWalk, N))
+              Set(varDashMaxWalk, Max(colDashWalk, N));
+              Set(varDashSafeN, CountIf(colDash, Safety));
+              ClearCollect(
+                  colDashMod,
+                  FirstN(
+                      SortByColumns(
+                          ForAll(Filter(Distinct(colDash, Module), !IsBlank(Value)) As s, { Key: s.Value, N: CountIf(colDash, Module = s.Value) }),
+                          "N",
+                          SortOrder.Descending
+                      ),
+                      6
+                  )
+              );
+              Set(varDashMaxMod, Max(colDashMod, N));
+              Set(varDashNoModN, CountIf(colDash, IsBlank(Module)))
+            PaddingBottom: =5
+            PaddingLeft: =12
+            PaddingRight: =12
+            PaddingTop: =5
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Size: =Round(11 * UI, 0)
+            Text: =""
+            VerticalAlign: =VerticalAlign.Middle
+            Visible: =false
+            Width: =1
+      - btnVote_Dsh:
+          Control: ModernButton@1.0.0
+          Properties:
+            Align: =Align.Center
+            FontWeight: =""
+            Height: =1
+            OnSelect: |-
+              =// ME TOO from the dashboard (re-read first, one vote per person)
+              Set(varSaving, true);
+              With(
+                  { fresh: LookUp(Floorwalk_Ideas, ID = varDashSel.ID) },
+                  If(
+                      IsBlank(fresh),
+                      Notify("This idea could not be found. Tap Refresh.", NotificationType.Error),
+                      (";" & MeEmail & ";") in Lower(Coalesce(fresh.Voters, "")) || Lower(fresh.'Created By'.Email) = MeEmail,
+                      Notify("You have already added this one.", NotificationType.Information),
+                      With(
+                          { r: Patch(Floorwalk_Ideas, fresh, { Votes: Coalesce(fresh.Votes, 0) + 1, Voters: Coalesce(fresh.Voters, ";") & MeEmail & ";" }) },
+                          If(
+                              IsEmpty(Errors(Floorwalk_Ideas)),
+                              Patch(colDashRows, LookUp(colDashRows, ID = r.ID), { Votes: r.Votes, Voters: Lower(r.Voters), Modified: r.Modified });
+                              Set(varDashSel, LookUp(colDashRows, ID = r.ID));
+                              Select(btnCalc_Dsh);
+                              Notify("Added. Thanks.", NotificationType.Success),
+                              Notify("Could not save. Check your connection and try again.", NotificationType.Error)
+                          )
+                      )
+                  )
+              );
+              Set(varSaving, false)
             PaddingBottom: =5
             PaddingLeft: =12
             PaddingRight: =12
