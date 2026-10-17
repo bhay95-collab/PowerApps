@@ -128,7 +128,7 @@ MeName = User().FullName;
 MeFirst = With({{ n: User().FullName }}, If("," in n, Trim(Last(Split(n, ",")).Value), First(Split(n, " ")).Value));
 
 // ---- patient safety alerts: who gets the email when a floorwalker ticks "Could this harm a patient? Yes".
-// Put the CITTA safety lead's address (or a shared mailbox) between the quotes. Several: separate with ";". Empty = no email.
+// Put the CITTA safety lead's address (or a shared mailbox) between the quotes. Several: separate with a semicolon ";" (not a comma). Empty = no email.
 SafetyAlertTo = "";
 
 // ---- email look (same as every other STARS email)
@@ -615,7 +615,7 @@ If(
             }},
             If(
                 !IsBlank(r.ID),
-                If(!IsBlank(q.Photo), IfError(Patch({LIST}, r, {{ Photo: q.Photo }}), Notify("An idea uploaded without its photo.", NotificationType.Warning)));
+                If(!IsBlank(q.Photo) && IsError(Patch({LIST}, r, {{ Photo: q.Photo }})), Notify("An idea uploaded without its photo.", NotificationType.Warning));
                 If(q.SafetyConcern = "Yes", {safety_email(lambda k: 'q.' + k)});
                 Collect(colSynced, {{ QID: q.QID }})
             )

@@ -550,7 +550,7 @@ Screens:
                           },
                           If(
                               !IsBlank(r.ID),
-                              If(!IsBlank(q.Photo), IfError(Patch(Floorwalk_Ideas, r, { Photo: q.Photo }), Notify("An idea uploaded without its photo.", NotificationType.Warning)));
+                              If(!IsBlank(q.Photo) && IsError(Patch(Floorwalk_Ideas, r, { Photo: q.Photo })), Notify("An idea uploaded without its photo.", NotificationType.Warning));
                               If(q.SafetyConcern = "Yes", If(
                   !IsBlank(SafetyAlertTo),
                   IfError(
