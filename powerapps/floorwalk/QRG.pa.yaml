@@ -6,7 +6,7 @@ Screens:
         =Set(varQrgChip, "ALL");
         Reset(txtSearch_Qrg);
         // saved copy of the list from the last time this phone had signal (not in the browser preview)
-        If(CountRows(colQrg) = 0, IfError(LoadData(colQrg, "fwQrg", true), false));
+        If(CountRows(colQrg) = 0, IfError(LoadData(colQrg, "fwQrg", true), Blank()));
         If(
             Connection.Connected && (CountRows(colQrg) = 0 || IsBlank(varQrgAt) || DateDiff(varQrgAt, Now(), TimeUnit.Minutes) >= 60),
             Select(btnLoad_Qrg),
