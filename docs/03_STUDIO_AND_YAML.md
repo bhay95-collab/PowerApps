@@ -74,10 +74,11 @@ Screens:
 | `Timer` | `@2.1.0` | |
 | `PieChart` / `LineChart` | `@2.3.0` | `BarChart@2.4.0`, `Legend@2.1.0` |
 | `Rectangle` | `@2.3.0` | |
+| `PDFViewer` | `@2.5.0` | `Document` = base64 data address from a flow |
 
 Avoid: `Classic/ComboBox` for people/patients (blank until typing).
 
-**PDF viewer**: exact YAML name/version not confirmed. Add it in Studio by hand (Insert → Media → PDF viewer), set `Document`, then **Copy code** and put the real block here. `Document` takes a base64 data address or a public URL only; a SharePoint link fails (sign-in). Use flow `GetQrgPdf` (`06_POWER_AUTOMATE.md`). Not yet confirmed on iPhone/Android: see `OPEN_ITEMS.md`.
+**PDF viewer**: `PDFViewer@2.5.0` (real export: `powerapps/floorwalk/QrgView.pa.yaml` → `pdfQrg_Qv`; properties `Document`, `Y`, `Width`, `Height`, `Visible`). `Document` takes a base64 data address or a public URL only; a SharePoint link fails (sign-in). Use flow `GetQrgPdf` (`06_POWER_AUTOMATE.md`). Not yet confirmed on iPhone/Android: see `OPEN_ITEMS.md`.
 
 ## 4. ModernIcon / ModernButton icon names known to work
 

@@ -228,7 +228,6 @@ Screens:
                                     Height: =Round(48 * UI, 0)
                                     Size: =Round(11 * UI, 0)
                                     Text: =ThisItem.Label
-                                    VerticalAlign: =VerticalAlign.Middle
                                     Width: =Parent.Width - Round(8 * UI, 0)
                                     Wrap: =false
                                     X: =Round(4 * UI, 0)
@@ -255,7 +254,6 @@ Screens:
                   - lblCount_Qrg:
                       Control: Label@2.5.1
                       Properties:
-                        AlignInContainer: =AlignInContainer.SetByContainer
                         Color: =C_Muted
                         Font: =AppFont
                         FontWeight: =FontWeight.Bold
@@ -269,7 +267,6 @@ Screens:
                       Control: Label@2.5.1
                       Properties:
                         Align: =Align.Center
-                        AlignInContainer: =AlignInContainer.SetByContainer
                         Color: =C_Muted
                         Font: =AppFont
                         Height: =Round(50 * UI, 0)

@@ -2,18 +2,19 @@
 
 CITTA floorwalkers capture ieMR improvement ideas on the ward (Capture), see them (Dashboard), and now **find a Quick Reference Guide (QRG)** (QRG + QrgView).
 
-Studio export is the source of truth. The app's original generator (`tools/floorwalk_generator/fwbuild.py`, named in the header of the old App.Formulas) is **not in any repo**. Home was edited by hand: if anyone re-runs that generator, the QRG tile disappears.
+Studio export is the source of truth (all five screens + App.Formulas were copied in on 20 Oct 2026). The app's original generator (`tools/floorwalk_generator/fwbuild.py`, named in the old App.Formulas header) is **not in any repo**: edit these files and Studio directly. Never re-run an old generator over them.
 
 ## What is in this folder
 
-| File | What it is | Status |
-|---|---|---|
-| `Home.pa.yaml` | Home with the new **Find a Guide** tile | In repo |
-| `QRG.pa.yaml` | Search + application chips + list of ieMR QRGs | New, not yet pasted |
-| `QrgView.pa.yaml` | Shows one QRG (PDF viewer) + Open in Browser | New, not yet pasted. **PDF viewer is added by hand** (below) |
-| `App_Formulas_additions.txt` | One line to add to App > Formulas (`QrgLibUrl`) | New |
-| `../flows/Get_QRG_PDF.zip` | Flow `GetQrgPdf` (built by `tools/flows/build_qrg_pdf_flow.py`) | New |
-| Capture, Dashboard, full App.Formulas | Not in the repo yet | Still only in Studio |
+| File | What it is |
+|---|---|
+| `App_Formulas.txt` | Whole App > Formulas. **`SafetyAlertTo` is a placeholder** (real addresses are staff data, not kept in this public repo): type them in Studio after pasting |
+| `Home.pa.yaml` | Home: Capture an Idea, Find a Guide, Ideas Dashboard, My Ideas |
+| `Capture.pa.yaml` | Capture an idea (offline queue, similar-idea check, safety email) |
+| `Dashboard.pa.yaml` | Dashboard, detail sheet, review |
+| `QRG.pa.yaml` | Search + application chips + list of ieMR QRGs |
+| `QrgView.pa.yaml` | One QRG in the PDF viewer (`pdfQrg_Qv`, `PDFViewer@2.5.0`) + Open in Browser |
+| `../flows/Get_QRG_PDF.zip` | Flow `GetQrgPdf` (built by `tools/flows/build_qrg_pdf_flow.py`) |
 
 ## How the QRG feature works
 
@@ -47,26 +48,19 @@ If the zip will not import, build it by hand: **Create** → **Instant cloud flo
 
 ### C. App > Formulas
 1. Tree view → click **App** → property drop-down → **Formulas**.
-2. Click at the very end, new line, paste the whole of `App_Formulas_additions.txt` (GitHub → **Raw** → Ctrl+A, Ctrl+C). Keep everything already there.
+2. Click at the very end, new line, add:
+```
+QrgLibUrl = "https://healthqld.sharepoint.com/teams/MNHHS-DMN-APP/Resources%20library/";
+```
+(It is already in `App_Formulas.txt`. Do **not** paste that whole file over the live one: it has a placeholder for `SafetyAlertTo`.)
 
 ### D. Screens
 For each of `QRG`, then `QrgView`, then `Home`: follow `docs/03_STUDIO_AND_YAML.md` §1 (delete old screen if there is one → **+ New screen → Blank** → rename exactly → **Raw** copy → right-click screen → **Paste code**).
 For `Home` also: after pasting, drag **Home** to the top of Tree view so it is still the first screen.
 Red errors naming a screen that is not pasted yet clear once all three are in.
 
-### E. Add the PDF viewer to QrgView (by hand)
-1. Tree view → click the **QrgView** screen (the screen itself, not a control).
-2. Left rail **+ Insert** → **Media** → **PDF viewer**. (If you cannot see it, type `pdf` in the Insert search box.)
-3. In Tree view, rename it exactly `pdfQrg_Qv`. It must sit directly under **QrgView**, at the top of the list (not inside `conRoot_Qv`). If it is inside, drag it out.
-4. Select `pdfQrg_Qv`. Use the property drop-down (top left) and set each one:
-   - `Document` → `=varQrgPdf`
-   - `X` → `=0`
-   - `Y` → `=Round(95 * UI, 0)`
-   - `Width` → `=App.Width`
-   - `Height` → `=App.Height - Round(95 * UI, 0) - Round(84 * UI, 0)`
-   - `Visible` → `=!varQrgLoading && !varQrgFail`
-5. **Ctrl+S**.
-6. Right-click **QrgView** → **Copy code** → paste it to Claude (so the control's exact name and version go into the repo).
+### E. PDF viewer
+Already inside `QrgView.pa.yaml` (`pdfQrg_Qv`, `PDFViewer@2.5.0`). Nothing to add by hand.
 
 ### F. Check, publish, test on a phone
 1. Tree view → **QRG** → ⋯ → **Run OnVisible**. Wait. `Home` → **Find a Guide** should list guides.

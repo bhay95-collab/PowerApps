@@ -86,7 +86,6 @@ Screens:
                         Height: =Round(50 * UI, 0)
                         Size: =Round(14 * UI, 0)
                         Text: =varQrg.Title
-                        VerticalAlign: =VerticalAlign.Middle
                         Width: =PageW - Round(85 * UI, 0)
                         X: =Gutter + Round(65 * UI, 0)
                         Y: =Round(8 * UI, 0)
@@ -219,7 +218,6 @@ Screens:
                               Height: =Round(60 * UI, 0)
                               Size: =Round(14 * UI, 0)
                               Text: ="Open in Browser"
-                              VerticalAlign: =VerticalAlign.Middle
                               Width: =Parent.Width
                               Wrap: =false
                         - btnBrowser_Qv:
@@ -243,3 +241,11 @@ Screens:
                               Text: =""
                               VerticalAlign: =VerticalAlign.Middle
                               Width: =Parent.Width
+      - pdfQrg_Qv:
+          Control: PDFViewer@2.5.0
+          Properties:
+            Document: =varQrgPdf
+            Height: =App.Height - Round(95 * UI, 0) - Round(84 * UI, 0)
+            Visible: =!varQrgLoading && !varQrgFail
+            Width: =App.Width
+            Y: =Round(95 * UI, 0)

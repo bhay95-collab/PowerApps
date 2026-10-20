@@ -273,7 +273,6 @@ Screens:
                   - capQrg_Hm:
                       Control: Label@2.5.1
                       Properties:
-                        AlignInContainer: =AlignInContainer.SetByContainer
                         Color: =C_Muted
                         Font: =AppFont
                         FontWeight: =FontWeight.Bold
