@@ -410,7 +410,7 @@ Screens:
                               With(
                                   {
                                       t: Trim(Coalesce(r.'Resource title', r.'File name with extension')),
-                                      d: Trim(Coalesce(r.Description, "")),
+                                      d: Trim(Coalesce(r.'Description (Description0)', r.'Description (OData__ExtendedDescription)', "")),
                                       a: Concat(r.Applications, Value, ", "),
                                       p: Concat(r.Profession, Value, ", ")
                                   },

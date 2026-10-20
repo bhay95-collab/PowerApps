@@ -10,7 +10,7 @@ Never commit exports of these lists (staff/patient data).
 |---|---|---|
 | PhysioDreamTeam | `https://healthqld.sharepoint.com/teams/PhysioDreamTeam` | Desktop dashboard, mobile equipment, training |
 | DTVAuditing | `https://healthqld.sharepoint.com/teams/DTVAuditing` | DTV Audit app |
-| MNHHS-DMN-APP (ieMR Applications, **not ours, read only**) | `https://healthqld.sharepoint.com/teams/MNHHS-DMN-APP` | Floorwalking app: `Resources library` (QRG PDFs). Document library, ~1,330 files, all in the root. Columns: `Resource title` (the Title column), `Description`, `Resource type` (multi lookup), `Systems` (multi lookup), `Applications` (multi choice), `Profession` (multi choice), `Facility` (multi lookup), `Modified`, `Name` (file name). QRG = Systems has `ieMR` and Resource type has `Quick reference guide` (704 of them, all `.pdf`). Must stay under the 2000 row limit (read in one go) |
+| MNHHS-DMN-APP (ieMR Applications, **not ours, read only**) | `https://healthqld.sharepoint.com/teams/MNHHS-DMN-APP` | Floorwalking app: `Resources library` (QRG PDFs). Document library, ~1,330 files, all in the root. Columns: `Resource title` (the Title column), `Description` (in Power Apps: `'Description (Description0)'`; the other `'Description (OData__ExtendedDescription)'` is a built-in twin), `Resource type` (multi lookup), `Systems` (multi lookup), `Applications` (multi choice), `Profession` (multi choice), `Facility` (multi lookup), `Modified`, `Name` (file name). QRG = Systems has `ieMR` and Resource type has `Quick reference guide` (704 of them, all `.pdf`). Must stay under the 2000 row limit (read in one go) |
 
 ---
 

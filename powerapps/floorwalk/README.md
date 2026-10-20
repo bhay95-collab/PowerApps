@@ -18,7 +18,7 @@ Studio export is the source of truth. The app's original generator (`tools/floor
 ## How the QRG feature works
 
 - Data: the ieMR Applications site library `Resources library` (`https://healthqld.sharepoint.com/teams/MNHHS-DMN-APP`). It is **read only for us**. About 1,330 files; 704 are ieMR QRGs; all are PDFs in the library root.
-- Columns used: `Resource title`, `Description`, `Resource type` (lookup), `Systems` (lookup), `Applications` (multi-choice), `Profession` (multi-choice), `Modified`, file name.
+- Columns used: `Resource title`, `Description` (Power Apps name `'Description (Description0)'`), `Resource type` (lookup), `Systems` (lookup), `Applications` (multi-choice), `Profession` (multi-choice), `Modified`, file name.
 - A guide is shown when **Systems contains ieMR** and **Resource type contains Quick reference guide** and the file ends `.pdf`.
 - `btnLoad_Qrg` copies those rows into `colQrg` (plain columns) once per hour and saves them on the phone (`SaveData` `fwQrg`), so the **list and search work offline**. Opening a PDF needs signal.
 - Search: every word typed must appear in the title, description, application or profession.
