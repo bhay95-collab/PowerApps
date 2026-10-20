@@ -7,6 +7,8 @@ Screens:
         Reset(txtSearch_Qrg);
         // saved copy of the list from the last time this phone had signal (not in the browser preview)
         If(CountRows(colQrg) = 0, IfError(LoadData(colQrg, "fwQrg", true), Blank()));
+        // starred guides are kept on this phone only
+        If(CountRows(colQrgFav) = 0, IfError(LoadData(colQrgFav, "fwQrgFav", true), Blank()));
         If(
             Connection.Connected && (CountRows(colQrg) = 0 || IsBlank(varQrgAt) || DateDiff(varQrgAt, Now(), TimeUnit.Minutes) >= 60),
             Select(btnLoad_Qrg),
@@ -277,7 +279,14 @@ Screens:
                         Height: =Round(50 * UI, 0)
                         LayoutMinHeight: =Round(50 * UI, 0)
                         Size: =Round(12 * UI, 0)
-                        Text: =If(varQrgLoading, "Loading guides...", CountRows(colQrg) = 0, "No guides yet. Get signal, then tap refresh.", "Nothing matches. Try fewer words.")
+                        Text: |-
+                          =If(
+                              varQrgLoading, "Loading guides...",
+                              CountRows(colQrg) = 0, "No guides yet. Get signal, then tap refresh.",
+                              IsBlank(Trim(txtSearch_Qrg.Text)) && varQrgChip = "RECENT", "Guides you open show up here.",
+                              IsBlank(Trim(txtSearch_Qrg.Text)) && varQrgChip = "STAR", "Tap the star on a guide to pin it here.",
+                              "Nothing matches. Try fewer words."
+                          )
                         Visible: =CountRows(galRows_Qrg.AllItems) = 0
                         Width: =PageW - Round(40 * UI, 0)
                         Wrap: =false
@@ -287,13 +296,30 @@ Screens:
                       Properties:
                         AlignInContainer: =AlignInContainer.SetByContainer
                         Items: |-
-                          =// colQrg is already sorted A to Z. Every word typed must appear in the title, description, application or profession.
-                          Filter(
-                              colQrg,
-                              (Coalesce(varQrgChip, "ALL") = "ALL" || (";" & varQrgChip & ";") in AppKey)
-                              && (
-                                  IsBlank(Trim(txtSearch_Qrg.Text))
-                                  || IsEmpty(Filter(Split(Lower(Trim(txtSearch_Qrg.Text)), " "), !(Value in Hay)))
+                          =// ALL and application chips keep colQrg order (most opened first, then A to Z).
+                          // RECENT = my last 10 guides, newest first. STAR = my starred guides.
+                          // Every word typed must appear in the title, description, application or profession.
+                          With(
+                              { q: Lower(Trim(txtSearch_Qrg.Text)) },
+                              With(
+                                  {
+                                      base: Filter(
+                                          colQrg,
+                                          Switch(
+                                              Coalesce(varQrgChip, "ALL"),
+                                              "ALL", true,
+                                              "RECENT", LastMine <> "",
+                                              "STAR", Starred,
+                                              (";" & varQrgChip & ";") in AppKey
+                                          )
+                                          && (IsBlank(q) || IsEmpty(Filter(Split(q, " "), !(Value in Hay))))
+                                      )
+                                  },
+                                  If(
+                                      Coalesce(varQrgChip, "ALL") = "RECENT",
+                                      FirstN(SortByColumns(base, "LastMine", SortOrder.Descending), 10),
+                                      base
+                                  )
                               )
                           )
                         LayoutMinHeight: =Round(150 * UI, 0)
@@ -375,6 +401,9 @@ Screens:
                                     Height: =Parent.Height
                                     OnSelect: |-
                                       =Set(varQrg, ThisItem);
+                                      // "Recent" works at once and offline: stamp the guide on this phone
+                                      UpdateIf(colQrg, File = ThisItem.File, { LastMine: Text(Now(), "yyyy-mm-dd hh:mm:ss") });
+                                      IfError(SaveData(colQrg, "fwQrg"), Blank());
                                       Navigate(QrgView, ScreenTransition.Cover);
                                       // log the open (file name in Title; SharePoint adds who and when). A failed log must never stop the guide opening.
                                       If(Connection.Connected, IfError(Patch(QRG_Open_Log, Defaults(QRG_Open_Log), { Title: ThisItem.File }), Blank()))
@@ -389,6 +418,51 @@ Screens:
                                     Text: =""
                                     VerticalAlign: =VerticalAlign.Middle
                                     Width: =Parent.Width
+                              - lblStar_Qrg:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Align: =Align.Center
+                                    Color: =If(ThisItem.Starred, C_Amber, C_Muted)
+                                    Font: =AppFont
+                                    Height: =Round(36 * UI, 0)
+                                    Size: =Round(20 * UI, 0)
+                                    Text: =If(ThisItem.Starred, "★", "☆")
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Round(36 * UI, 0)
+                                    Wrap: =false
+                                    X: =Parent.Width - Round(44 * UI, 0)
+                                    Y: =Round(6 * UI, 0)
+                              - btnStar_Qrg:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    BorderStyle: =BorderStyle.None
+                                    FontWeight: =""
+                                    Height: =Round(48 * UI, 0)
+                                    OnSelect: |-
+                                      =// STAR: pin or unpin this guide. Kept on this phone (SaveData fwQrgFav), so it works offline.
+                                      If(
+                                          ThisItem.Starred,
+                                          RemoveIf(colQrgFav, File = ThisItem.File),
+                                          Collect(colQrgFav, { File: ThisItem.File })
+                                      );
+                                      UpdateIf(colQrg, File = ThisItem.File, { Starred: !ThisItem.Starred });
+                                      IfError(SaveData(colQrgFav, "fwQrgFav"), Blank());
+                                      IfError(SaveData(colQrg, "fwQrg"), Blank())
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =4
+                                    RadiusBottomRight: =4
+                                    RadiusTopLeft: =4
+                                    RadiusTopRight: =4
+                                    Text: =""
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Round(48 * UI, 0)
+                                    X: =Parent.Width - Round(50 * UI, 0)
+                                    Y: =Round(2 * UI, 0)
       - btnLoad_Qrg:
           Control: ModernButton@1.0.0
           Properties:
@@ -428,6 +502,8 @@ Screens:
                                       Prof: p,
                                       Mod: r.Modified,
                                       Opens: 0,
+                                      LastMine: "",
+                                      Starred: !IsBlank(LookUp(colQrgFav, File = r.'File name with extension')),
                                       Hay: Lower(t & " " & d & " " & a & " " & p)
                                   }
                               )
@@ -467,8 +543,8 @@ Screens:
             FontWeight: =""
             Height: =1
             OnSelect: |-
-              =// CHIPS: "All" plus the 12 applications with the most guides (built from colQrg, so it also works from the saved copy)
-              ClearCollect(colQrgChips, { Key: "ALL", Label: "All", N: CountRows(colQrg) });
+              =// CHIPS: "All", "Recent", "Starred" plus the 12 applications with the most guides (built from colQrg, so it also works from the saved copy)
+              ClearCollect(colQrgChips, { Key: "ALL", Label: "All", N: CountRows(colQrg) }, { Key: "RECENT", Label: "Recent", N: 0 }, { Key: "STAR", Label: "Starred", N: 0 });
               Collect(
                   colQrgChips,
                   FirstN(
@@ -512,16 +588,17 @@ Screens:
               Set(varQrgRankAt, Now());
               Set(varQrgRankOk, true);
               IfError(
-                  ClearCollect(colQrgLog, ForAll(Sort(QRG_Open_Log, Created, SortOrder.Descending) As l, { File: l.Title })),
+                  ClearCollect(colQrgLog, ForAll(Sort(QRG_Open_Log, Created, SortOrder.Descending) As l, { File: l.Title, Who: Lower(l.'Created By'.Email), When: Text(l.Created, "yyyy-mm-dd hh:mm:ss") })),
                   Set(varQrgRankOk, false)
               );
               If(
                   varQrgRankOk,
+                  ClearCollect(colQrgMine, Filter(colQrgLog, Who = MeEmail));
                   ClearCollect(colQrgCount, ForAll(GroupBy(colQrgLog, File, Grp) As g, { File: g.File, N: CountRows(g.Grp) }));
                   ClearCollect(
                       colQrg,
                       SortByColumns(
-                          ForAll(colQrg As q, Patch(q, { Opens: Coalesce(LookUp(colQrgCount, File = q.File).N, 0) })),
+                          ForAll(colQrg As q, Patch(q, { Opens: Coalesce(LookUp(colQrgCount, File = q.File).N, 0), LastMine: Coalesce(LookUp(colQrgMine, File = q.File).When, "") })),
                           "Opens",
                           SortOrder.Descending,
                           "Title",

@@ -23,7 +23,7 @@ Studio export is the source of truth (all five screens + App.Formulas were copie
 - A guide is shown when **Systems contains ieMR** and **Resource type contains Quick reference guide** and the file ends `.pdf`.
 - `btnLoad_Qrg` copies those rows into `colQrg` (plain columns) once per hour and saves them on the phone (`SaveData` `fwQrg`), so the **list and search work offline**. Opening a PDF needs signal.
 - Search: every word typed must appear in the title, description, application or profession.
-- Chips: All + the 12 applications with the most guides (built from the data, so new applications appear on their own).
+- Chips: All, **Recent** (your last 10 guides, newest first), **Starred** (tap the ☆ on a row; stars live on that phone only, so a new phone starts empty), then the 12 applications with the most guides (built from the data, so new applications appear on their own).
 - Opening a PDF: `QrgView` runs flow `GetQrgPdf` (file name in, PDF as `data:application/pdf;base64,...` out). The PDF viewer cannot open a SharePoint link itself (sign-in), which is why the flow is needed. If it fails, **Open in Browser** opens the file in the phone browser.
 - Nothing is written to SharePoint.
 - Library growth: the app reads the library in one go, so it must stay **under the 2000 row limit**. At about 1,900 files, change `btnLoad_Qrg` to a delegable filter.
