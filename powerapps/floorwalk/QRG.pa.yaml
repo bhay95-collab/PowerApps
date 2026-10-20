@@ -293,7 +293,7 @@ Screens:
                           )
                         LayoutMinHeight: =Round(150 * UI, 0)
                         TemplatePadding: =0
-                        TemplateSize: =Round(106 * UI, 0)
+                        TemplateSize: =Round(122 * UI, 0)
                         Width: =PageW - Round(40 * UI, 0)
                       Children:
                         - conRow_Qrg:
@@ -304,7 +304,7 @@ Screens:
                               BorderThickness: =1
                               DropShadow: =DropShadow.None
                               Fill: =C_White
-                              Height: =Round(96 * UI, 0)
+                              Height: =Round(112 * UI, 0)
                               RadiusBottomLeft: =Round(18 * UI, 0)
                               RadiusBottomRight: =Round(18 * UI, 0)
                               RadiusTopLeft: =Round(18 * UI, 0)
@@ -319,7 +319,7 @@ Screens:
                                     Color: =C_Ink
                                     Font: =AppFont
                                     FontWeight: =FontWeight.Bold
-                                    Height: =Round(40 * UI, 0)
+                                    Height: =Round(60 * UI, 0)
                                     Size: =Round(12 * UI, 0)
                                     Text: =ThisItem.Title
                                     VerticalAlign: =VerticalAlign.Top
@@ -338,7 +338,7 @@ Screens:
                                     Width: =Parent.Width - Round(62 * UI, 0)
                                     Wrap: =false
                                     X: =Round(16 * UI, 0)
-                                    Y: =Round(50 * UI, 0)
+                                    Y: =Round(70 * UI, 0)
                               - lblRowM_Qrg:
                                   Control: Label@2.5.1
                                   Properties:
@@ -350,7 +350,7 @@ Screens:
                                     Width: =Parent.Width - Round(62 * UI, 0)
                                     Wrap: =false
                                     X: =Round(16 * UI, 0)
-                                    Y: =Round(70 * UI, 0)
+                                    Y: =Round(90 * UI, 0)
                               - icoGo_Qrg:
                                   Control: ModernIcon@1.1.1
                                   Properties:
@@ -359,7 +359,7 @@ Screens:
                                     IconColor: =C_Muted
                                     Width: =Round(24 * UI, 0)
                                     X: =Parent.Width - Round(36 * UI, 0)
-                                    Y: =Round(36 * UI, 0)
+                                    Y: =Round(44 * UI, 0)
                               - btnRow_Qrg:
                                   Control: ModernButton@1.0.0
                                   Properties:
