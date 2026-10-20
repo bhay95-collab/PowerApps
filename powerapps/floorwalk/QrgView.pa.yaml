@@ -7,7 +7,11 @@ Screens:
         Set(varQrgPdf, Blank());
         Set(varQrgFail, false);
         Set(varQrgLoading, true);
-        IfError(Set(varQrgPdf, GetQrgPdf.Run(varQrg.File).pdf), Set(varQrgFail, true));
+        If(
+            IsBlank(varQrg.File),
+            Set(varQrgFail, true),
+            IfError(Set(varQrgPdf, GetQrgPdf.Run(varQrg.File).pdf), Set(varQrgFail, true))
+        );
         If(IsBlank(varQrgPdf), Set(varQrgFail, true));
         Set(varQrgLoading, false)
     Children:
