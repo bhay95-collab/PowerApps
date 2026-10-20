@@ -198,7 +198,7 @@ Screens:
                         LayoutMinHeight: =Round(52 * UI, 0)
                         ShowScrollbar: =false
                         TemplatePadding: =0
-                        TemplateSize: =Round(118 * UI, 0)
+                        TemplateSize: =Round(150 * UI, 0)
                         Width: =PageW - Round(40 * UI, 0)
                       Children:
                         - conChip_Qrg:
@@ -409,7 +409,7 @@ Screens:
                               ) As r,
                               With(
                                   {
-                                      t: Trim(Coalesce(r.'Resource title', r.'File name with extension')),
+                                      t: With({ x: Trim(Coalesce(r.'Resource title', "")), f: r.'File name with extension' }, If(IsBlank(x) || StartsWith(x, "http"), Left(f, Len(f) - 4), x)),
                                       d: Trim(Coalesce(r.'Description (Description0)', r.'Description (OData__ExtendedDescription)', "")),
                                       a: Concat(r.Applications, Value, ", "),
                                       p: Concat(r.Profession, Value, ", ")
