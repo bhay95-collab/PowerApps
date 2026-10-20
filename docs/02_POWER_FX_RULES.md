@@ -88,6 +88,7 @@ Set `IsActive = false` instead of `Remove()`. History stays; filter `IsActive` e
 |---|---|---|
 | Choice | `x.Status.Value` | `{ Value: "Allocated" }` |
 | Multi-select choice | `Concat(x.EducationGiven, Value, ", ")` | `ForAll(colEdu As e, { Value: e.Value })` (values must match choices **exactly**) |
+| Multi-select lookup | `Concat(x.Systems, Value, ", ")`; test with `!IsBlank(LookUp(x.Systems, Value = "ieMR"))` (a SharePoint export shows these as `Name;#id;#Name;#id`; multi-choice shows `Name;#Name`) |
 | Person | `x.'Created By'.DisplayName`, `.Email` | (claims record — avoid writing; store name/email as text) |
 | Number | `Text(x.Bed)` | number |
 | Image | `x.AuditPhoto` | `imgControl.Image` |

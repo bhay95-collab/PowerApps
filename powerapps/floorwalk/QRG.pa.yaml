@@ -1,0 +1,496 @@
+Screens:
+  QRG:
+    Properties:
+      Fill: =C_Bg
+      OnVisible: |-
+        =Set(varQrgChip, "ALL");
+        Reset(txtSearch_Qrg);
+        // saved copy of the list from the last time this phone had signal (not in the browser preview)
+        If(CountRows(colQrg) = 0, IfError(LoadData(colQrg, "fwQrg", true), false));
+        If(
+            Connection.Connected && (CountRows(colQrg) = 0 || IsBlank(varQrgAt) || DateDiff(varQrgAt, Now(), TimeUnit.Minutes) >= 60),
+            Select(btnLoad_Qrg),
+            CountRows(colQrgChips) = 0,
+            Select(btnChips_Qrg)
+        )
+    Children:
+      - conRoot_Qrg:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =C_Bg
+            Height: =Parent.Height
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Width: =Parent.Width
+          Children:
+            - conHdr_Qrg:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(7, 95, 115, 1)
+                  FillPortions: =0
+                  Height: =Round(95 * UI, 0)
+                  LayoutMinHeight: =Round(95 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                  - imgHdr_Qrg:
+                      Control: Image@2.2.3
+                      Properties:
+                        Height: =Parent.Height
+                        Image: =HeaderImage
+                        ImagePosition: =ImagePosition.Fill
+                        Width: =Parent.Width
+                  - btnBack_Qrg:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        Appearance: =ButtonAppearance.Transparent
+                        Color: =C_White
+                        FontWeight: =""
+                        Height: =Round(60 * UI, 0)
+                        Icon: ="ChevronLeft"
+                        OnSelect: =Navigate(Home, ScreenTransition.UnCoverRight)
+                        PaddingBottom: =5
+                        PaddingLeft: =12
+                        PaddingRight: =12
+                        PaddingTop: =5
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =Round(24 * UI, 0)
+                        Text: =""
+                        VerticalAlign: =VerticalAlign.Middle
+                        Width: =Round(60 * UI, 0)
+                        X: =Gutter + Round(5 * UI, 0)
+                        Y: =Round(18 * UI, 0)
+                  - lblHdrT_Qrg:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_White
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(42 * UI, 0)
+                        Size: =Round(19 * UI, 0)
+                        Text: ="Find a Guide"
+                        Width: =PageW - Round(135 * UI, 0)
+                        Wrap: =false
+                        X: =Gutter + Round(65 * UI, 0)
+                        Y: =Round(12 * UI, 0)
+                  - lblHdrS_Qrg:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 0.85)
+                        Font: =AppFont
+                        Height: =Round(25 * UI, 0)
+                        Size: =Round(12 * UI, 0)
+                        Text: =If(varQrgLoading, "Loading guides...", CountRows(colQrg) & " ieMR guides" & If(Connection.Connected, "", "  ·  Offline"))
+                        Width: =PageW - Round(135 * UI, 0)
+                        Wrap: =false
+                        X: =Gutter + Round(65 * UI, 0)
+                        Y: =Round(53 * UI, 0)
+                  - btnRefresh_Qrg:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        Appearance: =ButtonAppearance.Transparent
+                        Color: =C_White
+                        DisplayMode: =If(varQrgLoading || !Connection.Connected, DisplayMode.Disabled, DisplayMode.Edit)
+                        FontWeight: =""
+                        Height: =Round(60 * UI, 0)
+                        Icon: ="ArrowClockwise"
+                        OnSelect: =Select(btnLoad_Qrg)
+                        PaddingBottom: =5
+                        PaddingLeft: =12
+                        PaddingRight: =12
+                        PaddingTop: =5
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =Round(22 * UI, 0)
+                        Text: =""
+                        VerticalAlign: =VerticalAlign.Middle
+                        Width: =Round(60 * UI, 0)
+                        X: =Gutter + PageW - Round(65 * UI, 0)
+                        Y: =Round(18 * UI, 0)
+            - conBody_Qrg:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  DropShadow: =DropShadow.None
+                  LayoutAlignItems: =LayoutAlignItems.Stretch
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =Round(12 * UI, 0)
+                  LayoutMinHeight: =Round(250 * UI, 0)
+                  PaddingBottom: =Round(10 * UI, 0)
+                  PaddingLeft: =Gutter + Round(20 * UI, 0)
+                  PaddingRight: =Gutter + Round(20 * UI, 0)
+                  PaddingTop: =Round(15 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                  - conSearch_Qrg:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =RGBA(14, 42, 70, 0.22)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round(60 * UI, 0)
+                        LayoutMinHeight: =Round(60 * UI, 0)
+                        RadiusBottomLeft: =Round(15 * UI, 0)
+                        RadiusBottomRight: =Round(15 * UI, 0)
+                        RadiusTopLeft: =Round(15 * UI, 0)
+                        RadiusTopRight: =Round(15 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - icoSearch_Qrg:
+                            Control: ModernIcon@1.1.1
+                            Properties:
+                              Height: =Round(24 * UI, 0)
+                              Icon: ="Search"
+                              IconColor: =C_Muted
+                              Width: =Round(24 * UI, 0)
+                              X: =Round(16 * UI, 0)
+                              Y: =Round(18 * UI, 0)
+                        - txtSearch_Qrg:
+                            Control: Classic/TextInput@2.3.2
+                            Properties:
+                              BorderStyle: =BorderStyle.None
+                              Color: =C_Ink
+                              Default: =""
+                              DelayOutput: =true
+                              Fill: =RGBA(0, 0, 0, 0)
+                              Font: =AppFont
+                              Height: =Parent.Height
+                              HintText: ="Search e.g. PCA, discharge, insulin"
+                              Size: =Round(13 * UI, 0)
+                              Width: =Parent.Width - Round(54 * UI, 0)
+                              X: =Round(46 * UI, 0)
+                  - galChips_Qrg:
+                      Control: Gallery@2.15.0
+                      Variant: Horizontal
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        FillPortions: =0
+                        Height: =Round(52 * UI, 0)
+                        Items: =colQrgChips
+                        LayoutMinHeight: =Round(52 * UI, 0)
+                        ShowScrollbar: =false
+                        TemplatePadding: =0
+                        TemplateSize: =Round(118 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - conChip_Qrg:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =If(ThisItem.Key = Coalesce(varQrgChip, "ALL"), C_Accent, C_Line)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =If(ThisItem.Key = Coalesce(varQrgChip, "ALL"), C_Accent, C_White)
+                              Height: =Round(48 * UI, 0)
+                              RadiusBottomLeft: =Round(24 * UI, 0)
+                              RadiusBottomRight: =Round(24 * UI, 0)
+                              RadiusTopLeft: =Round(24 * UI, 0)
+                              RadiusTopRight: =Round(24 * UI, 0)
+                              Width: =Parent.TemplateWidth - Round(8 * UI, 0)
+                              X: =4
+                              Y: =Round(2 * UI, 0)
+                            Children:
+                              - lblChip_Qrg:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Align: =Align.Center
+                                    Color: =If(ThisItem.Key = Coalesce(varQrgChip, "ALL"), C_White, C_Ink2)
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(48 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: =ThisItem.Label
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width - Round(8 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(4 * UI, 0)
+                              - btnChip_Qrg:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    BorderStyle: =BorderStyle.None
+                                    FontWeight: =""
+                                    Height: =Parent.Height
+                                    OnSelect: =Set(varQrgChip, ThisItem.Key)
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =4
+                                    RadiusBottomRight: =4
+                                    RadiusTopLeft: =4
+                                    RadiusTopRight: =4
+                                    Text: =""
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                  - lblCount_Qrg:
+                      Control: Label@2.5.1
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        Color: =C_Muted
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(22 * UI, 0)
+                        LayoutMinHeight: =Round(22 * UI, 0)
+                        Size: =Round(11 * UI, 0)
+                        Text: =CountRows(galRows_Qrg.AllItems) & If(CountRows(galRows_Qrg.AllItems) = 1, " guide", " guides")
+                        Width: =PageW - Round(40 * UI, 0)
+                        Wrap: =false
+                  - lblEmpty_Qrg:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        Color: =C_Muted
+                        Font: =AppFont
+                        Height: =Round(50 * UI, 0)
+                        LayoutMinHeight: =Round(50 * UI, 0)
+                        Size: =Round(12 * UI, 0)
+                        Text: =If(varQrgLoading, "Loading guides...", CountRows(colQrg) = 0, "No guides yet. Get signal, then tap refresh.", "Nothing matches. Try fewer words.")
+                        Visible: =CountRows(galRows_Qrg.AllItems) = 0
+                        Width: =PageW - Round(40 * UI, 0)
+                        Wrap: =false
+                  - galRows_Qrg:
+                      Control: Gallery@2.15.0
+                      Variant: Vertical
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        Items: |-
+                          =// colQrg is already sorted A to Z. Every word typed must appear in the title, description, application or profession.
+                          Filter(
+                              colQrg,
+                              (Coalesce(varQrgChip, "ALL") = "ALL" || (";" & varQrgChip & ";") in AppKey)
+                              && (
+                                  IsBlank(Trim(txtSearch_Qrg.Text))
+                                  || IsEmpty(Filter(Split(Lower(Trim(txtSearch_Qrg.Text)), " "), !(Value in Hay)))
+                              )
+                          )
+                        LayoutMinHeight: =Round(150 * UI, 0)
+                        TemplatePadding: =0
+                        TemplateSize: =Round(106 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - conRow_Qrg:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              BorderColor: =C_Line
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =C_White
+                              Height: =Round(96 * UI, 0)
+                              RadiusBottomLeft: =Round(18 * UI, 0)
+                              RadiusBottomRight: =Round(18 * UI, 0)
+                              RadiusTopLeft: =Round(18 * UI, 0)
+                              RadiusTopRight: =Round(18 * UI, 0)
+                              Width: =Parent.TemplateWidth - Round(10 * UI, 0)
+                              X: =1
+                              Y: =Round(5 * UI, 0)
+                            Children:
+                              - lblRowT_Qrg:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Ink
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(40 * UI, 0)
+                                    Size: =Round(12 * UI, 0)
+                                    Text: =ThisItem.Title
+                                    VerticalAlign: =VerticalAlign.Top
+                                    Width: =Parent.Width - Round(62 * UI, 0)
+                                    X: =Round(16 * UI, 0)
+                                    Y: =Round(8 * UI, 0)
+                              - lblRowS_Qrg:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Accent
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(20 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: =Coalesce(ThisItem.Apps, "No application listed")
+                                    Width: =Parent.Width - Round(62 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(16 * UI, 0)
+                                    Y: =Round(50 * UI, 0)
+                              - lblRowM_Qrg:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Muted
+                                    Font: =AppFont
+                                    Height: =Round(20 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: ="Updated " & Text(ThisItem.Mod, "d mmm yyyy")
+                                    Width: =Parent.Width - Round(62 * UI, 0)
+                                    Wrap: =false
+                                    X: =Round(16 * UI, 0)
+                                    Y: =Round(70 * UI, 0)
+                              - icoGo_Qrg:
+                                  Control: ModernIcon@1.1.1
+                                  Properties:
+                                    Height: =Round(24 * UI, 0)
+                                    Icon: ="ChevronRight"
+                                    IconColor: =C_Muted
+                                    Width: =Round(24 * UI, 0)
+                                    X: =Parent.Width - Round(36 * UI, 0)
+                                    Y: =Round(36 * UI, 0)
+                              - btnRow_Qrg:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    BorderStyle: =BorderStyle.None
+                                    FontWeight: =""
+                                    Height: =Parent.Height
+                                    OnSelect: |-
+                                      =Set(varQrg, ThisItem);
+                                      Navigate(QrgView, ScreenTransition.Cover)
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =4
+                                    RadiusBottomRight: =4
+                                    RadiusTopLeft: =4
+                                    RadiusTopRight: =4
+                                    Text: =""
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+      - btnLoad_Qrg:
+          Control: ModernButton@1.0.0
+          Properties:
+            Align: =Align.Center
+            FontWeight: =""
+            Height: =1
+            OnSelect: |-
+              =// LOAD: every ieMR quick reference guide (PDF) in the Resources library, flattened to plain columns once.
+              // The library is about 1,300 files (under the 2000 row limit), so the filter runs on the device.
+              Set(varQrgLoading, true);
+              Set(varQrgOk, true);
+              IfError(
+                  ClearCollect(
+                      colQrg,
+                      SortByColumns(
+                          ForAll(
+                              Filter(
+                                  'Resources library',
+                                  !IsBlank(LookUp(Systems, Value = "ieMR"))
+                                  && !IsBlank(LookUp('Resource type', Value = "Quick reference guide"))
+                                  && Lower(Right('File name with extension', 4)) = ".pdf"
+                              ) As r,
+                              With(
+                                  {
+                                      t: Trim(Coalesce(r.'Resource title', r.'File name with extension')),
+                                      d: Trim(Coalesce(r.Description, "")),
+                                      a: Concat(r.Applications, Value, ", "),
+                                      p: Concat(r.Profession, Value, ", ")
+                                  },
+                                  {
+                                      ID: r.ID,
+                                      Title: t,
+                                      Desc: d,
+                                      File: r.'File name with extension',
+                                      Apps: a,
+                                      AppKey: ";" & Concat(r.Applications, Value, ";") & ";",
+                                      Prof: p,
+                                      Mod: r.Modified,
+                                      Hay: Lower(t & " " & d & " " & a & " " & p)
+                                  }
+                              )
+                          ),
+                          "Title",
+                          SortOrder.Ascending
+                      )
+                  ),
+                  Set(varQrgOk, false);
+                  Notify("Could not load the guides. Showing the last saved list.", NotificationType.Warning)
+              );
+              If(
+                  varQrgOk,
+                  IfError(SaveData(colQrg, "fwQrg"), false);
+                  Set(varQrgAt, Now());
+                  Select(btnChips_Qrg)
+              );
+              Set(varQrgLoading, false)
+            PaddingBottom: =5
+            PaddingLeft: =12
+            PaddingRight: =12
+            PaddingTop: =5
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Size: =Round(11 * UI, 0)
+            Text: =""
+            VerticalAlign: =VerticalAlign.Middle
+            Visible: =false
+            Width: =1
+      - btnChips_Qrg:
+          Control: ModernButton@1.0.0
+          Properties:
+            Align: =Align.Center
+            FontWeight: =""
+            Height: =1
+            OnSelect: |-
+              =// CHIPS: "All" plus the 12 applications with the most guides (built from colQrg, so it also works from the saved copy)
+              ClearCollect(colQrgChips, { Key: "ALL", Label: "All", N: CountRows(colQrg) });
+              Collect(
+                  colQrgChips,
+                  FirstN(
+                      SortByColumns(
+                          ForAll(
+                              Filter(Distinct(Split(Concat(colQrg, AppKey, ""), ";"), Value), !IsBlank(Value)) As d,
+                              {
+                                  Key: d.Value,
+                                  Label: Switch(d.Value, "Prisoner Health Service (PHS)", "PHS", "Medication Management", "Medication Mgmt", d.Value),
+                                  N: CountIf(colQrg, (";" & d.Value & ";") in AppKey)
+                              }
+                          ),
+                          "N",
+                          SortOrder.Descending
+                      ),
+                      12
+                  )
+              )
+            PaddingBottom: =5
+            PaddingLeft: =12
+            PaddingRight: =12
+            PaddingTop: =5
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Size: =Round(11 * UI, 0)
+            Text: =""
+            VerticalAlign: =VerticalAlign.Middle
+            Visible: =false
+            Width: =1

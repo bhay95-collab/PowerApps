@@ -8,7 +8,8 @@ Organisation: Queensland Health, STARS (Surgical, Treatment and Rehabilitation S
 | **STARS Equipment** | Phone / tablet | Scan, find, allocate, return, audit, service equipment; training | 11 (M1–M11) | `powerapps/mobile/` | UI/PageW |
 | **Physiotherapy Training Register** | Any (stand-alone) | Book BLS and Manual Handling | 2 | `powerapps/training/` | Wide/UI |
 | **DTV Audit** | Phone | Audit ieMR Downtime Viewers | 5 | `powerapps/dtv/` (generated) | UI/PageW |
-| **Flows** | Cloud | Training emails, reminders, waitlist, cleanup, Team Brief | 8 | `powerapps/flows/` | — |
+| **Floorwalking Ideas** | Phone | CITTA floorwalkers capture ieMR ideas, dashboard, find a QRG | 5 | `powerapps/floorwalk/` | UI/PageW |
+| **Flows** | Cloud | Training emails, reminders, waitlist, cleanup, Team Brief, QRG PDF | 9 | `powerapps/flows/` | — |
 
 Linked web tools (GitHub Pages, opened from desktop buttons): equipment prescription support (`bhay95-collab.github.io/stars-wheelchair-prescription/`), basic outcome measures (`bhay95-collab.github.io/basic-outcome-measures/`). Staff Movement Tracker (`index.html` in `bhay95-collab/staff-movements`) is the original visual reference for the ward board.
 
@@ -75,3 +76,15 @@ Manual Studio edits already mirrored in repo: `lblRemovePhoto_Aud.Color = RGBA(1
 ## Training Register (stand-alone)
 
 `Home` + `scrTrainingSessions`. Two columns ≥ 820 px. Re-checks capacity and clashes (later booking cancelled), waitlist, soft delete, branded emails. Needs `varCanManageTraining` set in OnStart. Same logic also in desktop `Training_Hub/Sessions` and mobile M10/M11 — **three copies**, change all three.
+
+## Floorwalking Ideas (phone)
+
+App.Formulas: colours, `AppFont`, `HeaderImage`, `UI/PageW/Gutter/SheetW`, `Dash*`, `MeEmail/MeName/MeFirst`, `SafetyAlertTo`, `EmailHead/EmailFoot`, `StreamList`, `ThemeList`, `StatusList`, `ServiceMap`, `QrgLibUrl`. Data: `Floorwalk_Ideas` (own list), `Resources library` (ieMR Applications site, read only). Data row limit 2000. Details: `powerapps/floorwalk/README.md`.
+
+| Screen | Purpose |
+|---|---|
+| `Home` | Capture an Idea, **Find a Guide** tile, Ideas Dashboard, My Ideas; amber "waiting to upload" card for ideas saved offline |
+| `Capture` | Where (service search, location), the idea, similar-idea check ("Me Too"), ieMR area, theme, priority, patient safety (emails `SafetyAlertTo`), stakeholder (Office 365 directory), photo; offline queue (`fwQueue`) |
+| `Dashboard` | Stream / period / Mine filters, KPI tiles, by stream / theme / status / service / ieMR area / floorwalker, idea list, detail sheet with status, priority, review notes (optimistic lock on `Modified`) |
+| `QRG` | Search + application chips over the ieMR QRGs (704 PDFs). List cached on the phone (`fwQrg`), works offline |
+| `QrgView` | One QRG in the PDF viewer (via flow `GetQrgPdf`), **Open in Browser** fallback |

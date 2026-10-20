@@ -1,0 +1,703 @@
+Screens:
+  Home:
+    Properties:
+      Fill: =C_Bg
+      OnVisible: |-
+        =Set(varSyncing, false);
+        // ideas saved on this phone while offline (none = empty)
+        IfError(LoadData(colQueue, "fwQueue", true), false);
+        If(
+            Connection.Connected,
+            Refresh(Floorwalk_Ideas);
+            // my ideas (for the My Ideas tile)
+            ClearCollect(colMine_Hm, Filter(Floorwalk_Ideas, 'Created By'.Email = User().Email));
+            Set(varHmMineAllN, CountRows(colMine_Hm));
+            // upload anything saved offline
+            If(CountRows(colQueue) > 0, Select(btnSync_Hm))
+        )
+    Children:
+      - conRoot_Hm:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =C_Bg
+            Height: =Parent.Height
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Width: =Parent.Width
+          Children:
+            - conHdr_Hm:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(7, 95, 115, 1)
+                  FillPortions: =0
+                  Height: =Round(165 * UI, 0)
+                  LayoutMinHeight: =Round(165 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                  - imgHdr_Hm:
+                      Control: Image@2.2.3
+                      Properties:
+                        Height: =Parent.Height
+                        Image: =HeaderImage
+                        ImagePosition: =ImagePosition.Fill
+                        Width: =Parent.Width
+                  - lblKicker_Hm:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 0.8)
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(23 * UI, 0)
+                        Size: =Round(11 * UI, 0)
+                        Text: ="RBWH POST GO-LIVE"
+                        Width: =PageW - Round(50 * UI, 0)
+                        Wrap: =false
+                        X: =Gutter + Round(25 * UI, 0)
+                        Y: =Round(33 * UI, 0)
+                  - lblTitle_Hm:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_White
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(70 * UI, 0)
+                        Size: =Round(28 * UI, 0)
+                        Text: ="Optimisation Ideas"
+                        Width: =PageW - Round(50 * UI, 0)
+                        Wrap: =false
+                        X: =Gutter + Round(25 * UI, 0)
+                        Y: =Round(45 * UI, 0)
+                  - lblHello_Hm:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 0.9)
+                        Font: =AppFont
+                        Height: =Round(28 * UI, 0)
+                        Size: =Round(13 * UI, 0)
+                        Text: ="Hi " & MeFirst & "  ·  " & Text(Today(), "dddd d mmmm")
+                        Width: =PageW - Round(50 * UI, 0)
+                        Wrap: =false
+                        X: =Gutter + Round(25 * UI, 0)
+                        Y: =Round(110 * UI, 0)
+            - conBody_Hm:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  DropShadow: =DropShadow.None
+                  LayoutAlignItems: =LayoutAlignItems.Stretch
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =Round(15 * UI, 0)
+                  LayoutMinHeight: =Round(250 * UI, 0)
+                  LayoutOverflowY: =LayoutOverflow.Scroll
+                  PaddingBottom: =Round(30 * UI, 0)
+                  PaddingLeft: =Gutter + Round(20 * UI, 0)
+                  PaddingRight: =Gutter + Round(20 * UI, 0)
+                  PaddingTop: =Round(20 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                  - conQueue_Hm:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =RGBA(178, 105, 0, 0.35)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_AmberBg
+                        FillPortions: =0
+                        Height: =Round(150 * UI, 0)
+                        LayoutMinHeight: =Round(150 * UI, 0)
+                        RadiusBottomLeft: =Round(20 * UI, 0)
+                        RadiusBottomRight: =Round(20 * UI, 0)
+                        RadiusTopLeft: =Round(20 * UI, 0)
+                        RadiusTopRight: =Round(20 * UI, 0)
+                        Visible: =CountRows(colQueue) > 0
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - lblQueueCap_Hm:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Amber
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(20 * UI, 0)
+                              Size: =Round(11 * UI, 0)
+                              Text: ="WAITING TO UPLOAD"
+                              Width: =Parent.Width - Round(40 * UI, 0)
+                              Wrap: =false
+                              X: =Round(20 * UI, 0)
+                              Y: =Round(14 * UI, 0)
+                        - lblQueueT_Hm:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(30 * UI, 0)
+                              Size: =Round(15 * UI, 0)
+                              Text: =CountRows(colQueue) & If(CountRows(colQueue) = 1, " idea", " ideas") & " saved on this phone"
+                              Width: =Parent.Width - Round(40 * UI, 0)
+                              Wrap: =false
+                              X: =Round(20 * UI, 0)
+                              Y: =Round(36 * UI, 0)
+                        - conQueueBtn_Hm:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =If(Connection.Connected && !varSyncing, C_Accent, RGBA(160, 174, 180, 1))
+                              Height: =Round(52 * UI, 0)
+                              RadiusBottomLeft: =Round(26 * UI, 0)
+                              RadiusBottomRight: =Round(26 * UI, 0)
+                              RadiusTopLeft: =Round(26 * UI, 0)
+                              RadiusTopRight: =Round(26 * UI, 0)
+                              Width: =Parent.Width - Round(40 * UI, 0)
+                              X: =Round(20 * UI, 0)
+                              Y: =Round(80 * UI, 0)
+                            Children:
+                              - btnQueue_Hm:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Color: =C_White
+                                    DisplayMode: =If(Connection.Connected && !varSyncing, DisplayMode.Edit, DisplayMode.Disabled)
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Parent.Height
+                                    OnSelect: =Select(btnSync_Hm)
+                                    PaddingBottom: =5
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =5
+                                    RadiusBottomLeft: =Round(26 * UI, 0)
+                                    RadiusBottomRight: =Round(26 * UI, 0)
+                                    RadiusTopLeft: =Round(26 * UI, 0)
+                                    RadiusTopRight: =Round(26 * UI, 0)
+                                    Size: =Round(13 * UI, 0)
+                                    Text: =If(varSyncing, "Uploading...", Connection.Connected, "Upload Now", "No Signal Yet")
+                                    VerticalAlign: =VerticalAlign.Middle
+                                    Width: =Parent.Width
+                  - conHero_Hm:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        DropShadow: =DropShadow.None
+                        Fill: =C_Accent
+                        FillPortions: =0
+                        Height: =Round(120 * UI, 0)
+                        LayoutMinHeight: =Round(120 * UI, 0)
+                        RadiusBottomLeft: =Round(25 * UI, 0)
+                        RadiusBottomRight: =Round(25 * UI, 0)
+                        RadiusTopLeft: =Round(25 * UI, 0)
+                        RadiusTopRight: =Round(25 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - conHeroIc_Hm:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =RGBA(255, 255, 255, 0.16)
+                              Height: =Round(56 * UI, 0)
+                              RadiusBottomLeft: =Round(28 * UI, 0)
+                              RadiusBottomRight: =Round(28 * UI, 0)
+                              RadiusTopLeft: =Round(28 * UI, 0)
+                              RadiusTopRight: =Round(28 * UI, 0)
+                              Width: =Round(56 * UI, 0)
+                              X: =Round(20 * UI, 0)
+                              Y: =Round(32 * UI, 0)
+                            Children:
+                              - icoHero_Hm:
+                                  Control: ModernIcon@1.1.1
+                                  Properties:
+                                    Height: =Round(34 * UI, 0)
+                                    Icon: ="Edit"
+                                    IconColor: =C_White
+                                    IconStyle: =IconStyle.Filled
+                                    Width: =Round(34 * UI, 0)
+                                    X: =Round(11 * UI, 0)
+                                    Y: =Round(11 * UI, 0)
+                        - lblHeroT_Hm:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_White
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(32 * UI, 0)
+                              Size: =Round(19 * UI, 0)
+                              Text: ="Capture an Idea"
+                              Width: =Parent.Width - Round(108 * UI, 0)
+                              Wrap: =false
+                              X: =Round(92 * UI, 0)
+                              Y: =Round(42 * UI, 0)
+                        - btnHero_Hm:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              BorderStyle: =BorderStyle.None
+                              FontWeight: =""
+                              Height: =Parent.Height
+                              OnSelect: =Navigate(Capture, ScreenTransition.Cover)
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =4
+                              RadiusBottomRight: =4
+                              RadiusTopLeft: =4
+                              RadiusTopRight: =4
+                              Text: =""
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+                  - capQrg_Hm:
+                      Control: Label@2.5.1
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        Color: =C_Muted
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(23 * UI, 0)
+                        LayoutMinHeight: =Round(23 * UI, 0)
+                        Size: =Round(11 * UI, 0)
+                        Text: ="QUICK REFERENCE GUIDES"
+                        Width: =PageW - Round(40 * UI, 0)
+                        Wrap: =false
+                  - conTileQrg_Hm:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =C_Line
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round(90 * UI, 0)
+                        LayoutMinHeight: =Round(90 * UI, 0)
+                        RadiusBottomLeft: =Round(20 * UI, 0)
+                        RadiusBottomRight: =Round(20 * UI, 0)
+                        RadiusTopLeft: =Round(20 * UI, 0)
+                        RadiusTopRight: =Round(20 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - conTileIcQrg_Hm:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =C_GoodBg
+                              Height: =Round(55 * UI, 0)
+                              RadiusBottomLeft: =Round(28 * UI, 0)
+                              RadiusBottomRight: =Round(28 * UI, 0)
+                              RadiusTopLeft: =Round(28 * UI, 0)
+                              RadiusTopRight: =Round(28 * UI, 0)
+                              Width: =Round(55 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(18 * UI, 0)
+                            Children:
+                              - icoTileQrg_Hm:
+                                  Control: ModernIcon@1.1.1
+                                  Properties:
+                                    Height: =Round(30 * UI, 0)
+                                    Icon: ="Search"
+                                    IconColor: =C_Good
+                                    IconStyle: =IconStyle.Filled
+                                    Width: =Round(30 * UI, 0)
+                                    X: =Round(13 * UI, 0)
+                                    Y: =Round(13 * UI, 0)
+                        - lblTileTQrg_Hm:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(26 * UI, 0)
+                              Size: =Round(15 * UI, 0)
+                              Text: ="Find a Guide"
+                              Width: =Parent.Width - Round(130 * UI, 0)
+                              Wrap: =false
+                              X: =Round(88 * UI, 0)
+                              Y: =Round(18 * UI, 0)
+                        - lblTileSQrg_Hm:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Muted
+                              Font: =AppFont
+                              Height: =Round(22 * UI, 0)
+                              Size: =Round(12 * UI, 0)
+                              Text: ="Search ieMR QRGs"
+                              Width: =Parent.Width - Round(130 * UI, 0)
+                              Wrap: =false
+                              X: =Round(88 * UI, 0)
+                              Y: =Round(46 * UI, 0)
+                        - icoTileGoQrg_Hm:
+                            Control: ModernIcon@1.1.1
+                            Properties:
+                              Height: =Round(24 * UI, 0)
+                              Icon: ="ChevronRight"
+                              IconColor: =C_Muted
+                              Width: =Round(24 * UI, 0)
+                              X: =Parent.Width - Round(38 * UI, 0)
+                              Y: =Round(33 * UI, 0)
+                        - btnTileQrg_Hm:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              BorderStyle: =BorderStyle.None
+                              FontWeight: =""
+                              Height: =Parent.Height
+                              OnSelect: =Navigate(QRG, ScreenTransition.Cover)
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =4
+                              RadiusBottomRight: =4
+                              RadiusTopLeft: =4
+                              RadiusTopRight: =4
+                              Text: =""
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+                  - capOther_Hm:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_Muted
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(23 * UI, 0)
+                        LayoutMinHeight: =Round(23 * UI, 0)
+                        Size: =Round(11 * UI, 0)
+                        Text: ="SEE WHAT IS COMING IN"
+                        Width: =PageW - Round(40 * UI, 0)
+                        Wrap: =false
+                  - conTileDash_Hm:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =C_Line
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round(90 * UI, 0)
+                        LayoutMinHeight: =Round(90 * UI, 0)
+                        RadiusBottomLeft: =Round(20 * UI, 0)
+                        RadiusBottomRight: =Round(20 * UI, 0)
+                        RadiusTopLeft: =Round(20 * UI, 0)
+                        RadiusTopRight: =Round(20 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - conTileIcDash_Hm:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =C_AccentSoft
+                              Height: =Round(55 * UI, 0)
+                              RadiusBottomLeft: =Round(28 * UI, 0)
+                              RadiusBottomRight: =Round(28 * UI, 0)
+                              RadiusTopLeft: =Round(28 * UI, 0)
+                              RadiusTopRight: =Round(28 * UI, 0)
+                              Width: =Round(55 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(18 * UI, 0)
+                            Children:
+                              - icoTileDash_Hm:
+                                  Control: ModernIcon@1.1.1
+                                  Properties:
+                                    Height: =Round(30 * UI, 0)
+                                    Icon: ="AppsList"
+                                    IconColor: =C_Accent
+                                    IconStyle: =IconStyle.Filled
+                                    Width: =Round(30 * UI, 0)
+                                    X: =Round(13 * UI, 0)
+                                    Y: =Round(13 * UI, 0)
+                        - lblTileTDash_Hm:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(26 * UI, 0)
+                              Size: =Round(15 * UI, 0)
+                              Text: ="Ideas Dashboard"
+                              Width: =Parent.Width - Round(130 * UI, 0)
+                              Wrap: =false
+                              X: =Round(88 * UI, 0)
+                              Y: =Round(18 * UI, 0)
+                        - lblTileSDash_Hm:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Muted
+                              Font: =AppFont
+                              Height: =Round(22 * UI, 0)
+                              Size: =Round(12 * UI, 0)
+                              Text: ="Overview and Every Idea"
+                              Width: =Parent.Width - Round(130 * UI, 0)
+                              Wrap: =false
+                              X: =Round(88 * UI, 0)
+                              Y: =Round(46 * UI, 0)
+                        - icoTileGoDash_Hm:
+                            Control: ModernIcon@1.1.1
+                            Properties:
+                              Height: =Round(24 * UI, 0)
+                              Icon: ="ChevronRight"
+                              IconColor: =C_Muted
+                              Width: =Round(24 * UI, 0)
+                              X: =Parent.Width - Round(38 * UI, 0)
+                              Y: =Round(33 * UI, 0)
+                        - btnTileDash_Hm:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              BorderStyle: =BorderStyle.None
+                              FontWeight: =""
+                              Height: =Parent.Height
+                              OnSelect: |-
+                                =Set(varDashMine, false);
+                                Navigate(Dashboard, ScreenTransition.Cover)
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =4
+                              RadiusBottomRight: =4
+                              RadiusTopLeft: =4
+                              RadiusTopRight: =4
+                              Text: =""
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+                  - conTileMine_Hm:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =C_Line
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round(90 * UI, 0)
+                        LayoutMinHeight: =Round(90 * UI, 0)
+                        RadiusBottomLeft: =Round(20 * UI, 0)
+                        RadiusBottomRight: =Round(20 * UI, 0)
+                        RadiusTopLeft: =Round(20 * UI, 0)
+                        RadiusTopRight: =Round(20 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - conTileIcMine_Hm:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =C_AmberBg
+                              Height: =Round(55 * UI, 0)
+                              RadiusBottomLeft: =Round(28 * UI, 0)
+                              RadiusBottomRight: =Round(28 * UI, 0)
+                              RadiusTopLeft: =Round(28 * UI, 0)
+                              RadiusTopRight: =Round(28 * UI, 0)
+                              Width: =Round(55 * UI, 0)
+                              X: =Round(18 * UI, 0)
+                              Y: =Round(18 * UI, 0)
+                            Children:
+                              - icoTileMine_Hm:
+                                  Control: ModernIcon@1.1.1
+                                  Properties:
+                                    Height: =Round(30 * UI, 0)
+                                    Icon: ="Person"
+                                    IconColor: =C_Amber
+                                    IconStyle: =IconStyle.Filled
+                                    Width: =Round(30 * UI, 0)
+                                    X: =Round(13 * UI, 0)
+                                    Y: =Round(13 * UI, 0)
+                        - lblTileTMine_Hm:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Ink
+                              Font: =AppFont
+                              FontWeight: =FontWeight.Bold
+                              Height: =Round(26 * UI, 0)
+                              Size: =Round(15 * UI, 0)
+                              Text: ="My Ideas"
+                              Width: =Parent.Width - Round(130 * UI, 0)
+                              Wrap: =false
+                              X: =Round(88 * UI, 0)
+                              Y: =Round(18 * UI, 0)
+                        - lblTileSMine_Hm:
+                            Control: Label@2.5.1
+                            Properties:
+                              Color: =C_Muted
+                              Font: =AppFont
+                              Height: =Round(22 * UI, 0)
+                              Size: =Round(12 * UI, 0)
+                              Text: =varHmMineAllN & If(varHmMineAllN = 1, " idea", " ideas") & " captured by you"
+                              Width: =Parent.Width - Round(130 * UI, 0)
+                              Wrap: =false
+                              X: =Round(88 * UI, 0)
+                              Y: =Round(46 * UI, 0)
+                        - icoTileGoMine_Hm:
+                            Control: ModernIcon@1.1.1
+                            Properties:
+                              Height: =Round(24 * UI, 0)
+                              Icon: ="ChevronRight"
+                              IconColor: =C_Muted
+                              Width: =Round(24 * UI, 0)
+                              X: =Parent.Width - Round(38 * UI, 0)
+                              Y: =Round(33 * UI, 0)
+                        - btnTileMine_Hm:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              BorderStyle: =BorderStyle.None
+                              FontWeight: =""
+                              Height: =Parent.Height
+                              OnSelect: |-
+                                =Set(varDashMine, true);
+                                Navigate(Dashboard, ScreenTransition.Cover)
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =4
+                              RadiusBottomRight: =4
+                              RadiusTopLeft: =4
+                              RadiusTopRight: =4
+                              Text: =""
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+                  - conEnd_Hm:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =Round(16 * UI, 0)
+                        LayoutMinHeight: =Round(16 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+      - btnSync_Hm:
+          Control: ModernButton@1.0.0
+          Properties:
+            Align: =Align.Center
+            FontWeight: =""
+            Height: =1
+            OnSelect: |-
+              =// UPLOAD: ideas saved on this phone while offline (one at a time; a failed one stays in the queue)
+              If(
+                  Connection.Connected && CountRows(colQueue) > 0,
+                  Set(varSyncing, true);
+                  ClearCollect(colSynced, { QID: "" });
+                  Clear(colSynced);
+                  ForAll(
+                      colQueue As q,
+                      With(
+                          {
+                              r: IfError(
+                                  Patch(
+                                      Floorwalk_Ideas,
+                                      Defaults(Floorwalk_Ideas),
+                                      {
+                                      Title: q.Title,
+                                      Idea: q.Idea,
+                                      Service: q.Service,
+                                      ServiceLine: q.ServiceLine,
+                                      Stream: q.Stream,
+                                      Location: q.Location,
+                                      Module: q.Module,
+                                      StakeholderName: q.StakeholderName,
+                                      StakeholderEmail: q.StakeholderEmail,
+                                      StakeholderJobTitle: q.StakeholderJobTitle,
+                                      StakeholderDept: q.StakeholderDept,
+                                      FollowUp: q.FollowUp,
+                                      Theme: q.Theme,
+                                      ThemeOther: q.ThemeOther,
+                                      Priority: q.Priority,
+                                      SafetyConcern: q.SafetyConcern,
+                                      Status: q.Status,
+                                      Votes: q.Votes
+                                  }
+                                  ),
+                                  Blank()
+                              )
+                          },
+                          If(
+                              !IsBlank(r.ID),
+                              If(!IsBlank(q.Photo) && IsError(Patch(Floorwalk_Ideas, r, { Photo: q.Photo })), Notify("An idea uploaded without its photo.", NotificationType.Warning));
+                              If(q.SafetyConcern = "Yes", If(
+                  !IsBlank(SafetyAlertTo),
+                  IfError(
+                      Office365Outlook.SendEmailV2(
+                          SafetyAlertTo,
+                          "Patient safety concern: " & q.Title,
+                          Substitute(Substitute(EmailHead, "{{TITLE}}", "Patient Safety Concern"), "{{SUB}}", Coalesce(q.Service, "No service recorded")) &
+                          "<tr><td style='padding:24px 32px 8px 32px;font-size:15px;line-height:22px;color:#3A5068;'>A floorwalker flagged an idea as a possible patient safety concern. Please check a RiskMan has been logged.</td></tr>" &
+                          "<tr><td style='padding:8px 32px 24px 32px;'><table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' style='font-size:14px;'>" &
+                              "<tr><td style='padding:6px 0;color:#8C9BAE;font-size:12px;font-weight:700;width:120px;vertical-align:top;'>SUMMARY</td><td style='padding:6px 0;color:#0E1C2A;'>" & Substitute(Substitute(Coalesce(q.Title, ""), "<", "&lt;"), ">", "&gt;") & "</td></tr>" &
+                              "<tr><td style='padding:6px 0;color:#8C9BAE;font-size:12px;font-weight:700;width:120px;vertical-align:top;'>DETAIL</td><td style='padding:6px 0;color:#0E1C2A;'>" & Substitute(Substitute(Coalesce(q.Idea, ""), "<", "&lt;"), ">", "&gt;") & "</td></tr>" &
+                              "<tr><td style='padding:6px 0;color:#8C9BAE;font-size:12px;font-weight:700;width:120px;vertical-align:top;'>SERVICE</td><td style='padding:6px 0;color:#0E1C2A;'>" & Substitute(Substitute(Coalesce(q.Service, ""), "<", "&lt;"), ">", "&gt;") & "</td></tr>" &
+                              "<tr><td style='padding:6px 0;color:#8C9BAE;font-size:12px;font-weight:700;width:120px;vertical-align:top;'>LOCATION</td><td style='padding:6px 0;color:#0E1C2A;'>" & Substitute(Substitute(Coalesce(q.Location, ""), "<", "&lt;"), ">", "&gt;") & "</td></tr>" &
+                              "<tr><td style='padding:6px 0;color:#8C9BAE;font-size:12px;font-weight:700;width:120px;vertical-align:top;'>IEMR AREA</td><td style='padding:6px 0;color:#0E1C2A;'>" & Substitute(Substitute(Coalesce(q.Module, ""), "<", "&lt;"), ">", "&gt;") & "</td></tr>" &
+                              "<tr><td style='padding:6px 0;color:#8C9BAE;font-size:12px;font-weight:700;width:120px;vertical-align:top;'>STAKEHOLDER</td><td style='padding:6px 0;color:#0E1C2A;'>" & Substitute(Substitute(Coalesce(q.StakeholderName, ""), "<", "&lt;"), ">", "&gt;") & "</td></tr>" &
+                              "<tr><td style='padding:6px 0;color:#8C9BAE;font-size:12px;font-weight:700;width:120px;vertical-align:top;'>PRIORITY</td><td style='padding:6px 0;color:#0E1C2A;'>" & Substitute(Substitute(Coalesce(q.Priority, ""), "<", "&lt;"), ">", "&gt;") & "</td></tr>" &
+                              "<tr><td style='padding:6px 0;color:#8C9BAE;font-size:12px;font-weight:700;width:120px;vertical-align:top;'>FLOORWALKER</td><td style='padding:6px 0;color:#0E1C2A;'>" & Substitute(Substitute(Coalesce(MeName, ""), "<", "&lt;"), ">", "&gt;") & "</td></tr>" &
+                          "</table></td></tr>" &
+                          Substitute(EmailFoot, "{{NOTE}}", "Raised in the Floorwalking Ideas app."),
+                          { Importance: "High" }
+                      ),
+                      Notify("Saved, but the safety email could not be sent. Tell the CITTA lead directly.", NotificationType.Warning)
+                  )
+              ));
+                              Collect(colSynced, { QID: q.QID })
+                          )
+                      )
+                  );
+                  RemoveIf(colQueue, QID in colSynced.QID);
+                  IfError(SaveData(colQueue, "fwQueue"), false);
+                  Set(varSyncing, false);
+                  If(
+                      CountRows(colQueue) = 0,
+                      Notify(CountRows(colSynced) & If(CountRows(colSynced) = 1, " idea", " ideas") & " uploaded.", NotificationType.Success),
+                      Notify(CountRows(colQueue) & " could not upload yet. Try again with better signal.", NotificationType.Warning)
+                  );
+                  Refresh(Floorwalk_Ideas);
+                  ClearCollect(colMine_Hm, Filter(Floorwalk_Ideas, 'Created By'.Email = User().Email));
+                  Set(varHmMineAllN, CountRows(colMine_Hm))
+              )
+            PaddingBottom: =5
+            PaddingLeft: =12
+            PaddingRight: =12
+            PaddingTop: =5
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Size: =Round(11 * UI, 0)
+            Text: =""
+            VerticalAlign: =VerticalAlign.Middle
+            Visible: =false
+            Width: =1

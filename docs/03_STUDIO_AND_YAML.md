@@ -77,6 +77,8 @@ Screens:
 
 Avoid: `Classic/ComboBox` for people/patients (blank until typing).
 
+**PDF viewer**: exact YAML name/version not confirmed. Add it in Studio by hand (Insert → Media → PDF viewer), set `Document`, then **Copy code** and put the real block here. `Document` takes a base64 data address or a public URL only; a SharePoint link fails (sign-in). Use flow `GetQrgPdf` (`06_POWER_AUTOMATE.md`). Not yet confirmed on iPhone/Android: see `OPEN_ITEMS.md`.
+
 ## 4. ModernIcon / ModernButton icon names known to work
 
 `ChevronLeft` · `ChevronRight` · `ChevronDown` · `ArrowClockwise` · `ArrowRight` · `CheckmarkCircle` · `Checkmark` · `DismissCircle` · `Search` · `Filter` · `Save` · `Edit` · `People` · `PeopleAdd` · `Person` · `BookContacts` · `Mail` · `Heart` · `Open` · `Calendar` · `Database` · `Camera` · `AppsList` · `Settings` · `Eye` · `Cart` · `Attach`

@@ -38,6 +38,7 @@ powerapps/desktop/       Physio Dashboard (Studio export = source of truth)
 powerapps/mobile/        STARS Equipment mobile (Studio export = source of truth)
 powerapps/dtv/           DTV Audit (generated from tools/dtv_generator — edit the generator, not the YAML)
 powerapps/training/      stand-alone Training Register
+powerapps/floorwalk/     Floorwalking Ideas (Home, QRG, QrgView; Capture/Dashboard not in repo yet)
 powerapps/email/         email formulas and button OnSelects
 powerapps/flows/         Power Automate Import Package (Legacy) zips
 powerapps/icon/          app icons

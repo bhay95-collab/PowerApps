@@ -1,0 +1,8 @@
+// =====================================================================
+// Floorwalking Ideas app > App > Formulas  (ADD these lines at the end; keep everything already there)
+// Used by the QRG feature (screens QRG and QrgView).
+// =====================================================================
+
+// ---- QRG: web address of the ieMR Applications "Resources library" (the QRG PDFs sit in its root).
+// "Open in Browser" on QrgView adds the file name to this.
+QrgLibUrl = "https://healthqld.sharepoint.com/teams/MNHHS-DMN-APP/Resources%20library/";
