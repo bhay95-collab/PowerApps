@@ -12,6 +12,8 @@ Never commit exports of these lists (staff/patient data).
 | DTVAuditing | `https://healthqld.sharepoint.com/teams/DTVAuditing` | DTV Audit app |
 | MNHHS-DMN-APP (ieMR Applications, **not ours, read only**) | `https://healthqld.sharepoint.com/teams/MNHHS-DMN-APP` | Floorwalking app: `Resources library` (QRG PDFs). Document library, ~1,330 files, all in the root. Columns: `Resource title` (the Title column), `Description` (in Power Apps: `'Description (Description0)'`; the other `'Description (OData__ExtendedDescription)'` is a built-in twin), `Resource type` (multi lookup), `Systems` (multi lookup), `Applications` (multi choice), `Profession` (multi choice), `Facility` (multi lookup), `Modified`, `Name` (file name). QRG = Systems has `ieMR` and Resource type has `Quick reference guide` (704 of them, all `.pdf`). Must stay under the 2000 row limit (read in one go) |
 
+**Floorwalking app list: `QRG_Open_Log`** (same site as `Floorwalk_Ideas`). Blank list, no extra columns: `Title` = file name of the QRG opened; `Created` / `Created By` = when / who (SharePoint fills these). One row per tap on a guide in the QRG screen. The app counts rows per file to put the most-opened guides first (newest 2000 rows). Floorwalking runs about 6 weeks, so no cleanup flow; delete the list's rows or the list afterwards. Not part of `Data Cleanup`.
+
 ---
 
 ## PhysioDreamTeam lists

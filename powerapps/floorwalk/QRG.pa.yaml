@@ -12,6 +12,11 @@ Screens:
             Select(btnLoad_Qrg),
             CountRows(colQrgChips) = 0,
             Select(btnChips_Qrg)
+        );
+        // most-opened order: refresh from the log at most every 10 minutes
+        If(
+            Connection.Connected && CountRows(colQrg) > 0 && (IsBlank(varQrgRankAt) || DateDiff(varQrgRankAt, Now(), TimeUnit.Minutes) >= 10),
+            Select(btnRank_Qrg)
         )
     Children:
       - conRoot_Qrg:
@@ -370,7 +375,9 @@ Screens:
                                     Height: =Parent.Height
                                     OnSelect: |-
                                       =Set(varQrg, ThisItem);
-                                      Navigate(QrgView, ScreenTransition.Cover)
+                                      Navigate(QrgView, ScreenTransition.Cover);
+                                      // log the open (file name in Title; SharePoint adds who and when). A failed log must never stop the guide opening.
+                                      If(Connection.Connected, IfError(Patch(QRG_Open_Log, Defaults(QRG_Open_Log), { Title: ThisItem.File }), Blank()))
                                     PaddingBottom: =5
                                     PaddingLeft: =12
                                     PaddingRight: =12
@@ -420,6 +427,7 @@ Screens:
                                       AppKey: ";" & Concat(r.Applications, Value, ";") & ";",
                                       Prof: p,
                                       Mod: r.Modified,
+                                      Opens: 0,
                                       Hay: Lower(t & " " & d & " " & a & " " & p)
                                   }
                               )
@@ -435,7 +443,8 @@ Screens:
                   varQrgOk,
                   IfError(SaveData(colQrg, "fwQrg"), false);
                   Set(varQrgAt, Now());
-                  Select(btnChips_Qrg)
+                  Select(btnChips_Qrg);
+                  Select(btnRank_Qrg)
               );
               Set(varQrgLoading, false)
             PaddingBottom: =5
@@ -477,6 +486,49 @@ Screens:
                       ),
                       12
                   )
+              )
+            PaddingBottom: =5
+            PaddingLeft: =12
+            PaddingRight: =12
+            PaddingTop: =5
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Size: =Round(11 * UI, 0)
+            Text: =""
+            VerticalAlign: =VerticalAlign.Middle
+            Visible: =false
+            Width: =1
+      - btnRank_Qrg:
+          Control: ModernButton@1.0.0
+          Properties:
+            Align: =Align.Center
+            FontWeight: =""
+            Height: =1
+            OnSelect: |-
+              =// RANK: most-opened guides first, never-opened guides A to Z after them.
+              // Opens are counted from the newest 2000 rows of QRG_Open_Log (the data row limit).
+              Set(varQrgRankAt, Now());
+              Set(varQrgRankOk, true);
+              IfError(
+                  ClearCollect(colQrgLog, ForAll(Sort(QRG_Open_Log, Created, SortOrder.Descending) As l, { File: l.Title })),
+                  Set(varQrgRankOk, false)
+              );
+              If(
+                  varQrgRankOk,
+                  ClearCollect(colQrgCount, ForAll(GroupBy(colQrgLog, File, Grp) As g, { File: g.File, N: CountRows(g.Grp) }));
+                  ClearCollect(
+                      colQrg,
+                      SortByColumns(
+                          ForAll(colQrg As q, Patch(q, { Opens: Coalesce(LookUp(colQrgCount, File = q.File).N, 0) })),
+                          "Opens",
+                          SortOrder.Descending,
+                          "Title",
+                          SortOrder.Ascending
+                      )
+                  );
+                  IfError(SaveData(colQrg, "fwQrg"), Blank())
               )
             PaddingBottom: =5
             PaddingLeft: =12

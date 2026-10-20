@@ -36,6 +36,13 @@ Do them in this order.
 1. Studio → open Floorwalking Ideas → **Settings** (top) → **General** → **Data row limit** → type `2000`.
 2. Left rail → **Data**. `Resources library` must be listed. If not: **Add data** → SharePoint → pick the DMN-APP site → tick **Resources library** → **Connect**.
 
+### A2. Open log list
+1. Open the SharePoint site that holds `Floorwalk_Ideas` → **+ New** → **List** → **Blank list**.
+2. Name it exactly `QRG_Open_Log` → **Create**. No columns to add (it uses Title, Created, Created By).
+3. Studio → left rail **Data** → **Add data** → **SharePoint** → pick the same site as `Floorwalk_Ideas` → tick `QRG_Open_Log` → **Connect**.
+
+Each tap on a guide adds one row (Title = file name). The QRG screen counts rows per file: most-opened first, the rest A to Z.
+
 ### B. Flow
 1. Open the zip on GitHub: `powerapps/flows/Get_QRG_PDF.zip` → **Download raw file**.
 2. make.powerautomate.com → **My flows** → **Import** → **Import Package (Legacy)** → **Upload** → pick the zip.

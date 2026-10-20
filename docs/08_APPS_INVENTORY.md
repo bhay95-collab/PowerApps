@@ -86,5 +86,5 @@ App.Formulas: colours, `AppFont`, `HeaderImage`, `UI/PageW/Gutter/SheetW`, `Dash
 | `Home` | Capture an Idea, **Find a Guide** tile, Ideas Dashboard, My Ideas; amber "waiting to upload" card for ideas saved offline |
 | `Capture` | Where (service search, location), the idea, similar-idea check ("Me Too"), ieMR area, theme, priority, patient safety (emails `SafetyAlertTo`), stakeholder (Office 365 directory), photo; offline queue (`fwQueue`) |
 | `Dashboard` | Stream / period / Mine filters, KPI tiles, by stream / theme / status / service / ieMR area / floorwalker, idea list, detail sheet with status, priority, review notes (optimistic lock on `Modified`) |
-| `QRG` | Search + application chips over the ieMR QRGs (704 PDFs). List cached on the phone (`fwQrg`), works offline |
+| `QRG` | Search + application chips over the ieMR QRGs (about 700 PDFs). Most-opened first (counted from `QRG_Open_Log`, refreshed every 10 min), never-opened A to Z. List cached on the phone (`fwQrg`), works offline. Each tap logs a row |
 | `QrgView` | One QRG in the PDF viewer (via flow `GetQrgPdf`), **Open in Browser** fallback |
