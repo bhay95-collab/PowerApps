@@ -109,29 +109,11 @@ Screens:
                         X: =Gutter + Round(25 * UI, 0)
                         Y: =Round(108 * UI, 0)
                       Children:
-                        - lblAvatar_Hm:
-                            Control: Label@2.5.1
+                        - Avatar1:
+                            Control: ModernAvatar@1.1.0
                             Properties:
-                              Align: =Align.Center
-                              Color: =C_White
-                              Font: =AppFont
-                              FontWeight: =FontWeight.Bold
-                              Height: =Parent.Height
-                              Size: =Round(11 * UI, 0)
-                              Text: |-
-                                =Upper(
-                                    With(
-                                        { n: User().FullName },
-                                        If(
-                                            "," in n,
-                                            Left(Trim(Last(Split(n, ",")).Value), 1) & Left(Trim(First(Split(n, ",")).Value), 1),
-                                            Left(First(Split(n, " ")).Value, 1) & Left(Last(Split(n, " ")).Value, 1)
-                                        )
-                                    )
-                                )
-                              VerticalAlign: =VerticalAlign.Middle
-                              Width: =Parent.Width
-                              Wrap: =false
+                              Height: =35
+                              Width: =35
                         - btnAvatar_Hm:
                             Control: ModernButton@1.0.0
                             Properties:

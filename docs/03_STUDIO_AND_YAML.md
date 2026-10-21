@@ -74,6 +74,8 @@ Screens:
 | `Timer` | `@2.1.0` | |
 | `PieChart` / `LineChart` | `@2.3.0` | `BarChart@2.4.0`, `Legend@2.1.0` |
 | `Rectangle` | `@2.3.0` | |
+| `ModernAvatar` | `@1.1.0` | Shows the signed-in user's profile picture by default (no properties needed) |
+| `HtmlViewer` | `@2.1.0` | `HtmlText`; strips script and iframe |
 | `PDFViewer` | `@2.5.0` | `Document` = base64 data address from a flow |
 
 Avoid: `Classic/ComboBox` for people/patients (blank until typing).
