@@ -78,7 +78,7 @@ def dpad(ind, key, icon, x, y, onselect):
 # ---- board HTML (Power Apps writes one string from the snake and the food; no script needed)
 HTML = f'''=With(
     {{ c: {C}, hs: Max(colSnake, Seq) }},
-    "<div style='position:relative;width:" & (14 * c) & "px;height:" & (15 * c) & "px;background:#F4F9FC;border-radius:12px;overflow:hidden;box-shadow:0 0 0 1px #D6E0EA'>" &
+    "<div style='position:absolute;left:0;top:0;width:" & (14 * c) & "px;height:" & (15 * c) & "px;background:#F4F9FC;border-radius:12px;overflow:hidden;box-shadow:0 0 0 1px #D6E0EA'>" &
     "<div style='position:absolute;left:" & (varSnFood.X * c) & "px;top:" & (varSnFood.Y * c) & "px;width:" & (c - 2) & "px;height:" & (c - 2) & "px;margin:1px;border-radius:50%;background:#B41A1A'></div>" &
     Concat(
         colSnake,
@@ -165,7 +165,7 @@ header = con(ROOT + "  ", "conHdr_Sn", {'AlignInContainer': '=AlignInContainer.S
 
 B = ROOT + "      "   # children of conBody
 board = ctl(B, "htmBoard_Sn", 'HtmlViewer@2.1.0', {
-    'DisabledBorderColor': '=RGBA(161, 159, 157, 1)', 'Font': '=AppFont', 'Height': f'={BH}', 'HtmlText': HTML, 'Width': f'={BW}', 'X': f'={BX}', 'Y': f'={BY}'})
+    'DisabledBorderColor': '=RGBA(161, 159, 157, 1)', 'Font': '=AppFont', 'Height': f'={BH} + 4', 'HtmlText': HTML, 'Width': f'={BW} + 4', 'X': f'={BX}', 'Y': f'={BY}'})
 
 OV = B + "      "
 over = con(B, "conOver_Sn", {

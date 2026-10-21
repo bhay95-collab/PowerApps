@@ -119,11 +119,11 @@ Screens:
                     Properties:
                       DisabledBorderColor: =RGBA(161, 159, 157, 1)
                       Font: =AppFont
-                      Height: =15 * Round(21 * UI, 0)
+                      Height: =15 * Round(21 * UI, 0) + 4
                       HtmlText: |-
                         =With(
                             { c: Round(21 * UI, 0), hs: Max(colSnake, Seq) },
-                            "<div style='position:relative;width:" & (14 * c) & "px;height:" & (15 * c) & "px;background:#F4F9FC;border-radius:12px;overflow:hidden;box-shadow:0 0 0 1px #D6E0EA'>" &
+                            "<div style='position:absolute;left:0;top:0;width:" & (14 * c) & "px;height:" & (15 * c) & "px;background:#F4F9FC;border-radius:12px;overflow:hidden;box-shadow:0 0 0 1px #D6E0EA'>" &
                             "<div style='position:absolute;left:" & (varSnFood.X * c) & "px;top:" & (varSnFood.Y * c) & "px;width:" & (c - 2) & "px;height:" & (c - 2) & "px;margin:1px;border-radius:50%;background:#B41A1A'></div>" &
                             Concat(
                                 colSnake,
@@ -131,7 +131,7 @@ Screens:
                             ) &
                             "</div>"
                         )
-                      Width: =14 * Round(21 * UI, 0)
+                      Width: =14 * Round(21 * UI, 0) + 4
                       X: =Gutter + (PageW - 14 * Round(21 * UI, 0)) / 2
                       Y: =Round(16 * UI, 0)
                 - conOver_Sn:
