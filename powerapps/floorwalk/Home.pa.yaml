@@ -92,6 +92,40 @@ Screens:
                         Wrap: =false
                         X: =Gutter + Round(25 * UI, 0)
                         Y: =Round(110 * UI, 0)
+                  - btnEgg_Hm:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        Appearance: =ButtonAppearance.Transparent
+                        BorderStyle: =BorderStyle.None
+                        FontWeight: =""
+                        Height: =Round(70 * UI, 0)
+                        OnSelect: |-
+                          =// hidden: five quick taps on the title open Snake (taps more than 3 seconds apart start again)
+                          If(
+                              IsBlank(varEggAt) || DateDiff(varEggAt, Now(), TimeUnit.Seconds) > 3,
+                              Set(varEggTaps, 1),
+                              Set(varEggTaps, varEggTaps + 1)
+                          );
+                          Set(varEggAt, Now());
+                          If(
+                              varEggTaps >= 5,
+                              Set(varEggTaps, 0);
+                              Navigate(Snake, ScreenTransition.Fade)
+                          )
+                        PaddingBottom: =5
+                        PaddingLeft: =12
+                        PaddingRight: =12
+                        PaddingTop: =5
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Text: =""
+                        VerticalAlign: =VerticalAlign.Middle
+                        Width: =PageW - Round(50 * UI, 0)
+                        X: =Gutter + Round(25 * UI, 0)
+                        Y: =Round(45 * UI, 0)
             - conBody_Hm:
                 Control: GroupContainer@1.5.0
                 Variant: AutoLayout

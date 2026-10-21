@@ -78,6 +78,8 @@ Screens:
 
 Avoid: `Classic/ComboBox` for people/patients (blank until typing).
 
+**HTML viewer / HTML text** (`HtmlViewer@2.1.0`): strips `<script>` and `<iframe>` (tested Oct 2026 in Studio). Inline styled `<div>`s work, so a game must run its logic in Power Fx and use the viewer only to draw. Third-party sources report a 16,384 character limit on the HTML.
+
 **PDF viewer**: `PDFViewer@2.5.0` (real export: `powerapps/floorwalk/QrgView.pa.yaml` → `pdfQrg_Qv`; properties `Document`, `Y`, `Width`, `Height`, `Visible`). `Document` takes a base64 data address or a public URL only; a SharePoint link fails (sign-in). Use flow `GetQrgPdf` (`06_POWER_AUTOMATE.md`). Not yet confirmed on iPhone/Android: see `OPEN_ITEMS.md`.
 
 ## 4. ModernIcon / ModernButton icon names known to work

@@ -1,0 +1,545 @@
+Screens:
+  Snake:
+    Properties:
+      Fill: =C_Bg
+      OnVisible: |-
+        =// RESET: a short snake in the middle, moving right, score 0, waiting for Start
+        ClearCollect(colSnake, { X: 6, Y: 7, Seq: 1 }, { X: 7, Y: 7, Seq: 2 }, { X: 8, Y: 7, Seq: 3 });
+        Set(varSnDir, { X: 1, Y: 0 });
+        Set(varSnNext, { X: 1, Y: 0 });
+        Set(varSnScore, 0);
+        Set(varSnDead, false);
+        Set(varSnWon, false);
+        Set(varSnRun, false);
+        Select(btnFood_Sn)
+    Children:
+      - conRoot_Sn:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =C_Bg
+            Height: =Parent.Height
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Width: =Parent.Width
+          Children:
+            - conHdr_Sn:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(7, 95, 115, 1)
+                  FillPortions: =0
+                  Height: =Round(95 * UI, 0)
+                  LayoutMinHeight: =Round(95 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                - imgHdr_Sn:
+                    Control: Image@2.2.3
+                    Properties:
+                      Height: =Parent.Height
+                      Image: =HeaderImage
+                      ImagePosition: =ImagePosition.Fill
+                      Width: =Parent.Width
+                - btnBack_Sn:
+                    Control: ModernButton@1.0.0
+                    Properties:
+                      Align: =Align.Center
+                      Appearance: =ButtonAppearance.Transparent
+                      Color: =C_White
+                      FontWeight: =""
+                      Height: =Round(60 * UI, 0)
+                      Icon: ="ChevronLeft"
+                      OnSelect: =Navigate(Home, ScreenTransition.UnCoverRight)
+                      PaddingBottom: =5
+                      PaddingLeft: =12
+                      PaddingRight: =12
+                      PaddingTop: =5
+                      RadiusBottomLeft: =4
+                      RadiusBottomRight: =4
+                      RadiusTopLeft: =4
+                      RadiusTopRight: =4
+                      Size: =Round(24 * UI, 0)
+                      Text: =""
+                      VerticalAlign: =VerticalAlign.Middle
+                      Width: =Round(60 * UI, 0)
+                      X: =Gutter + Round(5 * UI, 0)
+                      Y: =Round(18 * UI, 0)
+                - lblHdrT_Sn:
+                    Control: Label@2.5.1
+                    Properties:
+                      Color: =C_White
+                      Font: =AppFont
+                      FontWeight: =FontWeight.Bold
+                      Height: =Round(42 * UI, 0)
+                      Size: =Round(19 * UI, 0)
+                      Text: ="Snake"
+                      Width: =PageW - Round(85 * UI, 0)
+                      Wrap: =false
+                      X: =Gutter + Round(65 * UI, 0)
+                      Y: =Round(12 * UI, 0)
+                - lblHdrS_Sn:
+                    Control: Label@2.5.1
+                    Properties:
+                      Color: =RGBA(255, 255, 255, 0.85)
+                      Font: =AppFont
+                      Height: =Round(25 * UI, 0)
+                      Size: =Round(12 * UI, 0)
+                      Text: ="Score " & Coalesce(varSnScore, 0) & "  ·  Best " & Coalesce(varSnBest, 0)
+                      Width: =PageW - Round(85 * UI, 0)
+                      Wrap: =false
+                      X: =Gutter + Round(65 * UI, 0)
+                      Y: =Round(53 * UI, 0)
+            - conBody_Sn:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  DropShadow: =DropShadow.None
+                  Fill: =C_Bg
+                  LayoutMinHeight: =Round(250 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                - htmBoard_Sn:
+                    Control: HtmlViewer@2.1.0
+                    Properties:
+                      DisabledBorderColor: =RGBA(161, 159, 157, 1)
+                      Font: =AppFont
+                      Height: =15 * Round(21 * UI, 0)
+                      HtmlText: |-
+                        =With(
+                            { c: Round(21 * UI, 0), hs: Max(colSnake, Seq) },
+                            "<div style='position:relative;width:" & (14 * c) & "px;height:" & (15 * c) & "px;background:#F4F9FC;border-radius:12px;overflow:hidden;box-shadow:0 0 0 1px #D6E0EA'>" &
+                            "<div style='position:absolute;left:" & (varSnFood.X * c) & "px;top:" & (varSnFood.Y * c) & "px;width:" & (c - 2) & "px;height:" & (c - 2) & "px;margin:1px;border-radius:50%;background:#B41A1A'></div>" &
+                            Concat(
+                                colSnake,
+                                "<div style='position:absolute;left:" & (X * c) & "px;top:" & (Y * c) & "px;width:" & (c - 2) & "px;height:" & (c - 2) & "px;margin:1px;border-radius:" & Round(c / 3, 0) & "px;background:" & If(Seq = hs, "#124070", "#1A5A99") & "'></div>"
+                            ) &
+                            "</div>"
+                        )
+                      Width: =14 * Round(21 * UI, 0)
+                      X: =Gutter + (PageW - 14 * Round(21 * UI, 0)) / 2
+                      Y: =Round(16 * UI, 0)
+                - conOver_Sn:
+                    Control: GroupContainer@1.5.0
+                    Variant: ManualLayout
+                    Properties:
+                      BorderColor: =C_Line
+                      BorderThickness: =1
+                      DropShadow: =DropShadow.None
+                      Fill: =RGBA(255, 255, 255, 0.94)
+                      Height: =Round(190 * UI, 0)
+                      RadiusBottomLeft: =Round(22 * UI, 0)
+                      RadiusBottomRight: =Round(22 * UI, 0)
+                      RadiusTopLeft: =Round(22 * UI, 0)
+                      RadiusTopRight: =Round(22 * UI, 0)
+                      Visible: =!varSnRun
+                      Width: =Min(14 * Round(21 * UI, 0) - Round(40 * UI, 0), Round(260 * UI, 0))
+                      X: =Gutter + (PageW - 14 * Round(21 * UI, 0)) / 2 + (14 * Round(21 * UI, 0) - Min(14 * Round(21 * UI, 0) - Round(40 * UI, 0), Round(260 * UI, 0))) / 2
+                      Y: =Round(16 * UI, 0) + (15 * Round(21 * UI, 0) - Round(190 * UI, 0)) / 2
+                    Children:
+                      - lblOverT_Sn:
+                          Control: Label@2.5.1
+                          Properties:
+                            Align: =Align.Center
+                            Color: =C_Ink
+                            Font: =AppFont
+                            FontWeight: =FontWeight.Bold
+                            Height: =Round(34 * UI, 0)
+                            Size: =Round(19 * UI, 0)
+                            Text: =If(varSnWon, "You Win!", varSnDead, "Game Over", "Snake")
+                            Width: =Parent.Width
+                            Wrap: =false
+                            Y: =Round(16 * UI, 0)
+                      - lblOverS_Sn:
+                          Control: Label@2.5.1
+                          Properties:
+                            Align: =Align.Center
+                            Color: =C_Ink2
+                            Font: =AppFont
+                            Height: =Round(44 * UI, 0)
+                            Size: =Round(12 * UI, 0)
+                            Text: =If(varSnDead, "Score " & varSnScore, "Eat the dots. Avoid the walls and your tail.")
+                            Width: =Parent.Width - Round(32 * UI, 0)
+                            X: =Round(16 * UI, 0)
+                            Y: =Round(54 * UI, 0)
+                      - conGo_Sn:
+                          Control: GroupContainer@1.5.0
+                          Variant: ManualLayout
+                          Properties:
+                            DropShadow: =DropShadow.None
+                            Fill: =C_Accent
+                            Height: =Round(52 * UI, 0)
+                            RadiusBottomLeft: =Round(26 * UI, 0)
+                            RadiusBottomRight: =Round(26 * UI, 0)
+                            RadiusTopLeft: =Round(26 * UI, 0)
+                            RadiusTopRight: =Round(26 * UI, 0)
+                            Width: =Parent.Width - Round(48 * UI, 0)
+                            X: =Round(24 * UI, 0)
+                            Y: =Round(114 * UI, 0)
+                          Children:
+                            - lblGo_Sn:
+                                Control: Label@2.5.1
+                                Properties:
+                                  Align: =Align.Center
+                                  Color: =C_White
+                                  Font: =AppFont
+                                  FontWeight: =FontWeight.Bold
+                                  Height: =Parent.Height
+                                  Size: =Round(14 * UI, 0)
+                                  Text: =If(varSnDead, "Play Again", "Start")
+                                  VerticalAlign: =VerticalAlign.Middle
+                                  Width: =Parent.Width
+                                  Wrap: =false
+                            - btnGo_Sn:
+                                Control: ModernButton@1.0.0
+                                Properties:
+                                  Align: =Align.Center
+                                  Appearance: =ButtonAppearance.Transparent
+                                  BorderStyle: =BorderStyle.None
+                                  FontWeight: =""
+                                  Height: =Parent.Height
+                                  OnSelect: |-
+                                    =If(varSnDead, Select(btnReset_Sn));
+                                    Set(varSnRun, true)
+                                  PaddingBottom: =5
+                                  PaddingLeft: =12
+                                  PaddingRight: =12
+                                  PaddingTop: =5
+                                  RadiusBottomLeft: =4
+                                  RadiusBottomRight: =4
+                                  RadiusTopLeft: =4
+                                  RadiusTopRight: =4
+                                  Text: =""
+                                  VerticalAlign: =VerticalAlign.Middle
+                                  Width: =Parent.Width
+                - conUp_Sn:
+                    Control: GroupContainer@1.5.0
+                    Variant: ManualLayout
+                    Properties:
+                      BorderColor: =C_Line
+                      BorderThickness: =1
+                      DropShadow: =DropShadow.None
+                      Fill: =C_White
+                      Height: =Round(64 * UI, 0)
+                      RadiusBottomLeft: =Round(16 * UI, 0)
+                      RadiusBottomRight: =Round(16 * UI, 0)
+                      RadiusTopLeft: =Round(16 * UI, 0)
+                      RadiusTopRight: =Round(16 * UI, 0)
+                      Width: =Round(64 * UI, 0)
+                      X: =Gutter + PageW / 2 - Round(64 * UI, 0) / 2
+                      Y: =Round(16 * UI, 0) + 15 * Round(21 * UI, 0) + Round(16 * UI, 0)
+                    Children:
+                      - icoUp_Sn:
+                          Control: ModernIcon@1.1.1
+                          Properties:
+                            Height: =Round(30 * UI, 0)
+                            Icon: ="ChevronUp"
+                            IconColor: =C_Accent
+                            Width: =Round(30 * UI, 0)
+                            X: =(Round(64 * UI, 0) - Round(30 * UI, 0)) / 2
+                            Y: =(Round(64 * UI, 0) - Round(30 * UI, 0)) / 2
+                      - btnUp_Sn:
+                          Control: ModernButton@1.0.0
+                          Properties:
+                            Align: =Align.Center
+                            Appearance: =ButtonAppearance.Transparent
+                            BorderStyle: =BorderStyle.None
+                            FontWeight: =""
+                            Height: =Parent.Height
+                            OnSelect: |-
+                              =If(varSnDir.Y <> 1, Set(varSnNext, { X: 0, Y: -1 }))
+                            PaddingBottom: =5
+                            PaddingLeft: =12
+                            PaddingRight: =12
+                            PaddingTop: =5
+                            RadiusBottomLeft: =4
+                            RadiusBottomRight: =4
+                            RadiusTopLeft: =4
+                            RadiusTopRight: =4
+                            Text: =""
+                            VerticalAlign: =VerticalAlign.Middle
+                            Width: =Parent.Width
+                - conLeft_Sn:
+                    Control: GroupContainer@1.5.0
+                    Variant: ManualLayout
+                    Properties:
+                      BorderColor: =C_Line
+                      BorderThickness: =1
+                      DropShadow: =DropShadow.None
+                      Fill: =C_White
+                      Height: =Round(64 * UI, 0)
+                      RadiusBottomLeft: =Round(16 * UI, 0)
+                      RadiusBottomRight: =Round(16 * UI, 0)
+                      RadiusTopLeft: =Round(16 * UI, 0)
+                      RadiusTopRight: =Round(16 * UI, 0)
+                      Width: =Round(64 * UI, 0)
+                      X: =Gutter + PageW / 2 - Round(64 * UI, 0) / 2 - Round(8 * UI, 0) - Round(64 * UI, 0)
+                      Y: =Round(16 * UI, 0) + 15 * Round(21 * UI, 0) + Round(16 * UI, 0) + Round(64 * UI, 0) + Round(8 * UI, 0)
+                    Children:
+                      - icoLeft_Sn:
+                          Control: ModernIcon@1.1.1
+                          Properties:
+                            Height: =Round(30 * UI, 0)
+                            Icon: ="ChevronLeft"
+                            IconColor: =C_Accent
+                            Width: =Round(30 * UI, 0)
+                            X: =(Round(64 * UI, 0) - Round(30 * UI, 0)) / 2
+                            Y: =(Round(64 * UI, 0) - Round(30 * UI, 0)) / 2
+                      - btnLeft_Sn:
+                          Control: ModernButton@1.0.0
+                          Properties:
+                            Align: =Align.Center
+                            Appearance: =ButtonAppearance.Transparent
+                            BorderStyle: =BorderStyle.None
+                            FontWeight: =""
+                            Height: =Parent.Height
+                            OnSelect: |-
+                              =If(varSnDir.X <> 1, Set(varSnNext, { X: -1, Y: 0 }))
+                            PaddingBottom: =5
+                            PaddingLeft: =12
+                            PaddingRight: =12
+                            PaddingTop: =5
+                            RadiusBottomLeft: =4
+                            RadiusBottomRight: =4
+                            RadiusTopLeft: =4
+                            RadiusTopRight: =4
+                            Text: =""
+                            VerticalAlign: =VerticalAlign.Middle
+                            Width: =Parent.Width
+                - conDown_Sn:
+                    Control: GroupContainer@1.5.0
+                    Variant: ManualLayout
+                    Properties:
+                      BorderColor: =C_Line
+                      BorderThickness: =1
+                      DropShadow: =DropShadow.None
+                      Fill: =C_White
+                      Height: =Round(64 * UI, 0)
+                      RadiusBottomLeft: =Round(16 * UI, 0)
+                      RadiusBottomRight: =Round(16 * UI, 0)
+                      RadiusTopLeft: =Round(16 * UI, 0)
+                      RadiusTopRight: =Round(16 * UI, 0)
+                      Width: =Round(64 * UI, 0)
+                      X: =Gutter + PageW / 2 - Round(64 * UI, 0) / 2
+                      Y: =Round(16 * UI, 0) + 15 * Round(21 * UI, 0) + Round(16 * UI, 0) + Round(64 * UI, 0) + Round(8 * UI, 0)
+                    Children:
+                      - icoDown_Sn:
+                          Control: ModernIcon@1.1.1
+                          Properties:
+                            Height: =Round(30 * UI, 0)
+                            Icon: ="ChevronDown"
+                            IconColor: =C_Accent
+                            Width: =Round(30 * UI, 0)
+                            X: =(Round(64 * UI, 0) - Round(30 * UI, 0)) / 2
+                            Y: =(Round(64 * UI, 0) - Round(30 * UI, 0)) / 2
+                      - btnDown_Sn:
+                          Control: ModernButton@1.0.0
+                          Properties:
+                            Align: =Align.Center
+                            Appearance: =ButtonAppearance.Transparent
+                            BorderStyle: =BorderStyle.None
+                            FontWeight: =""
+                            Height: =Parent.Height
+                            OnSelect: |-
+                              =If(varSnDir.Y <> -1, Set(varSnNext, { X: 0, Y: 1 }))
+                            PaddingBottom: =5
+                            PaddingLeft: =12
+                            PaddingRight: =12
+                            PaddingTop: =5
+                            RadiusBottomLeft: =4
+                            RadiusBottomRight: =4
+                            RadiusTopLeft: =4
+                            RadiusTopRight: =4
+                            Text: =""
+                            VerticalAlign: =VerticalAlign.Middle
+                            Width: =Parent.Width
+                - conRight_Sn:
+                    Control: GroupContainer@1.5.0
+                    Variant: ManualLayout
+                    Properties:
+                      BorderColor: =C_Line
+                      BorderThickness: =1
+                      DropShadow: =DropShadow.None
+                      Fill: =C_White
+                      Height: =Round(64 * UI, 0)
+                      RadiusBottomLeft: =Round(16 * UI, 0)
+                      RadiusBottomRight: =Round(16 * UI, 0)
+                      RadiusTopLeft: =Round(16 * UI, 0)
+                      RadiusTopRight: =Round(16 * UI, 0)
+                      Width: =Round(64 * UI, 0)
+                      X: =Gutter + PageW / 2 + Round(64 * UI, 0) / 2 + Round(8 * UI, 0)
+                      Y: =Round(16 * UI, 0) + 15 * Round(21 * UI, 0) + Round(16 * UI, 0) + Round(64 * UI, 0) + Round(8 * UI, 0)
+                    Children:
+                      - icoRight_Sn:
+                          Control: ModernIcon@1.1.1
+                          Properties:
+                            Height: =Round(30 * UI, 0)
+                            Icon: ="ChevronRight"
+                            IconColor: =C_Accent
+                            Width: =Round(30 * UI, 0)
+                            X: =(Round(64 * UI, 0) - Round(30 * UI, 0)) / 2
+                            Y: =(Round(64 * UI, 0) - Round(30 * UI, 0)) / 2
+                      - btnRight_Sn:
+                          Control: ModernButton@1.0.0
+                          Properties:
+                            Align: =Align.Center
+                            Appearance: =ButtonAppearance.Transparent
+                            BorderStyle: =BorderStyle.None
+                            FontWeight: =""
+                            Height: =Parent.Height
+                            OnSelect: |-
+                              =If(varSnDir.X <> -1, Set(varSnNext, { X: 1, Y: 0 }))
+                            PaddingBottom: =5
+                            PaddingLeft: =12
+                            PaddingRight: =12
+                            PaddingTop: =5
+                            RadiusBottomLeft: =4
+                            RadiusBottomRight: =4
+                            RadiusTopLeft: =4
+                            RadiusTopRight: =4
+                            Text: =""
+                            VerticalAlign: =VerticalAlign.Middle
+                            Width: =Parent.Width
+      - tmr_Sn:
+          Control: Timer@2.1.0
+          Properties:
+            AutoStart: =false
+            Duration: =Max(90, 180 - Coalesce(varSnScore, 0) * 4)
+            Height: =1
+            OnTimerEnd: =Select(btnTick_Sn)
+            Repeat: =true
+            Start: =Coalesce(varSnRun, false)
+            Visible: =true
+            Width: =1
+            X: =0
+            Y: =0
+      - btnReset_Sn:
+          Control: ModernButton@1.0.0
+          Properties:
+            Align: =Align.Center
+            FontWeight: =""
+            Height: =1
+            OnSelect: |-
+              =// RESET: a short snake in the middle, moving right, score 0, waiting for Start
+              ClearCollect(colSnake, { X: 6, Y: 7, Seq: 1 }, { X: 7, Y: 7, Seq: 2 }, { X: 8, Y: 7, Seq: 3 });
+              Set(varSnDir, { X: 1, Y: 0 });
+              Set(varSnNext, { X: 1, Y: 0 });
+              Set(varSnScore, 0);
+              Set(varSnDead, false);
+              Set(varSnWon, false);
+              Set(varSnRun, false);
+              Select(btnFood_Sn)
+            PaddingBottom: =5
+            PaddingLeft: =12
+            PaddingRight: =12
+            PaddingTop: =5
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Size: =Round(11 * UI, 0)
+            Text: =""
+            VerticalAlign: =VerticalAlign.Middle
+            Visible: =false
+            Width: =1
+      - btnFood_Sn:
+          Control: ModernButton@1.0.0
+          Properties:
+            Align: =Align.Center
+            FontWeight: =""
+            Height: =1
+            OnSelect: |-
+              =// FOOD: pick a random empty cell (14 x 15 board). No empty cell left = the player wins.
+              With(
+                  {
+                      free: Filter(
+                          ForAll(Sequence(14 * 15, 0) As s, { X: Mod(s.Value, 14), Y: RoundDown(s.Value / 14, 0) }) As c,
+                          IsBlank(LookUp(colSnake, X = c.X && Y = c.Y))
+                      )
+                  },
+                  If(
+                      CountRows(free) = 0,
+                      Set(varSnWon, true);
+                      Set(varSnDead, true);
+                      Set(varSnRun, false);
+                      Set(varSnBest, Max(Coalesce(varSnBest, 0), varSnScore)),
+                      Set(varSnFood, Index(free, RandBetween(1, CountRows(free))))
+                  )
+              )
+            PaddingBottom: =5
+            PaddingLeft: =12
+            PaddingRight: =12
+            PaddingTop: =5
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Size: =Round(11 * UI, 0)
+            Text: =""
+            VerticalAlign: =VerticalAlign.Middle
+            Visible: =false
+            Width: =1
+      - btnTick_Sn:
+          Control: ModernButton@1.0.0
+          Properties:
+            Align: =Align.Center
+            FontWeight: =""
+            Height: =1
+            OnSelect: |-
+              =// TICK (every timer beat): move one cell. Head = highest Seq, tail = lowest Seq.
+              If(
+                  varSnRun && !varSnDead,
+                  With(
+                      {
+                          head: First(Sort(colSnake, Seq, SortOrder.Descending)),
+                          tailSeq: Min(colSnake, Seq),
+                          d: varSnNext
+                      },
+                      With(
+                          { nx: head.X + d.X, ny: head.Y + d.Y },
+                          Set(varSnDir, d);
+                          If(
+                              nx < 0 || nx >= 14 || ny < 0 || ny >= 15 || !IsBlank(LookUp(colSnake, X = nx && Y = ny && Seq > tailSeq)),
+                              // hit a wall or itself (the tail cell is free because the tail moves away)
+                              Set(varSnDead, true);
+                              Set(varSnRun, false);
+                              Set(varSnBest, Max(Coalesce(varSnBest, 0), varSnScore)),
+                              Collect(colSnake, { X: nx, Y: ny, Seq: head.Seq + 1 });
+                              If(
+                                  nx = varSnFood.X && ny = varSnFood.Y,
+                                  Set(varSnScore, varSnScore + 1);
+                                  Select(btnFood_Sn),
+                                  RemoveIf(colSnake, Seq = tailSeq)
+                              )
+                          )
+                      )
+                  )
+              )
+            PaddingBottom: =5
+            PaddingLeft: =12
+            PaddingRight: =12
+            PaddingTop: =5
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Size: =Round(11 * UI, 0)
+            Text: =""
+            VerticalAlign: =VerticalAlign.Middle
+            Visible: =false
+            Width: =1
