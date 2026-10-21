@@ -14,7 +14,7 @@ Studio export is the source of truth (all five screens + App.Formulas were copie
 | `Dashboard.pa.yaml` | Dashboard, detail sheet, review |
 | `QRG.pa.yaml` | Search + application chips + list of ieMR QRGs |
 | `QrgView.pa.yaml` | One QRG in the PDF viewer (`pdfQrg_Qv`, `PDFViewer@2.5.0`) + Open in Browser |
-| `Snake.pa.yaml` | Hidden Snake game. Five quick taps on the Home title open it. Built by `tools/floorwalk/build_snake.py` (edit the script, not the YAML). Power Apps runs the game (Timer + `colSnake`); the HTML viewer only draws the board, because it strips `<script>` and `<iframe>` (tested Oct 2026) |
+| `Snake.pa.yaml` | Hidden Snake game. Tap the round initials avatar in front of "Hi <name>" on Home to open it. Built by `tools/floorwalk/build_snake.py` (edit the script, not the YAML). Power Apps runs the game (Timer + `colSnake`); the HTML viewer only draws the board, because it strips `<script>` and `<iframe>` (tested Oct 2026) |
 | `../flows/Get_QRG_PDF.zip` | Flow `GetQrgPdf` (built by `tools/flows/build_qrg_pdf_flow.py`) |
 
 ## How the QRG feature works
