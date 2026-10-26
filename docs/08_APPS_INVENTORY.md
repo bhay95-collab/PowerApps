@@ -20,7 +20,7 @@ App.Formulas: `Desktop_App_Formulas.txt` (SX/SY/SF/SR, MeEmail, MeName, CanManag
 
 | Screen | Purpose |
 |---|---|
-| `Home_Main` | Ward tiles (beds, patients, acuity, EDD ≤ 3 days); avatar beside user name (3 quick taps → `Discharge_Dash`, gated to one email while testing); bottom bar: My Day · Equipment · Discharge Planner · Team Info · Training · Manager Tools pop-up (Usage Log, Servicing, Audit Coverage, Equipment Audit, Data Health, Data Dashboard for Director/Team Leader/CA4; Manage Staff for Director/Team Leader) |
+| `Home_Main` | Ward tiles (beds, patients, acuity, EDD ≤ 3 days); avatar beside user name (one tap → `Discharge_Dash`, everyone); bottom bar: My Day · Equipment · Discharge Planner · Team Info · Training · Manager Tools pop-up (Usage Log, Servicing, Audit Coverage, Equipment Audit, Data Health, Data Dashboard for Director/Team Leader/CA4; Manage Staff for Director/Team Leader) |
 | `My_Day` | My patients, my equipment out, who is away today/tomorrow |
 | `Ward_All` | One board for 4A/4B/5A/6A (`varWard`). Read-only rows + edit panel: AFRM chips, physio picker pop-up, acuity −/+ (0–4), dates, flags, Move bed (swap), Discharge, Save/Discard (optimistic lock), EDD Summary email. 6A: no NDIS, no AROC (`wdShowNDIS`/`wdShowAROC`) |
 | `Handover_All` | Ward handover |
