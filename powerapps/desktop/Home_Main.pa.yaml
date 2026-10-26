@@ -147,8 +147,9 @@ Screens:
                   Align: =Align.Right
                   Color: =RGBA(255, 255, 255, 0.9)
                   Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Bold
                   Height: =70 * SY
-                  Size: =16
+                  Size: =14
                   Text: =User().FullName
                   Width: =400 * SX
                   X: =903 * SX
@@ -167,10 +168,10 @@ Screens:
                   RadiusTopRight: =Round(16 * SR, 0)
                   Width: =Round(32 * SR, 0)
                   X: |-
-                    =// Sits just left of the right-aligned name (approx. 11 px per character)
+                    =// Sits just left of the right-aligned name (approx. 10 px per character)
                     Max(
                         lblUser_HomeHdr.X - Self.Width,
-                        lblUser_HomeHdr.X + lblUser_HomeHdr.Width - 5 - Len(User().FullName) * 11 - 10 - Self.Width
+                        lblUser_HomeHdr.X + lblUser_HomeHdr.Width - 5 - Len(User().FullName) * 10 - 10 - Self.Width
                     )
                   Y: =(Parent.Height - Self.Height) / 2
                 Children:
@@ -660,7 +661,7 @@ Screens:
                         Font: =Font.'Segoe UI'
                         FontWeight: =FontWeight.Bold
                         Height: =Parent.Height
-                        Icon: ="TextBulletListLtr"
+                        Icon: ="AppsList"
                         IconStyle: =IconStyle.Filled
                         OnSelect: =Navigate(Equipment_Main, ScreenTransition.Fade)
                         PaddingBottom: =5
@@ -881,7 +882,7 @@ Screens:
                   RadiusTopLeft: =18 * SR
                   RadiusTopRight: =18 * SR
                   Width: =248 * SX
-                  X: =1087 * SX
+                  X: =1092 * SX
                   Y: =664 * SY - Self.Height
                 Children:
                   - conMnUsage_Home:
@@ -992,7 +993,7 @@ Screens:
                               Font: =Font.'Segoe UI'
                               FontWeight: =FontWeight.Bold
                               Height: =44 * SY
-                              Icon: ="Target"
+                              Icon: ="Radar"
                               IconStyle: =IconStyle.Filled
                               OnSelect: =Set(varHomeMenu, false); Navigate(Audit_Coverage, ScreenTransition.Fade)
                               PaddingBottom: =5
