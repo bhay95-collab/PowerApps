@@ -36,7 +36,7 @@ App.Formulas: `Desktop_App_Formulas.txt` (SX/SY/SF/SR, MeEmail, MeName, CanManag
 | `PT_Leave_New` | Week view of STARSPhysioLeave calendar (multi-day leave shows each day) |
 | `Data_Health` | Data problems (patients, equipment, audits) |
 | `Training_Hub`, `Training_Sessions` | Training inside the dashboard |
-| `Discharge_Dash` | Easter egg: Frogger-style game (patient with walker crosses ward hallway to the discharge door). One SVG image redrawn by a 60 ms timer; obstacle positions are a formula of `ddTick`. Nothing saved |
+| `Discharge_Dash` | Easter egg: Frogger-style game (patient with walker crosses ward hallway to the discharge door). One SVG image redrawn by a 60 ms timer; obstacle positions are a formula of `ddTick`. Keys W A S D / numpad 8 4 2 6 via hidden `txtKeys_DD` read each tick (Power Apps cannot see arrow keys). Nothing saved |
 
 ## STARS Equipment (mobile)
 

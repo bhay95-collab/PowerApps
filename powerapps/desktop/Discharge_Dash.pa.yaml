@@ -19,6 +19,7 @@ Screens:
         Set(ddCoffee, -1);
         Set(ddMsg, "");
         Set(ddMsgUntil, 0);
+        Set(ddKey, "");
         // Moving things: Lane = row, X0 = place on a 1160 px loop, W = width in px, Speed = px per tick (minus = moving left)
         ClearCollect(
             colDD_Obs,
@@ -107,7 +108,30 @@ Screens:
             AutoStart: =false
             Duration: =60
             Height: =15 * SY
-            OnTimerEnd: =Set(ddTick, ddTick + 1); Select(btnCheck_DD)
+            OnTimerEnd: |-
+              =Set(ddTick, ddTick + 1);
+              // One step per tick: on-screen arrow (ddKey) or last key typed into the hidden box (W A S D / number pad 8 4 2 6)
+              With(
+                  { k: Lower(Coalesce(ddKey, Right(txtKeys_DD.Text, 1))) },
+                  With(
+                      {
+                          dr: Switch(k, "w", -1, "8", -1, "s", 1, "2", 1, 0),
+                          dc: Switch(k, "a", -1, "4", -1, "d", 1, "6", 1, 0)
+                      },
+                      With(
+                          { r: ddRow + dr, c: ddCol + dc },
+                          If(
+                              (dr <> 0 || dc <> 0) && r >= 0 && r <= 6 && c >= 0 && c <= 13 && (r > 0 || c in [6, 7]) && IsBlank(LookUp(colDD_Static, Row = r && Col = c)),
+                              Set(ddRow, r);
+                              Set(ddCol, c);
+                              If(dc < 0, Set(ddFace, "L"), dc > 0, Set(ddFace, "R"))
+                          )
+                      )
+                  )
+              );
+              Set(ddKey, "");
+              If(!IsBlank(txtKeys_DD.Text), Reset(txtKeys_DD));
+              Select(btnCheck_DD)
             Repeat: =true
             Start: =ddState = "play"
             Visible: =false
@@ -329,6 +353,7 @@ Screens:
                         "</g></svg>"
                     )
                   ImagePosition: =ImagePosition.Fit
+                  OnSelect: =SetFocus(txtKeys_DD)
                   Width: =980 * SX
                   X: =15 * SX
                   Y: =15 * SY
@@ -418,7 +443,9 @@ Screens:
                                 Set(ddCoffee, Index([0, 1, 3, 4, 5, 6, 7, 8, 10, 12, 13], RandBetween(1, 11)).Value);
                                 Set(ddMsg, "Day 1 - get to the DISCHARGE door!");
                                 Set(ddMsgUntil, 35);
-                                Set(ddState, "play")
+                                Set(ddKey, "");
+                                Set(ddState, "play");
+                                SetFocus(txtKeys_DD)
                               PaddingBottom: =5
                               PaddingLeft: =12
                               PaddingRight: =12
@@ -467,7 +494,7 @@ Screens:
                   Font: =Font.'Segoe UI'
                   Height: =80 * SY
                   Size: =Round(13 * SF, 0)
-                  Text: ="Use the arrows to walk one step at a time. Reach the green DISCHARGE door for 100 points x the day number." & Char(10) & "Bumped by a bed, trolley, mop bucket or the ward round? Have a rest and start again (3 rests)." & Char(10) & "Each discharge makes the hallway a little busier. Wait in the rest area for a gap."
+                  Text: ="Use the arrows (or W A S D / number pad 8 4 2 6) to walk one step at a time. Reach the green DISCHARGE door for 100 points x the day number." & Char(10) & "Bumped by a bed, trolley, mop bucket or the ward round? Have a rest and start again (3 rests)." & Char(10) & "Each discharge makes the hallway a little busier. Wait in the rest area for a gap."
                   VerticalAlign: =VerticalAlign.Top
                   Width: =960 * SX
                   X: =24 * SX
@@ -633,19 +660,7 @@ Screens:
                         Height: =Parent.Height
                         Icon: ="ChevronUp"
                         IconStyle: =IconStyle.Filled
-                        OnSelect: |-
-                          =If(
-                              ddState = "play",
-                              With(
-                                  { r: ddRow - 1, c: ddCol },
-                                  If(
-                                      r >= 0 && (r > 0 || c in [6, 7]) && IsBlank(LookUp(colDD_Static, Row = r && Col = c)),
-                                      Set(ddRow, r);
-                                      Set(ddCol, c);
-                                      Select(btnCheck_DD)
-                                  )
-                              )
-                          )
+                        OnSelect: =Set(ddKey, "w"); SetFocus(txtKeys_DD)
                         PaddingBottom: =5
                         PaddingLeft: =12
                         PaddingRight: =12
@@ -686,20 +701,7 @@ Screens:
                         Height: =Parent.Height
                         Icon: ="ChevronLeft"
                         IconStyle: =IconStyle.Filled
-                        OnSelect: |-
-                          =If(
-                              ddState = "play",
-                              With(
-                                  { r: ddRow, c: ddCol - 1 },
-                                  If(
-                                      c >= 0 && IsBlank(LookUp(colDD_Static, Row = r && Col = c)),
-                                      Set(ddRow, r);
-                                      Set(ddCol, c);
-                                      Set(ddFace, "L");
-                                      Select(btnCheck_DD)
-                                  )
-                              )
-                          )
+                        OnSelect: =Set(ddKey, "a"); SetFocus(txtKeys_DD)
                         PaddingBottom: =5
                         PaddingLeft: =12
                         PaddingRight: =12
@@ -740,19 +742,7 @@ Screens:
                         Height: =Parent.Height
                         Icon: ="ChevronDown"
                         IconStyle: =IconStyle.Filled
-                        OnSelect: |-
-                          =If(
-                              ddState = "play",
-                              With(
-                                  { r: ddRow + 1, c: ddCol },
-                                  If(
-                                      r <= 6 && IsBlank(LookUp(colDD_Static, Row = r && Col = c)),
-                                      Set(ddRow, r);
-                                      Set(ddCol, c);
-                                      Select(btnCheck_DD)
-                                  )
-                              )
-                          )
+                        OnSelect: =Set(ddKey, "s"); SetFocus(txtKeys_DD)
                         PaddingBottom: =5
                         PaddingLeft: =12
                         PaddingRight: =12
@@ -793,20 +783,7 @@ Screens:
                         Height: =Parent.Height
                         Icon: ="ChevronRight"
                         IconStyle: =IconStyle.Filled
-                        OnSelect: |-
-                          =If(
-                              ddState = "play",
-                              With(
-                                  { r: ddRow, c: ddCol + 1 },
-                                  If(
-                                      c <= 13 && IsBlank(LookUp(colDD_Static, Row = r && Col = c)),
-                                      Set(ddRow, r);
-                                      Set(ddCol, c);
-                                      Set(ddFace, "R");
-                                      Select(btnCheck_DD)
-                                  )
-                              )
-                          )
+                        OnSelect: =Set(ddKey, "d"); SetFocus(txtKeys_DD)
                         PaddingBottom: =5
                         PaddingLeft: =12
                         PaddingRight: =12
@@ -819,6 +796,20 @@ Screens:
                         Text: =""
                         VerticalAlign: =VerticalAlign.Middle
                         Width: =Parent.Width
+            - lblKeys_DD:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  Color: =RGBA(58, 80, 104, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Bold
+                  Height: =26 * SY
+                  Size: =Round(12 * SF, 0)
+                  Text: |-
+                    ="Keys: W A S D  or  8 4 2 6"
+                  Width: =263 * SX
+                  X: =24 * SX
+                  Y: =376 * SY
             - conRestart_DD:
                 Control: GroupContainer@1.5.0
                 Variant: ManualLayout
@@ -834,7 +825,7 @@ Screens:
                   RadiusTopRight: =26 * SR
                   Width: =263 * SX
                   X: =24 * SX
-                  Y: =410 * SY
+                  Y: =412 * SY
                 Children:
                   - btnRestart_DD:
                       Control: ModernButton@1.0.0
@@ -860,7 +851,9 @@ Screens:
                           Set(ddCoffee, Index([0, 1, 3, 4, 5, 6, 7, 8, 10, 12, 13], RandBetween(1, 11)).Value);
                           Set(ddMsg, "Day 1 - get to the DISCHARGE door!");
                           Set(ddMsgUntil, 35);
-                          Set(ddState, "play")
+                          Set(ddKey, "");
+                          Set(ddState, "play");
+                          SetFocus(txtKeys_DD)
                         PaddingBottom: =5
                         PaddingLeft: =12
                         PaddingRight: =12
@@ -873,6 +866,22 @@ Screens:
                         Text: =If(ddState = "play", "Restart", "Start")
                         VerticalAlign: =VerticalAlign.Middle
                         Width: =Parent.Width
+            - txtKeys_DD:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderStyle: =BorderStyle.None
+                  Color: =RGBA(0, 0, 0, 0)
+                  Default: =""
+                  DelayOutput: =false
+                  Fill: =RGBA(0, 0, 0, 0)
+                  FocusedBorderThickness: =0
+                  Font: =Font.'Segoe UI'
+                  Height: =2 * SY
+                  HoverFill: =RGBA(0, 0, 0, 0)
+                  Size: =Round(11 * SF, 0)
+                  Width: =2 * SX
+                  X: =24 * SX
+                  Y: =650 * SY
             - lblTip_DD:
                 Control: Label@2.5.1
                 Properties:
@@ -881,7 +890,7 @@ Screens:
                   Height: =150 * SY
                   Size: =Round(12 * SF, 0)
                   Text: |-
-                    ="Tip: the ward round is slow but wide. Meal trolleys are quick. The coffee moves after every discharge."
+                    ="Keys not moving the patient? Click the hallway once, then try again." & Char(10) & Char(10) & "Tip: the ward round is slow but wide. Meal trolleys are quick. The coffee moves after every discharge."
                   VerticalAlign: =VerticalAlign.Top
                   Width: =263 * SX
                   X: =24 * SX
