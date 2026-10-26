@@ -298,7 +298,8 @@ Screens:
                   Height: =Round(16 * UI, 0)
                   Size: =Round(10 * UI, 0)
                   Text: ="DAY"
-                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
+                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(12 * UI, 0)
+                  Wrap: =false
                   X: =Round(10 * UI, 0) + 0 * (Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4
                   Y: =Round(6 * UI, 0)
             - lblDay_DD:
@@ -310,7 +311,8 @@ Screens:
                   Height: =Round(26 * UI, 0)
                   Size: =Round(17 * UI, 0)
                   Text: =ddLevel
-                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
+                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(12 * UI, 0)
+                  Wrap: =false
                   X: =Round(10 * UI, 0) + 0 * (Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4
                   Y: =Round(22 * UI, 0)
             - lblRestsCap_DD:
@@ -322,21 +324,24 @@ Screens:
                   Height: =Round(16 * UI, 0)
                   Size: =Round(10 * UI, 0)
                   Text: ="RESTS"
-                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
+                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(12 * UI, 0)
+                  Wrap: =false
                   X: =Round(10 * UI, 0) + 1 * (Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4
                   Y: =Round(6 * UI, 0)
-            - lblRests_DD:
-                Control: Label@2.5.1
+            - imgRests_DD:
+                Control: Image@2.2.3
                 Properties:
-                  Color: =RGBA(180, 26, 26, 1)
-                  Font: =Font.'Segoe UI'
-                  FontWeight: =FontWeight.Bold
-                  Height: =Round(26 * UI, 0)
-                  Size: =Round(17 * UI, 0)
-                  Text: =If(ddLives > 0, Left("♥ ♥ ♥", ddLives * 2 - 1), "-")
-                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
+                  Height: =Round(20 * UI, 0)
+                  Image: |-
+                    ="data:image/svg+xml;utf8," & EncodeUrl(
+                        "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 78 22' width='78' height='22'>" &
+                        Concat(Sequence(3), "<path transform='translate(" & (Value - 1) * 26 & ",0)' d='M11 20 C-3 11 1 0 11 6 C21 0 25 11 11 20Z' fill='" & If(Value <= ddLives, "#B41A1A", "#DCE3EA") & "'/>") &
+                        "</svg>"
+                    )
+                  ImagePosition: =ImagePosition.Fit
+                  Width: =Round(72 * UI, 0)
                   X: =Round(10 * UI, 0) + 1 * (Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4
-                  Y: =Round(22 * UI, 0)
+                  Y: =Round(26 * UI, 0)
             - lblScoreCap_DD:
                 Control: Label@2.5.1
                 Properties:
@@ -346,7 +351,8 @@ Screens:
                   Height: =Round(16 * UI, 0)
                   Size: =Round(10 * UI, 0)
                   Text: ="SCORE"
-                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
+                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(12 * UI, 0)
+                  Wrap: =false
                   X: =Round(10 * UI, 0) + 2 * (Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4
                   Y: =Round(6 * UI, 0)
             - lblScore_DD:
@@ -358,7 +364,8 @@ Screens:
                   Height: =Round(26 * UI, 0)
                   Size: =Round(17 * UI, 0)
                   Text: =ddScore
-                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
+                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(12 * UI, 0)
+                  Wrap: =false
                   X: =Round(10 * UI, 0) + 2 * (Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4
                   Y: =Round(22 * UI, 0)
             - lblBestCap_DD:
@@ -370,7 +377,8 @@ Screens:
                   Height: =Round(16 * UI, 0)
                   Size: =Round(10 * UI, 0)
                   Text: ="BEST"
-                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
+                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(12 * UI, 0)
+                  Wrap: =false
                   X: =Round(10 * UI, 0) + 3 * (Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4
                   Y: =Round(6 * UI, 0)
             - lblBest_DD:
@@ -382,7 +390,8 @@ Screens:
                   Height: =Round(26 * UI, 0)
                   Size: =Round(17 * UI, 0)
                   Text: =ddBest
-                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
+                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(12 * UI, 0)
+                  Wrap: =false
                   X: =Round(10 * UI, 0) + 3 * (Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4
                   Y: =Round(22 * UI, 0)
       - conField_DD:
