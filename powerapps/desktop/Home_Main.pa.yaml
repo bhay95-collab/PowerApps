@@ -179,7 +179,6 @@ Screens:
                       Control: ModernAvatar@1.1.0
                       Properties:
                         Height: =Parent.Height
-                        Name: =User().FullName
                         Width: =Parent.Width
                   - btnAvatar_HomeHdr:
                       Control: ModernButton@1.0.0
