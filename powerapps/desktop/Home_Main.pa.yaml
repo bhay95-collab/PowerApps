@@ -152,6 +152,52 @@ Screens:
                   Text: =User().FullName
                   Width: =400 * SX
                   X: =903 * SX
+            - conAvatar_HomeHdr:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  BorderColor: =RGBA(255, 255, 255, 0.7)
+                  BorderThickness: =1
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(255, 255, 255, 0.18)
+                  Height: =Round(32 * SR, 0)
+                  RadiusBottomLeft: =Round(16 * SR, 0)
+                  RadiusBottomRight: =Round(16 * SR, 0)
+                  RadiusTopLeft: =Round(16 * SR, 0)
+                  RadiusTopRight: =Round(16 * SR, 0)
+                  Width: =Round(32 * SR, 0)
+                  X: |-
+                    =// Sits just left of the right-aligned name (approx. 11 px per character)
+                    Max(
+                        lblUser_HomeHdr.X - Self.Width,
+                        lblUser_HomeHdr.X + lblUser_HomeHdr.Width - 5 - Len(User().FullName) * 11 - 10 - Self.Width
+                    )
+                  Y: =(Parent.Height - Self.Height) / 2
+                Children:
+                  - avtUser_HomeHdr:
+                      Control: ModernAvatar@1.1.0
+                      Properties:
+                        Height: =Parent.Height
+                        Name: =User().FullName
+                        Width: =Parent.Width
+                  - btnAvatar_HomeHdr:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        Appearance: =ButtonAppearance.Transparent
+                        BorderStyle: =BorderStyle.None
+                        Height: =Parent.Height
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        RadiusBottomLeft: =Round(16 * SR, 0)
+                        RadiusBottomRight: =Round(16 * SR, 0)
+                        RadiusTopLeft: =Round(16 * SR, 0)
+                        RadiusTopRight: =Round(16 * SR, 0)
+                        Text: =""
+                        VerticalAlign: =VerticalAlign.Middle
+                        Width: =Parent.Width
       - Gallery_Home:
           Control: Gallery@2.15.0
           Variant: Vertical
