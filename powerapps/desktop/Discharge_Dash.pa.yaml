@@ -110,12 +110,12 @@ Screens:
             Height: =15 * SY
             OnTimerEnd: |-
               =Set(ddTick, ddTick + 1);
-              // One step per tick: on-screen arrow (ddKey) or last key typed into the hidden box (W A S D / number pad 8 4 2 6)
+              // One step per tick: on-screen arrow (ddKey) or last key typed into the hidden box (W A S D / number pad 8 4 5 6, 2 also works for back)
               With(
                   { k: Lower(Coalesce(ddKey, Right(txtKeys_DD.Text, 1))) },
                   With(
                       {
-                          dr: Switch(k, "w", -1, "8", -1, "s", 1, "2", 1, 0),
+                          dr: Switch(k, "w", -1, "8", -1, "s", 1, "5", 1, "2", 1, 0),
                           dc: Switch(k, "a", -1, "4", -1, "d", 1, "6", 1, 0)
                       },
                       With(
@@ -494,7 +494,7 @@ Screens:
                   Font: =Font.'Segoe UI'
                   Height: =80 * SY
                   Size: =Round(13 * SF, 0)
-                  Text: ="Use the arrows (or W A S D / number pad 8 4 2 6) to walk one step at a time. Reach the green DISCHARGE door for 100 points x the day number." & Char(10) & "Bumped by a bed, trolley, mop bucket or the ward round? Have a rest and start again (3 rests)." & Char(10) & "Each discharge makes the hallway a little busier. Wait in the rest area for a gap."
+                  Text: ="Use the arrows (or W A S D / number pad 8 4 5 6) to walk one step at a time. Reach the green DISCHARGE door for 100 points x the day number." & Char(10) & "Bumped by a bed, trolley, mop bucket or the ward round? Have a rest and start again (3 rests)." & Char(10) & "Each discharge makes the hallway a little busier. Wait in the rest area for a gap."
                   VerticalAlign: =VerticalAlign.Top
                   Width: =960 * SX
                   X: =24 * SX
@@ -806,7 +806,7 @@ Screens:
                   Height: =26 * SY
                   Size: =Round(12 * SF, 0)
                   Text: |-
-                    ="Keys: W A S D  or  8 4 2 6"
+                    ="Keys: W A S D  or  8 4 5 6"
                   Width: =263 * SX
                   X: =24 * SX
                   Y: =376 * SY

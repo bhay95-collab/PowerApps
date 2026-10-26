@@ -108,12 +108,12 @@ Screens:
             Height: =15
             OnTimerEnd: |-
               =Set(ddTick, ddTick + 1);
-              // One step per tick: on-screen arrow (ddKey) or last key typed into the hidden box (W A S D / number pad 8 4 2 6)
+              // One step per tick: on-screen arrow (ddKey) or last key typed into the hidden box (W A S D / number pad 8 4 5 6, 2 also works for back)
               With(
                   { k: Lower(Coalesce(ddKey, Right(txtKeys_DD.Text, 1))) },
                   With(
                       {
-                          dr: Switch(k, "w", -1, "8", -1, "s", 1, "2", 1, 0),
+                          dr: Switch(k, "w", -1, "8", -1, "s", 1, "5", 1, "2", 1, 0),
                           dc: Switch(k, "a", -1, "4", -1, "d", 1, "6", 1, 0)
                       },
                       With(
