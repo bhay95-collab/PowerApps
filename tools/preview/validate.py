@@ -28,3 +28,8 @@ while i<len(lines):
         i=j
     else: i+=1
 print('unbalanced',bad)
+nov=0
+for i,l in enumerate(lines):
+    if re.search(r'Control: (GroupContainer|Gallery)@',l) and (i+1>=len(lines) or 'Variant:' not in lines[i+1]):
+        nov+=1; print('novariant line',i+1)
+print('novariant',nov)

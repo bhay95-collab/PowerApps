@@ -186,6 +186,7 @@ Screens:
             Width: =Parent.Width
       - conHdr_DD:
           Control: GroupContainer@1.5.0
+          Variant: ManualLayout
           Properties:
             DropShadow: =DropShadow.Regular
             Fill: =RGBA(7, 95, 115, 1)
