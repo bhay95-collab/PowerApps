@@ -619,7 +619,7 @@ Screens:
                         Font: =Font.'Segoe UI'
                         FontWeight: =FontWeight.Bold
                         Height: =Parent.Height
-                        Icon: ="Calendar"
+                        Icon: ="Person"
                         IconStyle: =IconStyle.Filled
                         OnSelect: =Navigate(My_Day, ScreenTransition.Fade)
                         PaddingBottom: =5
@@ -660,7 +660,7 @@ Screens:
                         Font: =Font.'Segoe UI'
                         FontWeight: =FontWeight.Bold
                         Height: =Parent.Height
-                        Icon: ="AppsList"
+                        Icon: ="TextBulletListLtr"
                         IconStyle: =IconStyle.Filled
                         OnSelect: =Navigate(Equipment_Main, ScreenTransition.Fade)
                         PaddingBottom: =5
@@ -701,7 +701,7 @@ Screens:
                         Font: =Font.'Segoe UI'
                         FontWeight: =FontWeight.Bold
                         Height: =Parent.Height
-                        Icon: ="ArrowRight"
+                        Icon: ="Calendar"
                         IconStyle: =IconStyle.Filled
                         OnSelect: =Navigate(Discharge_Planner, ScreenTransition.Fade)
                         PaddingBottom: =5
@@ -742,7 +742,7 @@ Screens:
                         Font: =Font.'Segoe UI'
                         FontWeight: =FontWeight.Bold
                         Height: =Parent.Height
-                        Icon: ="Attach"
+                        Icon: ="Library"
                         IconStyle: =IconStyle.Filled
                         OnSelect: =Navigate(Physiotherapy_Screen, ScreenTransition.Fade)
                         PaddingBottom: =5
@@ -836,7 +836,7 @@ Screens:
                         RadiusTopLeft: =23 * SR
                         RadiusTopRight: =23 * SR
                         Size: =Round(16 * SF, 0)
-                        Text: ="Manager tools"
+                        Text: ="Manager Tools"
                         VerticalAlign: =VerticalAlign.Middle
                         Width: =200 * SX
       - conMenu_Home:
@@ -875,14 +875,14 @@ Screens:
                   BorderThickness: =1
                   DropShadow: =DropShadow.Bold
                   Fill: =RGBA(255, 255, 255, 1)
-                  Height: =244 * SY
+                  Height: =If(Coalesce(varMeDirectory.Access.Value, "") in ["Director", "Team Leader"], 376, 324) * SY
                   RadiusBottomLeft: =18 * SR
                   RadiusBottomRight: =18 * SR
                   RadiusTopLeft: =18 * SR
                   RadiusTopRight: =18 * SR
                   Width: =248 * SX
                   X: =1087 * SX
-                  Y: =420 * SY
+                  Y: =664 * SY - Self.Height
                 Children:
                   - conMnUsage_Home:
                       Control: GroupContainer@1.5.0
@@ -910,7 +910,7 @@ Screens:
                               Font: =Font.'Segoe UI'
                               FontWeight: =FontWeight.Bold
                               Height: =44 * SY
-                              Icon: ="Database"
+                              Icon: ="History"
                               IconStyle: =IconStyle.Filled
                               OnSelect: =Set(varHomeMenu, false); Navigate(Usage_Log, ScreenTransition.Fade)
                               PaddingBottom: =5
@@ -992,7 +992,7 @@ Screens:
                               Font: =Font.'Segoe UI'
                               FontWeight: =FontWeight.Bold
                               Height: =44 * SY
-                              Icon: ="Checkmark"
+                              Icon: ="Target"
                               IconStyle: =IconStyle.Filled
                               OnSelect: =Set(varHomeMenu, false); Navigate(Audit_Coverage, ScreenTransition.Fade)
                               PaddingBottom: =5
@@ -1005,6 +1005,47 @@ Screens:
                               RadiusTopRight: =22 * SR
                               Size: =Round(15 * SF, 0)
                               Text: ="Audit Coverage"
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =224 * SX
+                  - conMnEqAudit_Home:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        BorderColor: =RGBA(14, 42, 70, 0.12)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(244, 249, 252, 1)
+                        Height: =44 * SY
+                        RadiusBottomLeft: =22 * SR
+                        RadiusBottomRight: =22 * SR
+                        RadiusTopLeft: =22 * SR
+                        RadiusTopRight: =22 * SR
+                        Width: =224 * SX
+                        X: =12 * SX
+                        Y: =168 * SY
+                      Children:
+                        - btnMnEqAudit_Home:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              Color: =RGBA(58, 80, 104, 1)
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =FontWeight.Bold
+                              Height: =44 * SY
+                              Icon: ="Toolbox"
+                              IconStyle: =IconStyle.Filled
+                              OnSelect: =Set(varHomeMenu, false); Navigate(scrAuditOversight, ScreenTransition.Fade)
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =22 * SR
+                              RadiusBottomRight: =22 * SR
+                              RadiusTopLeft: =22 * SR
+                              RadiusTopRight: =22 * SR
+                              Size: =Round(15 * SF, 0)
+                              Text: ="Equipment Audit"
                               VerticalAlign: =VerticalAlign.Middle
                               Width: =224 * SX
                   - conMnHealth_Home:
@@ -1022,7 +1063,7 @@ Screens:
                         RadiusTopRight: =22 * SR
                         Width: =224 * SX
                         X: =12 * SX
-                        Y: =168 * SY
+                        Y: =220 * SY
                       Children:
                         - btnMnHealth_Home:
                             Control: ModernButton@1.0.0
@@ -1046,5 +1087,125 @@ Screens:
                               RadiusTopRight: =22 * SR
                               Size: =Round(15 * SF, 0)
                               Text: ="Data Health"
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =224 * SX
+                  - conMnDash_Home:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        BorderColor: =RGBA(14, 42, 70, 0.12)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(244, 249, 252, 1)
+                        Height: =44 * SY
+                        RadiusBottomLeft: =22 * SR
+                        RadiusBottomRight: =22 * SR
+                        RadiusTopLeft: =22 * SR
+                        RadiusTopRight: =22 * SR
+                        Width: =224 * SX
+                        X: =12 * SX
+                        Y: =272 * SY
+                      Children:
+                        - btnMnDash_Home:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              Color: =RGBA(58, 80, 104, 1)
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =FontWeight.Bold
+                              Height: =44 * SY
+                              Icon: ="Database"
+                              IconStyle: =IconStyle.Filled
+                              OnSelect: |-
+                                =Set(varHomeMenu, false);
+                                // 1) Build a unified collection for all wards (keeps all original columns)
+                                ClearCollect(
+                                    colAllWardData,
+                                    AddColumns(Filter(Ward_4A_Shared, !IsBlank(Patient)), WardCode, "4A"),
+                                    AddColumns(Filter(Ward_4B_Shared, !IsBlank(Patient)), WardCode, "4B"),
+                                    AddColumns(Filter(Ward_5A_Shared, !IsBlank(Patient)), WardCode, "5A"),
+                                    AddColumns(Filter(Ward_6A_Shared, !IsBlank(Patient)), WardCode, "6A")
+                                );
+                                // 2) Config for the 4 tiles on the data screen
+                                ClearCollect(
+                                    colWardSummaryConfig,
+                                    { WardCode: "4A", Title: "Ward 4A" },
+                                    { WardCode: "4B", Title: "Ward 4B" },
+                                    { WardCode: "5A", Title: "Ward 5A" },
+                                    { WardCode: "6A", Title: "Ward 6A" }
+                                );
+                                // 3) Diagnosis summary for each ward. Shape: City (diagnosis text), Area (count)
+                                ClearCollect(
+                                    colPieDiagnoses,
+                                    { Diag: "Ortho" }, { Diag: "Recon" }, { Diag: "TBI" }, { Diag: "Amp" },
+                                    { Diag: "SCI" }, { Diag: "Trauma" }, { Diag: "Stroke" }, { Diag: "Neuro" }
+                                );
+                                ClearCollect(col4A_PieData, ForAll(colPieDiagnoses As d, { City: d.Diag, Area: CountRows(Filter(colAllWardData, WardCode = "4A" && field_3.Value = d.Diag)) }));
+                                ClearCollect(col4B_PieData, ForAll(colPieDiagnoses As d, { City: d.Diag, Area: CountRows(Filter(colAllWardData, WardCode = "4B" && field_3.Value = d.Diag)) }));
+                                ClearCollect(col5A_PieData, ForAll(colPieDiagnoses As d, { City: d.Diag, Area: CountRows(Filter(colAllWardData, WardCode = "5A" && field_3.Value = d.Diag)) }));
+                                ClearCollect(col6A_PieData, ForAll(colPieDiagnoses As d, { City: d.Diag, Area: CountRows(Filter(colAllWardData, WardCode = "6A" && field_3.Value = d.Diag)) }));
+                                // 4) Navigate to the data screen
+                                Navigate(Physio_Data_New, ScreenTransition.Fade)
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =22 * SR
+                              RadiusBottomRight: =22 * SR
+                              RadiusTopLeft: =22 * SR
+                              RadiusTopRight: =22 * SR
+                              Size: =Round(15 * SF, 0)
+                              Text: ="Data Dashboard"
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =224 * SX
+                  - conMnStaff_Home:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        BorderColor: =RGBA(14, 42, 70, 0.12)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(244, 249, 252, 1)
+                        Height: =44 * SY
+                        RadiusBottomLeft: =22 * SR
+                        RadiusBottomRight: =22 * SR
+                        RadiusTopLeft: =22 * SR
+                        RadiusTopRight: =22 * SR
+                        Visible: =Coalesce(varMeDirectory.Access.Value, "") in ["Director", "Team Leader"]
+                        Width: =224 * SX
+                        X: =12 * SX
+                        Y: =324 * SY
+                      Children:
+                        - btnMnStaff_Home:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              Color: =RGBA(58, 80, 104, 1)
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =FontWeight.Bold
+                              Height: =44 * SY
+                              Icon: ="PeopleAdd"
+                              IconStyle: =IconStyle.Filled
+                              OnSelect: |-
+                                =Set(varHomeMenu, false);
+                                If(
+                                    IsBlank(varMeDirectory),
+                                    Notify("You are not listed in the Clinician Directory.", NotificationType.Error),
+                                    Set(varAdminDiscipline, varMeDirectory.Discipline.Value);
+                                    Set(varAdminAccess, varMeDirectory.Access.Value);
+                                    Navigate(Directory_Admin_New, ScreenTransition.Fade)
+                                )
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =22 * SR
+                              RadiusBottomRight: =22 * SR
+                              RadiusTopLeft: =22 * SR
+                              RadiusTopRight: =22 * SR
+                              Size: =Round(15 * SF, 0)
+                              Text: ="Manage Staff"
                               VerticalAlign: =VerticalAlign.Middle
                               Width: =224 * SX
