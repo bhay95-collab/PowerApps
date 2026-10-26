@@ -76,3 +76,9 @@ Manual Studio edits already mirrored in repo: `lblRemovePhoto_Aud.Color = RGBA(1
 ## Training Register (stand-alone)
 
 `Home` + `scrTrainingSessions`. Two columns ≥ 820 px. Re-checks capacity and clashes (later booking cancelled), waitlist, soft delete, branded emails. Needs `varCanManageTraining` set in OnStart. Same logic also in desktop `Training_Hub/Sessions` and mobile M10/M11 — **three copies**, change all three.
+
+## Floorwalking (only partly in repo)
+
+| Screen | Purpose |
+|---|---|
+| `Discharge_Dash` | Portrait version of the Discharge Dash easter egg (`powerapps/floorwalking/`). Opened from the avatar button; replaces Snake |
