@@ -153,7 +153,7 @@ Screens:
                       ddRow = 0,
                       Set(ddScore, ddScore + 100 * ddLevel);
                       Set(ddLevel, ddLevel + 1);
-                      Set(ddMul, Min(2.2, 1 + 0.2 * (ddLevel - 1)));
+                      Set(ddMul, Min(3, 1 + (ddLevel - 1) * 2 / 19));
                       Set(ddMsg, "Discharged! Next patient - Day " & ddLevel);
                       Set(ddMsgUntil, ddTick + 30);
                       Set(ddRow, 6);
@@ -494,7 +494,7 @@ Screens:
                   Font: =Font.'Segoe UI'
                   Height: =80 * SY
                   Size: =Round(13 * SF, 0)
-                  Text: ="Use the arrows (or W A S D / number pad 8 4 5 6) to walk one step at a time. Reach the green DISCHARGE door for 100 points x the day number." & Char(10) & "Bumped by a bed, trolley, mop bucket or the ward round? Have a rest and start again (3 rests)." & Char(10) & "Each discharge makes the hallway a little busier. Wait in the rest area for a gap."
+                  Text: ="Use the arrows (or W A S D / number pad 8 4 5 6) to walk one step at a time. Reach the green DISCHARGE door for 100 points x the day number." & Char(10) & "Bumped by a bed, trolley, mop bucket or the ward round? Have a rest and start again (3 rests)." & Char(10) & "Each discharge makes the hallway a little faster, up to Day 20. Wait in the rest area for a gap."
                   VerticalAlign: =VerticalAlign.Top
                   Width: =960 * SX
                   X: =24 * SX

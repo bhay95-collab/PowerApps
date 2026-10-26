@@ -151,7 +151,7 @@ Screens:
                       ddRow = 0,
                       Set(ddScore, ddScore + 100 * ddLevel);
                       Set(ddLevel, ddLevel + 1);
-                      Set(ddMul, Min(2.2, 1 + 0.2 * (ddLevel - 1)));
+                      Set(ddMul, Min(3, 1 + (ddLevel - 1) * 2 / 19));
                       Set(ddMsg, "Discharged! Next patient - Day " & ddLevel);
                       Set(ddMsgUntil, ddTick + 30);
                       Set(ddRow, 8);
