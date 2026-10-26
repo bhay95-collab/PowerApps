@@ -187,6 +187,19 @@ Screens:
                         Appearance: =ButtonAppearance.Transparent
                         BorderStyle: =BorderStyle.None
                         Height: =Parent.Height
+                        OnSelect: |-
+                          =// Secret: 3 quick taps opens Discharge Dash (only for the email below while testing)
+                          If(
+                              !IsBlank(varEggLast) && DateDiff(varEggLast, Now(), TimeUnit.Milliseconds) < 700,
+                              Set(varEggTaps, varEggTaps + 1),
+                              Set(varEggTaps, 1)
+                          );
+                          Set(varEggLast, Now());
+                          If(
+                              varEggTaps >= 3 && Lower(User().Email) = Lower("YOUR.EMAIL@health.qld.gov.au"),
+                              Set(varEggTaps, 0);
+                              Navigate(Discharge_Dash, ScreenTransition.Fade)
+                          )
                         PaddingBottom: =0
                         PaddingLeft: =0
                         PaddingRight: =0

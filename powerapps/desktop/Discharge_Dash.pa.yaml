@@ -1,0 +1,887 @@
+Screens:
+  Discharge_Dash:
+    Properties:
+      Fill: =RGBA(235, 242, 248, 1)
+      OnHidden: =Set(ddState, "ready")
+      OnVisible: |-
+        =// DISCHARGE DASH - secret game. Nothing is saved anywhere.
+        // Field is a 14 x 7 grid of 70 px cells. Row 0 = discharge door (cols 6-7), rows 1-2 and 4-5 = traffic, row 3 = rest area, row 6 = bed bay (start).
+        Set(ddState, "ready");
+        Set(ddBest, Coalesce(ddBest, 0));
+        Set(ddScore, 0);
+        Set(ddLevel, 1);
+        Set(ddLives, 3);
+        Set(ddMul, 1);
+        Set(ddTick, 0);
+        Set(ddRow, 6);
+        Set(ddCol, 6);
+        Set(ddFace, "R");
+        Set(ddCoffee, -1);
+        Set(ddMsg, "");
+        Set(ddMsgUntil, 0);
+        // Moving things: Lane = row, X0 = place on a 1160 px loop, W = width in px, Speed = px per tick (minus = moving left)
+        ClearCollect(
+            colDD_Obs,
+            { Kind: "bed", Lane: 1, X0: 0, W: 140, Speed: 8 },
+            { Kind: "bed", Lane: 1, X0: 580, W: 140, Speed: 8 },
+            { Kind: "round", Lane: 2, X0: 100, W: 180, Speed: -5.5 },
+            { Kind: "round", Lane: 2, X0: 680, W: 180, Speed: -5.5 },
+            { Kind: "meal", Lane: 4, X0: 0, W: 100, Speed: -9.5 },
+            { Kind: "meal", Lane: 4, X0: 387, W: 100, Speed: -9.5 },
+            { Kind: "meal", Lane: 4, X0: 773, W: 100, Speed: -9.5 },
+            { Kind: "linen", Lane: 5, X0: 0, W: 110, Speed: 6.5 },
+            { Kind: "mop", Lane: 5, X0: 387, W: 60, Speed: 6.5 },
+            { Kind: "linen", Lane: 5, X0: 773, W: 110, Speed: 6.5 }
+        );
+        // Things that block the way (no harm, just walk around)
+        ClearCollect(
+            colDD_Static,
+            { Kind: "wet", Row: 3, Col: 2 },
+            { Kind: "iv", Row: 3, Col: 9 },
+            { Kind: "wet", Row: 3, Col: 11 }
+        );
+        // Hallway art and character drawings (built once)
+        Set(
+            ddBg,
+            "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 980 490' width='980' height='490'><defs><g id='pt'><ellipse cx='38' cy='64' rx='26' ry='4' fill='#0E1C2A' opacity='0.12'/>" &
+            "<path d='M28 46 L26 59 M35 46 L37 59' stroke='#3A5068' stroke-width='4' stroke-linecap='round'/><ellipse cx='25' cy='61' rx='5.5' ry='3' fill='#1A5A99'/>" &
+            "<ellipse cx='38' cy='61' rx='5.5' ry='3' fill='#1A5A99'/><path d='M21 27 Q31 20 41 27 L43 49 L19 49 Z' fill='#BFD9EF' stroke='#1A5A99' stroke-width='1.5'/>" &
+            "<circle cx='26' cy='34' r='1.6' fill='#1A5A99'/><circle cx='35' cy='37' r='1.6' fill='#1A5A99'/><circle cx='28' cy='43' r='1.6' fill='#1A5A99'/>" &
+            "<circle cx='38' cy='44' r='1.6' fill='#1A5A99'/><path d='M36 31 L50 37' stroke='#F1C7A1' stroke-width='4.5' stroke-linecap='round'/><circle cx='31' cy='15' r='9.5' fill='#F1C7A1'/>" &
+            "<path d='M21 15 Q21 3 31 4 Q41 4 41 13 Q37 8 31 9 Q25 9 23 16Z' fill='#E6EAEF' stroke='#C9D6E2' stroke-width='1'/>" &
+            "<circle cx='36' cy='15' r='3.2' fill='none' stroke='#3A5068' stroke-width='1.2'/><circle cx='36' cy='15' r='1.1' fill='#0E1C2A'/>" &
+            "<path d='M37 21 Q39 22 41 20' stroke='#3A5068' stroke-width='1.2' fill='none'/>" &
+            "<path d='M48 35 L65 35 M50 35 L47 59 M63 35 L66 59 M49 47 L64 47' stroke='#8C9BAE' stroke-width='3.2' stroke-linecap='round' fill='none'/>" &
+            "<circle cx='47' cy='61' r='3.8' fill='#C8DC3C'/><circle cx='66' cy='61' r='3.8' fill='#C8DC3C'/></g><g id='bed'>" &
+            "<ellipse cx='70' cy='64' rx='66' ry='4' fill='#0E1C2A' opacity='0.12'/><path d='M24 46 L24 57 M116 46 L116 57' stroke='#3A5068' stroke-width='3'/>" &
+            "<circle cx='24' cy='60' r='4.5' fill='#0E1C2A'/><circle cx='116' cy='60' r='4.5' fill='#0E1C2A'/>" &
+            "<rect x='6' y='32' width='128' height='15' rx='4' fill='#FFFFFF' stroke='#3A5068' stroke-width='2'/><rect x='14' y='22' width='112' height='13' rx='6' fill='#1A5A99'/>" &
+            "<path d='M44 24 L120 24' stroke='#FFFFFF' stroke-width='1.5' opacity='0.5'/><rect x='15' y='15' width='28' height='11' rx='5' fill='#F4F9FC' stroke='#C9D6E2'/>" &
+            "<rect x='4' y='12' width='8' height='37' rx='3' fill='#3A5068'/><rect x='128' y='22' width='8' height='27' rx='3' fill='#3A5068'/></g><g id='round'><g transform='translate(4,0)'>" &
+            "<ellipse cx='17' cy='64' rx='14' ry='3' fill='#0E1C2A' opacity='0.12'/><path d='M12 50 L11 61 M22 50 L23 61' stroke='#0E1C2A' stroke-width='4' stroke-linecap='round'/>" &
+            "<path d='M4 30 Q17 21 30 30 L31 52 L3 52 Z' fill='#FFFFFF' stroke='#8C9BAE' stroke-width='1.5'/><path d='M17 27 L17 50' stroke='#C9D6E2' stroke-width='1.5'/>" &
+            "<path d='M11 27 Q9 38 14 40 M23 27 Q25 38 20 40' stroke='#3A5068' stroke-width='1.6' fill='none'/><circle cx='17' cy='41' r='2.4' fill='#3A5068'/>" &
+            "<circle cx='17' cy='15' r='9' fill='#F1C7A1'/><path d='M8 14 Q9 4 17 5 Q26 4 26 14 Q22 9 17 9 Q12 9 8 14Z' fill='#6B4A2B'/></g><g transform='translate(62,0)'>" &
+            "<ellipse cx='17' cy='64' rx='14' ry='3' fill='#0E1C2A' opacity='0.12'/><path d='M12 50 L11 61 M22 50 L23 61' stroke='#0E1C2A' stroke-width='4' stroke-linecap='round'/>" &
+            "<path d='M4 30 Q17 21 30 30 L31 52 L3 52 Z' fill='#FFFFFF' stroke='#8C9BAE' stroke-width='1.5'/><path d='M17 27 L17 50' stroke='#C9D6E2' stroke-width='1.5'/>" &
+            "<path d='M11 27 Q9 38 14 40 M23 27 Q25 38 20 40' stroke='#3A5068' stroke-width='1.6' fill='none'/><circle cx='17' cy='41' r='2.4' fill='#3A5068'/>" &
+            "<circle cx='17' cy='15' r='9' fill='#8D5A3B'/><path d='M8 14 Q9 4 17 5 Q26 4 26 14 Q22 9 17 9 Q12 9 8 14Z' fill='#0E1C2A'/></g><g transform='translate(120,0)'>" &
+            "<ellipse cx='17' cy='64' rx='14' ry='3' fill='#0E1C2A' opacity='0.12'/><path d='M12 50 L11 61 M22 50 L23 61' stroke='#0E1C2A' stroke-width='4' stroke-linecap='round'/>" &
+            "<path d='M4 30 Q17 21 30 30 L31 52 L3 52 Z' fill='#FFFFFF' stroke='#8C9BAE' stroke-width='1.5'/><path d='M17 27 L17 50' stroke='#C9D6E2' stroke-width='1.5'/>" &
+            "<path d='M11 27 Q9 38 14 40 M23 27 Q25 38 20 40' stroke='#3A5068' stroke-width='1.6' fill='none'/><circle cx='17' cy='41' r='2.4' fill='#3A5068'/>" &
+            "<circle cx='17' cy='15' r='9' fill='#C68E63'/><path d='M8 14 Q9 4 17 5 Q26 4 26 14 Q22 9 17 9 Q12 9 8 14Z' fill='#B9A27A'/></g>" &
+            "<rect x='146' y='30' width='13' height='17' rx='2' fill='#B26900'/><rect x='148' y='33' width='9' height='11' fill='#FFFFFF'/></g><g id='meal'>" &
+            "<ellipse cx='50' cy='64' rx='46' ry='4' fill='#0E1C2A' opacity='0.12'/><circle cx='16' cy='60' r='4.5' fill='#0E1C2A'/><circle cx='84' cy='60' r='4.5' fill='#0E1C2A'/>" &
+            "<rect x='6' y='18' width='88' height='38' rx='5' fill='#FFF6E5' stroke='#B26900' stroke-width='2'/><path d='M12 28 H88 M12 37 H88 M12 46 H88' stroke='#F5B000' stroke-width='2.5'/>" &
+            "<path d='M28 18 Q40 3 52 18 Z' fill='#C9D6E2' stroke='#8C9BAE'/><circle cx='40' cy='8' r='2.2' fill='#8C9BAE'/><path d='M60 18 Q70 7 80 18 Z' fill='#C9D6E2' stroke='#8C9BAE'/>" &
+            "<circle cx='70' cy='11' r='2' fill='#8C9BAE'/></g><g id='mop'><ellipse cx='30' cy='64' rx='26' ry='4' fill='#0E1C2A' opacity='0.12'/>" &
+            "<path d='M40 34 L54 4' stroke='#8C9BAE' stroke-width='3.5' stroke-linecap='round'/><path d='M10 36 L50 36 L46 58 L14 58 Z' fill='#F5B000' stroke='#B26900' stroke-width='2'/>" &
+            "<rect x='8' y='31' width='44' height='7' rx='3' fill='#3A5068'/><path d='M32 31 Q36 22 40 31 Q44 22 47 31' fill='#E6EAEF' stroke='#C9D6E2'/>" &
+            "<circle cx='16' cy='61' r='3' fill='#0E1C2A'/><circle cx='44' cy='61' r='3' fill='#0E1C2A'/></g><g id='linen'>" &
+            "<ellipse cx='55' cy='64' rx='51' ry='4' fill='#0E1C2A' opacity='0.12'/><circle cx='18' cy='60' r='4.5' fill='#0E1C2A'/><circle cx='92' cy='60' r='4.5' fill='#0E1C2A'/>" &
+            "<path d='M12 20 Q22 8 34 18 Q46 6 58 17 Q70 7 82 18 Q92 10 98 20 Z' fill='#FFFFFF' stroke='#C9D6E2'/><rect x='8' y='18' width='94' height='38' rx='7' fill='#009099'/>" &
+            "<path d='M8 30 H102 M8 42 H102' stroke='#FFFFFF' stroke-width='2' opacity='0.45'/></g><g id='wet'><ellipse cx='35' cy='63' rx='18' ry='3.5' fill='#0E1C2A' opacity='0.12'/>" &
+            "<path d='M21 60 L35 9 L49 60 Z' fill='#F5B000' stroke='#B26900' stroke-width='2.5' stroke-linejoin='round'/><rect x='33.3' y='25' width='3.4' height='19' rx='1.5' fill='#0E1C2A'/>" &
+            "<circle cx='35' cy='51' r='2.3' fill='#0E1C2A'/></g><g id='iv'><ellipse cx='35' cy='63' rx='16' ry='3' fill='#0E1C2A' opacity='0.12'/>" &
+            "<path d='M35 6 L35 58 M22 58 L48 58 M26 6 L44 6' stroke='#8C9BAE' stroke-width='3' stroke-linecap='round'/><circle cx='22' cy='61' r='3' fill='#0E1C2A'/>" &
+            "<circle cx='48' cy='61' r='3' fill='#0E1C2A'/><rect x='38' y='8' width='13' height='19' rx='4' fill='#CFE8F3' stroke='#1A5A99' stroke-width='1.5'/>" &
+            "<path d='M44.5 27 Q45 40 37 44' stroke='#1A5A99' stroke-width='1.2' fill='none'/></g><g id='coffee'><circle cx='35' cy='37' r='24' fill='#F5B000' opacity='0.22'/>" &
+            "<path d='M28 20 Q24 14 28 9 M36 20 Q32 14 36 9 M44 20 Q40 14 44 9' stroke='#8C9BAE' stroke-width='2' fill='none' stroke-linecap='round'/>" &
+            "<path d='M24 29 L46 29 L43 56 L27 56 Z' fill='#FFFFFF' stroke='#3A5068' stroke-width='2'/><rect x='22' y='23' width='26' height='7' rx='3' fill='#3A5068'/>" &
+            "<rect x='25.5' y='37' width='19' height='9' fill='#B26900'/></g></defs><rect width='980' height='490' fill='#F4F9FC'/><rect width='980' height='70' fill='#DCE7F0'/>" &
+            "<path d='M0 62 H980' stroke='#8C9BAE' stroke-width='4'/><rect x='70' y='14' width='90' height='32' rx='4' fill='#FFFFFF' stroke='#C9D6E2'/><path d='M115 14 V46' stroke='#C9D6E2'/>" &
+            "<rect x='820' y='14' width='90' height='32' rx='4' fill='#FFFFFF' stroke='#C9D6E2'/><path d='M865 14 V46' stroke='#C9D6E2'/>" &
+            "<rect x='426' y='4' width='128' height='66' rx='6' fill='#0C7A52'/>" &
+            "<text x='490' y='44' font-family='Segoe UI, Arial' font-size='15' font-weight='700' fill='#FFFFFF' text-anchor='middle'>DISCHARGE</text>" &
+            "<rect y='70' width='980' height='140' fill='#FFFFFF'/><rect y='280' width='980' height='140' fill='#FFFFFF'/>" &
+            "<path d='M0 140 H980 M0 350 H980' stroke='#C9D6E2' stroke-width='2' stroke-dasharray='16 12'/><rect y='210' width='980' height='70' fill='#E3EEF6'/>" &
+            "<text x='970' y='272' font-family='Segoe UI, Arial' font-size='12' font-weight='700' fill='#8C9BAE' text-anchor='end'>REST AREA</text>" &
+            "<rect y='420' width='980' height='70' fill='#EBF2F8'/><path d='M0 420 H980' stroke='#C9D6E2' stroke-width='2'/>" &
+            "<text x='10' y='482' font-family='Segoe UI, Arial' font-size='12' font-weight='700' fill='#8C9BAE'>BED BAY</text>" &
+            "<path d='M0 210 H980 M0 280 H980' stroke='#C9D6E2' stroke-width='2'/>"
+        );
+    Children:
+      - tmrGame_DD:
+          Control: Timer@2.1.0
+          Properties:
+            AutoStart: =false
+            Duration: =60
+            Height: =15 * SY
+            OnTimerEnd: =Set(ddTick, ddTick + 1); Select(btnCheck_DD)
+            Repeat: =true
+            Start: =ddState = "play"
+            Visible: =false
+            Width: =85 * SX
+            X: =0 * SX
+            Y: =753 * SY
+      - btnCheck_DD:
+          Control: ModernButton@1.0.0
+          Properties:
+            Align: =Align.Center
+            FontWeight: =""
+            Height: =10 * SY
+            OnSelect: |-
+              =// Runs after every move and every timer tick
+              If(
+                  ddState = "play",
+                  If(
+                      // made it to the door
+                      ddRow = 0,
+                      Set(ddScore, ddScore + 100 * ddLevel);
+                      Set(ddLevel, ddLevel + 1);
+                      Set(ddMul, Min(2.2, 1 + 0.2 * (ddLevel - 1)));
+                      Set(ddMsg, "Discharged! Next patient - Day " & ddLevel);
+                      Set(ddMsgUntil, ddTick + 30);
+                      Set(ddRow, 6);
+                      Set(ddCol, 6);
+                      Set(ddFace, "R");
+                      Set(ddCoffee, Index([0, 1, 3, 4, 5, 6, 7, 8, 10, 12, 13], RandBetween(1, 11)).Value),
+                      // coffee
+                      ddRow = 3 && ddCol = ddCoffee,
+                      Set(ddScore, ddScore + 50);
+                      Set(ddCoffee, -1);
+                      Set(ddMsg, "Coffee break! +50");
+                      Set(ddMsgUntil, ddTick + 20),
+                      // bumped by something moving
+                      ddRow in [1, 2, 4, 5] && !IsEmpty(
+                          Filter(
+                              colDD_Obs,
+                              Lane = ddRow && With(
+                                  { p: Mod(X0 + Speed * ddTick * ddMul, 1160) - 180 },
+                                  p + 8 < ddCol * 70 + 54 && p + W - 8 > ddCol * 70 + 16
+                              )
+                          )
+                      ),
+                      Set(ddLives, ddLives - 1);
+                      Set(ddRow, 6);
+                      Set(ddCol, 6);
+                      Set(ddFace, "R");
+                      If(
+                          ddLives <= 0,
+                          Set(ddBest, Max(ddBest, ddScore));
+                          Set(ddState, "over"),
+                          Set(ddMsg, "Oops! Have a rest and try again");
+                          Set(ddMsgUntil, ddTick + 25)
+                      )
+                  )
+              )
+            PaddingBottom: =5
+            PaddingLeft: =12
+            PaddingRight: =12
+            PaddingTop: =5
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Size: =Round(14 * SF, 0)
+            Text: =""
+            VerticalAlign: =VerticalAlign.Middle
+            Visible: =false
+            Width: =10 * SX
+      - rectBg_DD:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(235, 242, 248, 1)
+            Height: =Parent.Height
+            Width: =Parent.Width
+      - conHdr_DD:
+          Control: GroupContainer@1.5.0
+          Properties:
+            DropShadow: =DropShadow.Regular
+            Fill: =RGBA(7, 95, 115, 1)
+            Height: =70 * SY
+            RadiusBottomLeft: =18 * SR
+            RadiusBottomRight: =18 * SR
+            RadiusTopLeft: =18 * SR
+            RadiusTopRight: =18 * SR
+            Width: =1333 * SX
+            X: =18 * SX
+            Y: =12 * SY
+          Children:
+            - imgHdr_DD:
+                Control: Image@2.2.3
+                Properties:
+                  Height: =Parent.Height
+                  Image: ="data:image/svg+xml;utf8," & EncodeUrl("<svg xmlns='http://www.w3.org/2000/svg' width='1333' height='70' viewBox='0 0 1333 70' preserveAspectRatio='none'><defs><linearGradient id='a' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='#001D46'/><stop offset='0.48' stop-color='#075F73'/><stop offset='1' stop-color='#00838A'/></linearGradient><linearGradient id='b' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='#001B36' stop-opacity='0.46'/><stop offset='0.45' stop-color='#002036' stop-opacity='0.18'/><stop offset='1' stop-color='#002036' stop-opacity='0.06'/></linearGradient></defs><rect width='1333' height='70' rx='18' fill='url(#a)'/><rect width='1333' height='70' rx='18' fill='url(#b)'/></svg>")
+                  ImagePosition: =ImagePosition.Fill
+                  Width: =Parent.Width
+            - lblTitle_DD:
+                Control: ModernText@1.0.0
+                Properties:
+                  Color: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Bold
+                  Height: =40 * SY
+                  PaddingBottom: =0
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Size: =Round(28 * SF, 0)
+                  Text: ="Discharge Dash"
+                  Width: =600 * SX
+                  X: =76 * SX
+                  Y: =5 * SY
+            - lblSub_DD:
+                Control: ModernText@1.0.0
+                Properties:
+                  Color: =RGBA(255, 255, 255, 0.88)
+                  Font: =Font.'Segoe UI'
+                  Height: =20 * SY
+                  PaddingBottom: =0
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Size: =Round(12 * SF, 0)
+                  Text: ="Get your patient from bed to the discharge door. Just for fun - nothing is saved."
+                  Width: =700 * SX
+                  X: =76 * SX
+                  Y: =42 * SY
+            - btnBack_DD:
+                Control: ModernButton@1.0.0
+                Properties:
+                  Align: =Align.Center
+                  Appearance: =ButtonAppearance.Transparent
+                  Color: =RGBA(255, 255, 255, 1)
+                  FontWeight: =""
+                  Height: =70 * SY
+                  Icon: ="ChevronLeft"
+                  OnSelect: =Set(ddState, "ready"); Navigate(Home_Main, ScreenTransition.Fade)
+                  PaddingBottom: =5
+                  PaddingLeft: =12
+                  PaddingRight: =12
+                  PaddingTop: =5
+                  RadiusBottomLeft: =4
+                  RadiusBottomRight: =4
+                  RadiusTopLeft: =4
+                  RadiusTopRight: =4
+                  Size: =Round(35 * SF, 0)
+                  Text: =""
+                  VerticalAlign: =VerticalAlign.Middle
+                  Width: =96 * SX
+                  X: =1 * SX
+            - conBanner_DD:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =44 * SY
+                  RadiusBottomLeft: =22 * SR
+                  RadiusBottomRight: =22 * SR
+                  RadiusTopLeft: =22 * SR
+                  RadiusTopRight: =22 * SR
+                  Visible: =ddState = "play" && ddTick < ddMsgUntil
+                  Width: =430 * SX
+                  X: =883 * SX
+                  Y: =13 * SY
+                Children:
+                  - lblBanner_DD:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        Color: =RGBA(26, 90, 153, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Bold
+                        Height: =Parent.Height
+                        Size: =Round(15 * SF, 0)
+                        Text: =ddMsg
+                        Width: =Parent.Width
+                        X: =0 * SX
+                        Y: =0 * SY
+      - conField_DD:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            BorderColor: =RGBA(14, 42, 70, 0.12)
+            BorderThickness: =1
+            DropShadow: =DropShadow.Regular
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =520 * SY
+            RadiusBottomLeft: =18 * SR
+            RadiusBottomRight: =18 * SR
+            RadiusTopLeft: =18 * SR
+            RadiusTopRight: =18 * SR
+            Width: =1010 * SX
+            X: =18 * SX
+            Y: =95 * SY
+          Children:
+            - imgField_DD:
+                Control: Image@2.2.3
+                Properties:
+                  Height: =490 * SY
+                  Image: |-
+                    ="data:image/svg+xml;utf8," & EncodeUrl(
+                        ddBg &
+                        Concat(colDD_Static, "<use href='#" & Kind & "' x='" & Col * 70 & "' y='" & Row * 70 & "'/>") &
+                        If(ddCoffee >= 0, "<use href='#coffee' x='" & ddCoffee * 70 & "' y='210'/>", "") &
+                        Concat(colDD_Obs, "<use href='#" & Kind & "' x='" & Text(Mod(X0 + Speed * ddTick * ddMul, 1160) - 180, "0") & "' y='" & Lane * 70 & "'/>") &
+                        "<g transform='translate(" & ddCol * 70 & "," & ddRow * 70 & ")'>" &
+                        If(ddFace = "L", "<use href='#pt' transform='matrix(-1 0 0 1 70 0)'/>", "<use href='#pt'/>") &
+                        "</g></svg>"
+                    )
+                  ImagePosition: =ImagePosition.Fit
+                  Width: =980 * SX
+                  X: =15 * SX
+                  Y: =15 * SY
+            - conOverlay_DD:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(255, 255, 255, 0.88)
+                  Height: =520 * SY
+                  RadiusBottomLeft: =18 * SR
+                  RadiusBottomRight: =18 * SR
+                  RadiusTopLeft: =18 * SR
+                  RadiusTopRight: =18 * SR
+                  Visible: =ddState <> "play"
+                  Width: =1010 * SX
+                  X: =0 * SX
+                  Y: =0 * SY
+                Children:
+                  - lblOvTitle_DD:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        Color: =RGBA(14, 28, 42, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Bold
+                        Height: =60 * SY
+                        Size: =Round(36 * SF, 0)
+                        Text: =If(ddState = "over", "Back to Bed!", "Discharge Dash")
+                        Width: =930 * SX
+                        X: =40 * SX
+                        Y: =120 * SY
+                  - lblOvBody_DD:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        Color: =RGBA(58, 80, 104, 1)
+                        Font: =Font.'Segoe UI'
+                        Height: =140 * SY
+                        Size: =Round(16 * SF, 0)
+                        Text: |-
+                          =If(
+                              ddState = "over",
+                              "Out of rest breaks. You reached Day " & ddLevel & " with " & ddScore & " points." & Char(10) & "Best today: " & ddBest,
+                              "Help your patient get from the bed bay to the DISCHARGE door." & Char(10) & "Dodge beds, meal trolleys, the cleaner and the ward round." & Char(10) & "Wet floor signs and IV poles block the way. Grab the coffee for +50."
+                          )
+                        VerticalAlign: =VerticalAlign.Top
+                        Width: =800 * SX
+                        X: =105 * SX
+                        Y: =190 * SY
+                  - conOvStart_DD:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.Semibold
+                        Fill: =RGBA(26, 90, 153, 1)
+                        Height: =52 * SY
+                        RadiusBottomLeft: =26 * SR
+                        RadiusBottomRight: =26 * SR
+                        RadiusTopLeft: =26 * SR
+                        RadiusTopRight: =26 * SR
+                        Width: =200 * SX
+                        X: =405 * SX
+                        Y: =350 * SY
+                      Children:
+                        - btnOvStart_DD:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Appearance: =ButtonAppearance.Transparent
+                              BorderStyle: =BorderStyle.None
+                              Color: =RGBA(255, 255, 255, 1)
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =FontWeight.Bold
+                              Height: =Parent.Height
+                              Icon: ="Play"
+                              IconStyle: =IconStyle.Filled
+                              OnSelect: |-
+                                =Set(ddScore, 0);
+                                Set(ddLevel, 1);
+                                Set(ddLives, 3);
+                                Set(ddMul, 1);
+                                Set(ddTick, 0);
+                                Set(ddRow, 6);
+                                Set(ddCol, 6);
+                                Set(ddFace, "R");
+                                Set(ddCoffee, Index([0, 1, 3, 4, 5, 6, 7, 8, 10, 12, 13], RandBetween(1, 11)).Value);
+                                Set(ddMsg, "Day 1 - get to the DISCHARGE door!");
+                                Set(ddMsgUntil, 35);
+                                Set(ddState, "play")
+                              PaddingBottom: =5
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =5
+                              RadiusBottomLeft: =26 * SR
+                              RadiusBottomRight: =26 * SR
+                              RadiusTopLeft: =26 * SR
+                              RadiusTopRight: =26 * SR
+                              Size: =Round(17 * SF, 0)
+                              Text: =If(ddState = "over", "Play Again", "Start")
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.Width
+      - conLegend_DD:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            BorderColor: =RGBA(14, 42, 70, 0.12)
+            BorderThickness: =1
+            DropShadow: =DropShadow.None
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =129 * SY
+            RadiusBottomLeft: =18 * SR
+            RadiusBottomRight: =18 * SR
+            RadiusTopLeft: =18 * SR
+            RadiusTopRight: =18 * SR
+            Width: =1010 * SX
+            X: =18 * SX
+            Y: =627 * SY
+          Children:
+            - lblLegCap_DD:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(140, 155, 174, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Bold
+                  Height: =20 * SY
+                  Size: =Round(11 * SF, 0)
+                  Text: ="HOW TO PLAY"
+                  Width: =400 * SX
+                  X: =24 * SX
+                  Y: =14 * SY
+            - lblLeg_DD:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(58, 80, 104, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =80 * SY
+                  Size: =Round(13 * SF, 0)
+                  Text: ="Use the arrows to walk one step at a time. Reach the green DISCHARGE door for 100 points x the day number." & Char(10) & "Bumped by a bed, trolley, mop bucket or the ward round? Have a rest and start again (3 rests)." & Char(10) & "Each discharge makes the hallway a little busier. Wait in the rest area for a gap."
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =960 * SX
+                  X: =24 * SX
+                  Y: =36 * SY
+      - conPanel_DD:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            BorderColor: =RGBA(14, 42, 70, 0.12)
+            BorderThickness: =1
+            DropShadow: =DropShadow.Regular
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =661 * SY
+            RadiusBottomLeft: =18 * SR
+            RadiusBottomRight: =18 * SR
+            RadiusTopLeft: =18 * SR
+            RadiusTopRight: =18 * SR
+            Width: =311 * SX
+            X: =1040 * SX
+            Y: =95 * SY
+          Children:
+            - lblDayCap_DD:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(140, 155, 174, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Bold
+                  Height: =18 * SY
+                  Size: =Round(11 * SF, 0)
+                  Text: ="DAY"
+                  Width: =130 * SX
+                  X: =24 * SX
+                  Y: =20 * SY
+            - lblDay_DD:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(14, 28, 42, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Bold
+                  Height: =40 * SY
+                  Size: =Round(26 * SF, 0)
+                  Text: =ddLevel
+                  Width: =130 * SX
+                  X: =24 * SX
+                  Y: =40 * SY
+            - lblRestsCap_DD:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(140, 155, 174, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Bold
+                  Height: =18 * SY
+                  Size: =Round(11 * SF, 0)
+                  Text: ="RESTS LEFT"
+                  Width: =130 * SX
+                  X: =160 * SX
+                  Y: =20 * SY
+            - lblRests_DD:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(180, 26, 26, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Bold
+                  Height: =40 * SY
+                  Size: =Round(26 * SF, 0)
+                  Text: =If(ddLives > 0, Left("♥ ♥ ♥", ddLives * 2 - 1), "-")
+                  Width: =130 * SX
+                  X: =160 * SX
+                  Y: =40 * SY
+            - lblScoreCap_DD:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(140, 155, 174, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Bold
+                  Height: =18 * SY
+                  Size: =Round(11 * SF, 0)
+                  Text: ="SCORE"
+                  Width: =130 * SX
+                  X: =24 * SX
+                  Y: =100 * SY
+            - lblScore_DD:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(14, 28, 42, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Bold
+                  Height: =40 * SY
+                  Size: =Round(26 * SF, 0)
+                  Text: =ddScore
+                  Width: =130 * SX
+                  X: =24 * SX
+                  Y: =120 * SY
+            - lblBestCap_DD:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(140, 155, 174, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Bold
+                  Height: =18 * SY
+                  Size: =Round(11 * SF, 0)
+                  Text: ="BEST TODAY"
+                  Width: =130 * SX
+                  X: =160 * SX
+                  Y: =100 * SY
+            - lblBest_DD:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(14, 28, 42, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Bold
+                  Height: =40 * SY
+                  Size: =Round(26 * SF, 0)
+                  Text: =ddBest
+                  Width: =130 * SX
+                  X: =160 * SX
+                  Y: =120 * SY
+            - rectDiv_DD:
+                Control: Rectangle@2.3.0
+                Properties:
+                  Fill: =RGBA(14, 42, 70, 0.12)
+                  Height: =1 * SY
+                  Width: =263 * SX
+                  X: =24 * SX
+                  Y: =178 * SY
+            - lblPadCap_DD:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(140, 155, 174, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Bold
+                  Height: =18 * SY
+                  Size: =Round(11 * SF, 0)
+                  Text: ="MOVE"
+                  Width: =200 * SX
+                  X: =24 * SX
+                  Y: =194 * SY
+            - conUp_DD:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Semilight
+                  Fill: =RGBA(26, 90, 153, 1)
+                  Height: =70 * SY
+                  RadiusBottomLeft: =16 * SR
+                  RadiusBottomRight: =16 * SR
+                  RadiusTopLeft: =16 * SR
+                  RadiusTopRight: =16 * SR
+                  Width: =84 * SX
+                  X: =113 * SX
+                  Y: =222 * SY
+                Children:
+                  - btnUp_DD:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        Appearance: =ButtonAppearance.Transparent
+                        BorderStyle: =BorderStyle.None
+                        Color: =RGBA(255, 255, 255, 1)
+                        DisplayMode: =If(ddState = "play", DisplayMode.Edit, DisplayMode.Disabled)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Bold
+                        Height: =Parent.Height
+                        Icon: ="ChevronUp"
+                        IconStyle: =IconStyle.Filled
+                        OnSelect: |-
+                          =If(
+                              ddState = "play",
+                              With(
+                                  { r: ddRow - 1, c: ddCol },
+                                  If(
+                                      r >= 0 && (r > 0 || c in [6, 7]) && IsBlank(LookUp(colDD_Static, Row = r && Col = c)),
+                                      Set(ddRow, r);
+                                      Set(ddCol, c);
+                                      Select(btnCheck_DD)
+                                  )
+                              )
+                          )
+                        PaddingBottom: =5
+                        PaddingLeft: =12
+                        PaddingRight: =12
+                        PaddingTop: =5
+                        RadiusBottomLeft: =16 * SR
+                        RadiusBottomRight: =16 * SR
+                        RadiusTopLeft: =16 * SR
+                        RadiusTopRight: =16 * SR
+                        Size: =Round(26 * SF, 0)
+                        Text: =""
+                        VerticalAlign: =VerticalAlign.Middle
+                        Width: =Parent.Width
+            - conLeft_DD:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Semilight
+                  Fill: =RGBA(26, 90, 153, 1)
+                  Height: =70 * SY
+                  RadiusBottomLeft: =16 * SR
+                  RadiusBottomRight: =16 * SR
+                  RadiusTopLeft: =16 * SR
+                  RadiusTopRight: =16 * SR
+                  Width: =84 * SX
+                  X: =21 * SX
+                  Y: =300 * SY
+                Children:
+                  - btnLeft_DD:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        Appearance: =ButtonAppearance.Transparent
+                        BorderStyle: =BorderStyle.None
+                        Color: =RGBA(255, 255, 255, 1)
+                        DisplayMode: =If(ddState = "play", DisplayMode.Edit, DisplayMode.Disabled)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Bold
+                        Height: =Parent.Height
+                        Icon: ="ChevronLeft"
+                        IconStyle: =IconStyle.Filled
+                        OnSelect: |-
+                          =If(
+                              ddState = "play",
+                              With(
+                                  { r: ddRow, c: ddCol - 1 },
+                                  If(
+                                      c >= 0 && IsBlank(LookUp(colDD_Static, Row = r && Col = c)),
+                                      Set(ddRow, r);
+                                      Set(ddCol, c);
+                                      Set(ddFace, "L");
+                                      Select(btnCheck_DD)
+                                  )
+                              )
+                          )
+                        PaddingBottom: =5
+                        PaddingLeft: =12
+                        PaddingRight: =12
+                        PaddingTop: =5
+                        RadiusBottomLeft: =16 * SR
+                        RadiusBottomRight: =16 * SR
+                        RadiusTopLeft: =16 * SR
+                        RadiusTopRight: =16 * SR
+                        Size: =Round(26 * SF, 0)
+                        Text: =""
+                        VerticalAlign: =VerticalAlign.Middle
+                        Width: =Parent.Width
+            - conDown_DD:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Semilight
+                  Fill: =RGBA(26, 90, 153, 1)
+                  Height: =70 * SY
+                  RadiusBottomLeft: =16 * SR
+                  RadiusBottomRight: =16 * SR
+                  RadiusTopLeft: =16 * SR
+                  RadiusTopRight: =16 * SR
+                  Width: =84 * SX
+                  X: =113 * SX
+                  Y: =300 * SY
+                Children:
+                  - btnDown_DD:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        Appearance: =ButtonAppearance.Transparent
+                        BorderStyle: =BorderStyle.None
+                        Color: =RGBA(255, 255, 255, 1)
+                        DisplayMode: =If(ddState = "play", DisplayMode.Edit, DisplayMode.Disabled)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Bold
+                        Height: =Parent.Height
+                        Icon: ="ChevronDown"
+                        IconStyle: =IconStyle.Filled
+                        OnSelect: |-
+                          =If(
+                              ddState = "play",
+                              With(
+                                  { r: ddRow + 1, c: ddCol },
+                                  If(
+                                      r <= 6 && IsBlank(LookUp(colDD_Static, Row = r && Col = c)),
+                                      Set(ddRow, r);
+                                      Set(ddCol, c);
+                                      Select(btnCheck_DD)
+                                  )
+                              )
+                          )
+                        PaddingBottom: =5
+                        PaddingLeft: =12
+                        PaddingRight: =12
+                        PaddingTop: =5
+                        RadiusBottomLeft: =16 * SR
+                        RadiusBottomRight: =16 * SR
+                        RadiusTopLeft: =16 * SR
+                        RadiusTopRight: =16 * SR
+                        Size: =Round(26 * SF, 0)
+                        Text: =""
+                        VerticalAlign: =VerticalAlign.Middle
+                        Width: =Parent.Width
+            - conRight_DD:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Semilight
+                  Fill: =RGBA(26, 90, 153, 1)
+                  Height: =70 * SY
+                  RadiusBottomLeft: =16 * SR
+                  RadiusBottomRight: =16 * SR
+                  RadiusTopLeft: =16 * SR
+                  RadiusTopRight: =16 * SR
+                  Width: =84 * SX
+                  X: =205 * SX
+                  Y: =300 * SY
+                Children:
+                  - btnRight_DD:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        Appearance: =ButtonAppearance.Transparent
+                        BorderStyle: =BorderStyle.None
+                        Color: =RGBA(255, 255, 255, 1)
+                        DisplayMode: =If(ddState = "play", DisplayMode.Edit, DisplayMode.Disabled)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Bold
+                        Height: =Parent.Height
+                        Icon: ="ChevronRight"
+                        IconStyle: =IconStyle.Filled
+                        OnSelect: |-
+                          =If(
+                              ddState = "play",
+                              With(
+                                  { r: ddRow, c: ddCol + 1 },
+                                  If(
+                                      c <= 13 && IsBlank(LookUp(colDD_Static, Row = r && Col = c)),
+                                      Set(ddRow, r);
+                                      Set(ddCol, c);
+                                      Set(ddFace, "R");
+                                      Select(btnCheck_DD)
+                                  )
+                              )
+                          )
+                        PaddingBottom: =5
+                        PaddingLeft: =12
+                        PaddingRight: =12
+                        PaddingTop: =5
+                        RadiusBottomLeft: =16 * SR
+                        RadiusBottomRight: =16 * SR
+                        RadiusTopLeft: =16 * SR
+                        RadiusTopRight: =16 * SR
+                        Size: =Round(26 * SF, 0)
+                        Text: =""
+                        VerticalAlign: =VerticalAlign.Middle
+                        Width: =Parent.Width
+            - conRestart_DD:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  BorderColor: =RGBA(14, 42, 70, 0.12)
+                  BorderThickness: =1
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(244, 249, 252, 1)
+                  Height: =52 * SY
+                  RadiusBottomLeft: =26 * SR
+                  RadiusBottomRight: =26 * SR
+                  RadiusTopLeft: =26 * SR
+                  RadiusTopRight: =26 * SR
+                  Width: =263 * SX
+                  X: =24 * SX
+                  Y: =410 * SY
+                Children:
+                  - btnRestart_DD:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        Appearance: =ButtonAppearance.Transparent
+                        BorderStyle: =BorderStyle.None
+                        Color: =RGBA(58, 80, 104, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Bold
+                        Height: =Parent.Height
+                        Icon: ="ArrowClockwise"
+                        IconStyle: =IconStyle.Filled
+                        OnSelect: |-
+                          =Set(ddScore, 0);
+                          Set(ddLevel, 1);
+                          Set(ddLives, 3);
+                          Set(ddMul, 1);
+                          Set(ddTick, 0);
+                          Set(ddRow, 6);
+                          Set(ddCol, 6);
+                          Set(ddFace, "R");
+                          Set(ddCoffee, Index([0, 1, 3, 4, 5, 6, 7, 8, 10, 12, 13], RandBetween(1, 11)).Value);
+                          Set(ddMsg, "Day 1 - get to the DISCHARGE door!");
+                          Set(ddMsgUntil, 35);
+                          Set(ddState, "play")
+                        PaddingBottom: =5
+                        PaddingLeft: =12
+                        PaddingRight: =12
+                        PaddingTop: =5
+                        RadiusBottomLeft: =26 * SR
+                        RadiusBottomRight: =26 * SR
+                        RadiusTopLeft: =26 * SR
+                        RadiusTopRight: =26 * SR
+                        Size: =Round(16 * SF, 0)
+                        Text: =If(ddState = "play", "Restart", "Start")
+                        VerticalAlign: =VerticalAlign.Middle
+                        Width: =Parent.Width
+            - lblTip_DD:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(140, 155, 174, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =150 * SY
+                  Size: =Round(12 * SF, 0)
+                  Text: |-
+                    ="Tip: the ward round is slow but wide. Meal trolleys are quick. The coffee moves after every discharge."
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =263 * SX
+                  X: =24 * SX
+                  Y: =480 * SY

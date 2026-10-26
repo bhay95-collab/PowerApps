@@ -20,7 +20,7 @@ App.Formulas: `Desktop_App_Formulas.txt` (SX/SY/SF/SR, MeEmail, MeName, CanManag
 
 | Screen | Purpose |
 |---|---|
-| `Home_Main` | Ward tiles (beds, patients, acuity, EDD ≤ 3 days); bottom bar: Equipment · My Day · Discharge Planner · Team Info · Training · Manager tools (Usage Log, Servicing, Audit Coverage, Data Health for Director/Team Leader/CA4) |
+| `Home_Main` | Ward tiles (beds, patients, acuity, EDD ≤ 3 days); avatar beside user name (3 quick taps → `Discharge_Dash`, gated to one email while testing); bottom bar: My Day · Equipment · Discharge Planner · Team Info · Training · Manager Tools pop-up (Usage Log, Servicing, Audit Coverage, Equipment Audit, Data Health, Data Dashboard for Director/Team Leader/CA4; Manage Staff for Director/Team Leader) |
 | `My_Day` | My patients, my equipment out, who is away today/tomorrow |
 | `Ward_All` | One board for 4A/4B/5A/6A (`varWard`). Read-only rows + edit panel: AFRM chips, physio picker pop-up, acuity −/+ (0–4), dates, flags, Move bed (swap), Discharge, Save/Discard (optimistic lock), EDD Summary email. 6A: no NDIS, no AROC (`wdShowNDIS`/`wdShowAROC`) |
 | `Handover_All` | Ward handover |
@@ -30,12 +30,13 @@ App.Formulas: `Desktop_App_Formulas.txt` (SX/SY/SF/SR, MeEmail, MeName, CanManag
 | `scrAuditOversight`, `Audit_Coverage` | Equipment audit results; coverage (re-audit after 30/60/90/180 days) |
 | `Usage_Log` | Manager view of usage log (no patient names) |
 | `Service_Dash` | Servicing (due > 100 days in use, at service, history) |
-| `Physiotherapy_Screen` | Team Brief files (via flow), team notes (Save/Discard), Manage Staff, Data Dashboard, Leave |
+| `Physiotherapy_Screen` | Team Brief files (via flow), team notes (Save/Discard), Leave (Manage Staff + Data Dashboard moved to Home → Manager Tools) |
 | `Physio_Data_New` | Ward acuity, week vs week, diagnosis pies, staffing FTE (one calc button `btnCalc_Dd`) |
 | `Directory_Admin_New` | Manage staff (Director/Team Leader) → `ClinicianDirectory` |
 | `PT_Leave_New` | Week view of STARSPhysioLeave calendar (multi-day leave shows each day) |
 | `Data_Health` | Data problems (patients, equipment, audits) |
 | `Training_Hub`, `Training_Sessions` | Training inside the dashboard |
+| `Discharge_Dash` | Easter egg: Frogger-style game (patient with walker crosses ward hallway to the discharge door). One SVG image redrawn by a 60 ms timer; obstacle positions are a formula of `ddTick`. Nothing saved |
 
 ## STARS Equipment (mobile)
 
