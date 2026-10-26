@@ -211,7 +211,7 @@ Screens:
             RadiusBottomRight: =0
             RadiusTopLeft: =0
             RadiusTopRight: =0
-            Width: =App.Width
+            Width: =Discharge_Dash.Width
             X: =0
             Y: =0
           Children:
@@ -244,7 +244,7 @@ Screens:
                   Text: =""
                   VerticalAlign: =VerticalAlign.Middle
                   Width: =Round(56 * UI, 0)
-                  X: =Gutter + Round(2 * UI, 0)
+                  X: =(Discharge_Dash.Width - Min(Discharge_Dash.Width, 720)) / 2 + Round(2 * UI, 0)
                   Y: =Round(2 * UI, 0)
             - lblTitle_DD:
                 Control: Label@2.5.1
@@ -255,9 +255,9 @@ Screens:
                   Height: =Round(32 * UI, 0)
                   Size: =Round(20 * UI, 0)
                   Text: ="Discharge Dash"
-                  Width: =(App.Width - 2 * Gutter) - Round(66 * UI, 0)
+                  Width: =Min(Discharge_Dash.Width, 720) - Round(66 * UI, 0)
                   Wrap: =false
-                  X: =Gutter + Round(56 * UI, 0)
+                  X: =(Discharge_Dash.Width - Min(Discharge_Dash.Width, 720)) / 2 + Round(56 * UI, 0)
                   Y: =Round(6 * UI, 0)
             - lblSub_DD:
                 Control: Label@2.5.1
@@ -268,9 +268,9 @@ Screens:
                   Height: =Round(22 * UI, 0)
                   Size: =Round(11 * UI, 0)
                   Text: =If(ddState = "play" && ddTick < ddMsgUntil, ddMsg, "Just for fun - nothing is saved")
-                  Width: =(App.Width - 2 * Gutter) - Round(66 * UI, 0)
+                  Width: =Min(Discharge_Dash.Width, 720) - Round(66 * UI, 0)
                   Wrap: =false
-                  X: =Gutter + Round(56 * UI, 0)
+                  X: =(Discharge_Dash.Width - Min(Discharge_Dash.Width, 720)) / 2 + Round(56 * UI, 0)
                   Y: =Round(36 * UI, 0)
       - conStats_DD:
           Control: GroupContainer@1.5.0
@@ -285,8 +285,8 @@ Screens:
             RadiusBottomRight: =Round(14 * UI, 0)
             RadiusTopLeft: =Round(14 * UI, 0)
             RadiusTopRight: =Round(14 * UI, 0)
-            Width: =(App.Width - 2 * Gutter) - Round(24 * UI, 0)
-            X: =Gutter + Round(12 * UI, 0)
+            Width: =Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)
+            X: =(Discharge_Dash.Width - Min(Discharge_Dash.Width, 720)) / 2 + Round(12 * UI, 0)
             Y: =Round(64 * UI, 0) + Round(8 * UI, 0)
           Children:
             - lblDayCap_DD:
@@ -298,8 +298,8 @@ Screens:
                   Height: =Round(16 * UI, 0)
                   Size: =Round(10 * UI, 0)
                   Text: ="DAY"
-                  Width: =((App.Width - 2 * Gutter) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
-                  X: =Round(10 * UI, 0) + 0 * ((App.Width - 2 * Gutter) - Round(24 * UI, 0)) / 4
+                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
+                  X: =Round(10 * UI, 0) + 0 * (Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4
                   Y: =Round(6 * UI, 0)
             - lblDay_DD:
                 Control: Label@2.5.1
@@ -310,8 +310,8 @@ Screens:
                   Height: =Round(26 * UI, 0)
                   Size: =Round(17 * UI, 0)
                   Text: =ddLevel
-                  Width: =((App.Width - 2 * Gutter) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
-                  X: =Round(10 * UI, 0) + 0 * ((App.Width - 2 * Gutter) - Round(24 * UI, 0)) / 4
+                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
+                  X: =Round(10 * UI, 0) + 0 * (Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4
                   Y: =Round(22 * UI, 0)
             - lblRestsCap_DD:
                 Control: Label@2.5.1
@@ -322,8 +322,8 @@ Screens:
                   Height: =Round(16 * UI, 0)
                   Size: =Round(10 * UI, 0)
                   Text: ="RESTS"
-                  Width: =((App.Width - 2 * Gutter) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
-                  X: =Round(10 * UI, 0) + 1 * ((App.Width - 2 * Gutter) - Round(24 * UI, 0)) / 4
+                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
+                  X: =Round(10 * UI, 0) + 1 * (Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4
                   Y: =Round(6 * UI, 0)
             - lblRests_DD:
                 Control: Label@2.5.1
@@ -334,8 +334,8 @@ Screens:
                   Height: =Round(26 * UI, 0)
                   Size: =Round(17 * UI, 0)
                   Text: =If(ddLives > 0, Left("♥ ♥ ♥", ddLives * 2 - 1), "-")
-                  Width: =((App.Width - 2 * Gutter) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
-                  X: =Round(10 * UI, 0) + 1 * ((App.Width - 2 * Gutter) - Round(24 * UI, 0)) / 4
+                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
+                  X: =Round(10 * UI, 0) + 1 * (Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4
                   Y: =Round(22 * UI, 0)
             - lblScoreCap_DD:
                 Control: Label@2.5.1
@@ -346,8 +346,8 @@ Screens:
                   Height: =Round(16 * UI, 0)
                   Size: =Round(10 * UI, 0)
                   Text: ="SCORE"
-                  Width: =((App.Width - 2 * Gutter) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
-                  X: =Round(10 * UI, 0) + 2 * ((App.Width - 2 * Gutter) - Round(24 * UI, 0)) / 4
+                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
+                  X: =Round(10 * UI, 0) + 2 * (Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4
                   Y: =Round(6 * UI, 0)
             - lblScore_DD:
                 Control: Label@2.5.1
@@ -358,8 +358,8 @@ Screens:
                   Height: =Round(26 * UI, 0)
                   Size: =Round(17 * UI, 0)
                   Text: =ddScore
-                  Width: =((App.Width - 2 * Gutter) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
-                  X: =Round(10 * UI, 0) + 2 * ((App.Width - 2 * Gutter) - Round(24 * UI, 0)) / 4
+                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
+                  X: =Round(10 * UI, 0) + 2 * (Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4
                   Y: =Round(22 * UI, 0)
             - lblBestCap_DD:
                 Control: Label@2.5.1
@@ -370,8 +370,8 @@ Screens:
                   Height: =Round(16 * UI, 0)
                   Size: =Round(10 * UI, 0)
                   Text: ="BEST"
-                  Width: =((App.Width - 2 * Gutter) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
-                  X: =Round(10 * UI, 0) + 3 * ((App.Width - 2 * Gutter) - Round(24 * UI, 0)) / 4
+                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
+                  X: =Round(10 * UI, 0) + 3 * (Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4
                   Y: =Round(6 * UI, 0)
             - lblBest_DD:
                 Control: Label@2.5.1
@@ -382,8 +382,8 @@ Screens:
                   Height: =Round(26 * UI, 0)
                   Size: =Round(17 * UI, 0)
                   Text: =ddBest
-                  Width: =((App.Width - 2 * Gutter) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
-                  X: =Round(10 * UI, 0) + 3 * ((App.Width - 2 * Gutter) - Round(24 * UI, 0)) / 4
+                  Width: =(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4 - Round(8 * UI, 0)
+                  X: =Round(10 * UI, 0) + 3 * (Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0)) / 4
                   Y: =Round(22 * UI, 0)
       - conField_DD:
           Control: GroupContainer@1.5.0
@@ -391,13 +391,13 @@ Screens:
           Properties:
             DropShadow: =DropShadow.Regular
             Fill: =RGBA(255, 255, 255, 1)
-            Height: =Self.Width * 630 / 490
+            Height: =Min(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0), (Discharge_Dash.Height - Round(274 * UI, 0)) * 490 / 630) * 630 / 490
             RadiusBottomLeft: =Round(12 * UI, 0)
             RadiusBottomRight: =Round(12 * UI, 0)
             RadiusTopLeft: =Round(12 * UI, 0)
             RadiusTopRight: =Round(12 * UI, 0)
-            Width: =Min((App.Width - 2 * Gutter) - Round(24 * UI, 0), (App.Height - Round(274 * UI, 0)) * 490 / 630)
-            X: =Gutter + ((App.Width - 2 * Gutter) - Self.Width) / 2
+            Width: =Min(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0), (Discharge_Dash.Height - Round(274 * UI, 0)) * 490 / 630)
+            X: =(Discharge_Dash.Width - Min(Discharge_Dash.Width, 720)) / 2 + (Min(Discharge_Dash.Width, 720) - Min(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0), (Discharge_Dash.Height - Round(274 * UI, 0)) * 490 / 630)) / 2
             Y: =Round(64 * UI, 0) + Round(8 * UI, 0) + Round(62 * UI, 0)
           Children:
             - imgField_DD:
@@ -531,8 +531,8 @@ Screens:
             RadiusTopLeft: =Round(14 * UI, 0)
             RadiusTopRight: =Round(14 * UI, 0)
             Width: =Round(96 * UI, 0)
-            X: =Gutter + (App.Width - 2 * Gutter) / 2 - Round(48 * UI, 0)
-            Y: =conField_DD.Y + conField_DD.Height + Round(10 * UI, 0)
+            X: =(Discharge_Dash.Width - Min(Discharge_Dash.Width, 720)) / 2 + Min(Discharge_Dash.Width, 720) / 2 - Round(48 * UI, 0)
+            Y: =Round(64 * UI, 0) + Round(8 * UI, 0) + Round(62 * UI, 0) + Min(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0), (Discharge_Dash.Height - Round(274 * UI, 0)) * 490 / 630) * 630 / 490 + Round(10 * UI, 0)
           Children:
             - btnUp_DD:
                 Control: ModernButton@1.0.0
@@ -572,8 +572,8 @@ Screens:
             RadiusTopLeft: =Round(14 * UI, 0)
             RadiusTopRight: =Round(14 * UI, 0)
             Width: =Round(96 * UI, 0)
-            X: =Gutter + (App.Width - 2 * Gutter) / 2 - Round(152 * UI, 0)
-            Y: =conField_DD.Y + conField_DD.Height + Round(10 * UI, 0) + Round(64 * UI, 0)
+            X: =(Discharge_Dash.Width - Min(Discharge_Dash.Width, 720)) / 2 + Min(Discharge_Dash.Width, 720) / 2 - Round(152 * UI, 0)
+            Y: =Round(64 * UI, 0) + Round(8 * UI, 0) + Round(62 * UI, 0) + Min(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0), (Discharge_Dash.Height - Round(274 * UI, 0)) * 490 / 630) * 630 / 490 + Round(10 * UI, 0) + Round(64 * UI, 0)
           Children:
             - btnLeft_DD:
                 Control: ModernButton@1.0.0
@@ -613,8 +613,8 @@ Screens:
             RadiusTopLeft: =Round(14 * UI, 0)
             RadiusTopRight: =Round(14 * UI, 0)
             Width: =Round(96 * UI, 0)
-            X: =Gutter + (App.Width - 2 * Gutter) / 2 - Round(48 * UI, 0)
-            Y: =conField_DD.Y + conField_DD.Height + Round(10 * UI, 0) + Round(64 * UI, 0)
+            X: =(Discharge_Dash.Width - Min(Discharge_Dash.Width, 720)) / 2 + Min(Discharge_Dash.Width, 720) / 2 - Round(48 * UI, 0)
+            Y: =Round(64 * UI, 0) + Round(8 * UI, 0) + Round(62 * UI, 0) + Min(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0), (Discharge_Dash.Height - Round(274 * UI, 0)) * 490 / 630) * 630 / 490 + Round(10 * UI, 0) + Round(64 * UI, 0)
           Children:
             - btnDown_DD:
                 Control: ModernButton@1.0.0
@@ -654,8 +654,8 @@ Screens:
             RadiusTopLeft: =Round(14 * UI, 0)
             RadiusTopRight: =Round(14 * UI, 0)
             Width: =Round(96 * UI, 0)
-            X: =Gutter + (App.Width - 2 * Gutter) / 2 + Round(56 * UI, 0)
-            Y: =conField_DD.Y + conField_DD.Height + Round(10 * UI, 0) + Round(64 * UI, 0)
+            X: =(Discharge_Dash.Width - Min(Discharge_Dash.Width, 720)) / 2 + Min(Discharge_Dash.Width, 720) / 2 + Round(56 * UI, 0)
+            Y: =Round(64 * UI, 0) + Round(8 * UI, 0) + Round(62 * UI, 0) + Min(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0), (Discharge_Dash.Height - Round(274 * UI, 0)) * 490 / 630) * 630 / 490 + Round(10 * UI, 0) + Round(64 * UI, 0)
           Children:
             - btnRight_DD:
                 Control: ModernButton@1.0.0
@@ -697,8 +697,8 @@ Screens:
             RadiusTopLeft: =Round(19 * UI, 0)
             RadiusTopRight: =Round(19 * UI, 0)
             Width: =Round(96 * UI, 0)
-            X: =Gutter + (App.Width - 2 * Gutter) / 2 - Round(152 * UI, 0)
-            Y: =conField_DD.Y + conField_DD.Height + Round(10 * UI, 0) + Round(10 * UI, 0)
+            X: =(Discharge_Dash.Width - Min(Discharge_Dash.Width, 720)) / 2 + Min(Discharge_Dash.Width, 720) / 2 - Round(152 * UI, 0)
+            Y: =Round(64 * UI, 0) + Round(8 * UI, 0) + Round(62 * UI, 0) + Min(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0), (Discharge_Dash.Height - Round(274 * UI, 0)) * 490 / 630) * 630 / 490 + Round(10 * UI, 0) + Round(10 * UI, 0)
           Children:
             - btnRestart_DD:
                 Control: ModernButton@1.0.0
@@ -750,8 +750,8 @@ Screens:
             Text: ="Keys:" & Char(10) & "W A S D"
             Visible: =!(Lower(Host.OSType) in ["ios", "android"])
             Width: =Round(110 * UI, 0)
-            X: =Gutter + (App.Width - 2 * Gutter) / 2 + Round(56 * UI, 0)
-            Y: =conField_DD.Y + conField_DD.Height + Round(10 * UI, 0) + Round(4 * UI, 0)
+            X: =(Discharge_Dash.Width - Min(Discharge_Dash.Width, 720)) / 2 + Min(Discharge_Dash.Width, 720) / 2 + Round(56 * UI, 0)
+            Y: =Round(64 * UI, 0) + Round(8 * UI, 0) + Round(62 * UI, 0) + Min(Min(Discharge_Dash.Width, 720) - Round(24 * UI, 0), (Discharge_Dash.Height - Round(274 * UI, 0)) * 490 / 630) * 630 / 490 + Round(10 * UI, 0) + Round(4 * UI, 0)
       - txtKeys_DD:
           Control: Classic/TextInput@2.3.2
           Properties:
@@ -766,5 +766,5 @@ Screens:
             HoverFill: =RGBA(0, 0, 0, 0)
             Size: =11
             Width: =2
-            X: =Gutter
-            Y: =App.Height - 4
+            X: =0
+            Y: =Discharge_Dash.Height - 4
