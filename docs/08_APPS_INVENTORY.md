@@ -8,8 +8,8 @@ Organisation: Queensland Health, STARS (Surgical, Treatment and Rehabilitation S
 | **STARS Equipment** | Phone / tablet | Scan, find, allocate, return, audit, service equipment; training | 11 (M1–M11) | `powerapps/mobile/` | UI/PageW |
 | **Physiotherapy Training Register** | Any (stand-alone) | Book BLS and Manual Handling | 2 | `powerapps/training/` | Wide/UI |
 | **DTV Audit** | Phone | Audit ieMR Downtime Viewers | 5 | `powerapps/dtv/` (generated) | UI/PageW |
-| **Floorwalking Ideas** | Phone | CITTA floorwalkers capture ieMR ideas, dashboard, find a QRG | 5 | `powerapps/floorwalk/` | UI/PageW |
-| **Flows** | Cloud | Training emails, reminders, waitlist, cleanup, Team Brief, QRG PDF | 9 | `powerapps/flows/` | — |
+| **Floorwalking Ideas** | Phone | CITTA floorwalkers capture ieMR ideas, dashboard, find a QRG, RBWH Business Rules | 7 | `powerapps/floorwalk/` | UI/PageW |
+| **Flows** | Cloud | Training emails, reminders, waitlist, cleanup, Team Brief, QRG PDF, Rule PDF | 10 | `powerapps/flows/` | — |
 
 Linked web tools (GitHub Pages, opened from desktop buttons): equipment prescription support (`bhay95-collab.github.io/stars-wheelchair-prescription/`), basic outcome measures (`bhay95-collab.github.io/basic-outcome-measures/`). Staff Movement Tracker (`index.html` in `bhay95-collab/staff-movements`) is the original visual reference for the ward board.
 
@@ -79,7 +79,7 @@ Manual Studio edits already mirrored in repo: `lblRemovePhoto_Aud.Color = RGBA(1
 
 ## Floorwalking Ideas (phone)
 
-App.Formulas: colours, `AppFont`, `HeaderImage`, `UI/PageW/Gutter/SheetW`, `Dash*`, `MeEmail/MeName/MeFirst`, `SafetyAlertTo`, `EmailHead/EmailFoot`, `StreamList`, `ThemeList`, `StatusList`, `ServiceMap`, `QrgLibUrl`. Data: `Floorwalk_Ideas` (own list), `Resources library` (ieMR Applications site, read only). Data row limit 2000. Details: `powerapps/floorwalk/README.md`.
+App.Formulas: colours, `AppFont`, `HeaderImage`, `UI/PageW/Gutter/SheetW`, `Dash*`, `MeEmail/MeName/MeFirst`, `SafetyAlertTo`, `EmailHead/EmailFoot`, `StreamList`, `ThemeList`, `StatusList`, `ServiceMap`, `QrgLibUrl`, `RuleSiteUrl`. Data: `Floorwalk_Ideas` (own list), `Resources library` (ieMR Applications site, read only), `Documents` (CITTA site, Business Rules PDFs). Data row limit 2000. Details: `powerapps/floorwalk/README.md`.
 
 | Screen | Purpose |
 |---|---|
@@ -89,3 +89,5 @@ App.Formulas: colours, `AppFont`, `HeaderImage`, `UI/PageW/Gutter/SheetW`, `Dash
 | `QRG` | Search + application chips over the ieMR QRGs (about 700 PDFs). Most-opened first (counted from `QRG_Open_Log`, refreshed every 10 min), never-opened A to Z. Chips: All, **Recent** (my last 10, from the log + stamped on the phone at once), **Starred** (☆ on each row; kept on this phone only, `fwQrgFav`), then applications. List cached on the phone (`fwQrg`), works offline. Each tap logs a row |
 | `Snake` | Hidden: tap the profile-picture avatar before "Hi <name>" on Home. Snake game; HTML viewer draws the board, Power Apps runs it (HTML viewer strips scripts and iframes). Source `tools/floorwalk/build_snake.py` |
 | `QrgView` | One QRG in the PDF viewer (via flow `GetQrgPdf`), **Open in Browser** fallback |
+| `Rules` | RBWH ieMR Business Rules + Go-Live resources, grouped under the same headings as the DMN RBWH Go-Live page (heading = `Section` choice on the CITTA `Documents` library, in choice order), search box. Cached on the phone (`fwRules`), works offline |
+| `RuleView` | One Business Rules PDF in the PDF viewer (via flow `GetRulePdf`), **Open in Browser** fallback |

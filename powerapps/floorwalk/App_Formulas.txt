@@ -54,6 +54,9 @@ SafetyAlertTo = "REPLACE_WITH_SAFETY_ALERT_EMAILS";
 // "Open in Browser" on QrgView adds the file name to this.
 QrgLibUrl = "https://healthqld.sharepoint.com/teams/MNHHS-DMN-APP/Resources%20library/";
 
+// ---- Business Rules: CITTA site. "Open in Browser" on RuleView adds the file path (/Shared Documents/...) to this.
+RuleSiteUrl = "https://healthqld.sharepoint.com/teams/CITTA";
+
 // ---- email look (same as every other STARS email)
 EmailHead =
     "<html><body style='margin:0;padding:0;background-color:#EBF2F8;'>" &

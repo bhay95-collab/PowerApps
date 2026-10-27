@@ -1,0 +1,416 @@
+Screens:
+  Rules:
+    Properties:
+      Fill: =C_Bg
+      OnVisible: |-
+        =Reset(txtSearch_Rl);
+        // saved copy of the list from the last time this phone had signal (not in the browser preview)
+        If(CountRows(colRules) = 0, IfError(LoadData(colRules, "fwRules", true), Blank()));
+        If(
+            Connection.Connected && (CountRows(colRules) = 0 || IsBlank(varRuleAt) || DateDiff(varRuleAt, Now(), TimeUnit.Minutes) >= 60),
+            Select(btnLoad_Rl)
+        )
+    Children:
+      - conRoot_Rl:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =C_Bg
+            Height: =Parent.Height
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Width: =Parent.Width
+          Children:
+            - conHdr_Rl:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(7, 95, 115, 1)
+                  FillPortions: =0
+                  Height: =Round(95 * UI, 0)
+                  LayoutMinHeight: =Round(95 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                  - imgHdr_Rl:
+                      Control: Image@2.2.3
+                      Properties:
+                        Height: =Parent.Height
+                        Image: =HeaderImage
+                        ImagePosition: =ImagePosition.Fill
+                        Width: =Parent.Width
+                  - btnBack_Rl:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        Appearance: =ButtonAppearance.Transparent
+                        Color: =C_White
+                        FontWeight: =""
+                        Height: =Round(60 * UI, 0)
+                        Icon: ="ChevronLeft"
+                        OnSelect: =Navigate(Home, ScreenTransition.UnCoverRight)
+                        PaddingBottom: =5
+                        PaddingLeft: =12
+                        PaddingRight: =12
+                        PaddingTop: =5
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =Round(24 * UI, 0)
+                        Text: =""
+                        VerticalAlign: =VerticalAlign.Middle
+                        Width: =Round(60 * UI, 0)
+                        X: =Gutter + Round(5 * UI, 0)
+                        Y: =Round(18 * UI, 0)
+                  - lblHdrT_Rl:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_White
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(42 * UI, 0)
+                        Size: =Round(19 * UI, 0)
+                        Text: ="Business Rules"
+                        Width: =PageW - Round(135 * UI, 0)
+                        Wrap: =false
+                        X: =Gutter + Round(65 * UI, 0)
+                        Y: =Round(12 * UI, 0)
+                  - lblHdrS_Rl:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =RGBA(255, 255, 255, 0.85)
+                        Font: =AppFont
+                        Height: =Round(25 * UI, 0)
+                        Size: =Round(12 * UI, 0)
+                        Text: =If(varRuleLoading, "Loading...", "RBWH ieMR  ·  " & CountRows(Filter(colRules, Kind = 1)) & " documents" & If(Connection.Connected, "", "  ·  Offline"))
+                        Width: =PageW - Round(135 * UI, 0)
+                        Wrap: =false
+                        X: =Gutter + Round(65 * UI, 0)
+                        Y: =Round(53 * UI, 0)
+                  - btnRefresh_Rl:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        Appearance: =ButtonAppearance.Transparent
+                        Color: =C_White
+                        DisplayMode: =If(varRuleLoading || !Connection.Connected, DisplayMode.Disabled, DisplayMode.Edit)
+                        FontWeight: =""
+                        Height: =Round(60 * UI, 0)
+                        Icon: ="ArrowClockwise"
+                        OnSelect: =Select(btnLoad_Rl)
+                        PaddingBottom: =5
+                        PaddingLeft: =12
+                        PaddingRight: =12
+                        PaddingTop: =5
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =Round(22 * UI, 0)
+                        Text: =""
+                        VerticalAlign: =VerticalAlign.Middle
+                        Width: =Round(60 * UI, 0)
+                        X: =Gutter + PageW - Round(65 * UI, 0)
+                        Y: =Round(18 * UI, 0)
+            - conBody_Rl:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  DropShadow: =DropShadow.None
+                  LayoutAlignItems: =LayoutAlignItems.Stretch
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =Round(12 * UI, 0)
+                  LayoutMinHeight: =Round(250 * UI, 0)
+                  PaddingBottom: =Round(10 * UI, 0)
+                  PaddingLeft: =Gutter + Round(20 * UI, 0)
+                  PaddingRight: =Gutter + Round(20 * UI, 0)
+                  PaddingTop: =Round(15 * UI, 0)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =App.Width
+                Children:
+                  - conSearch_Rl:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =RGBA(14, 42, 70, 0.22)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =C_White
+                        FillPortions: =0
+                        Height: =Round(60 * UI, 0)
+                        LayoutMinHeight: =Round(60 * UI, 0)
+                        RadiusBottomLeft: =Round(15 * UI, 0)
+                        RadiusBottomRight: =Round(15 * UI, 0)
+                        RadiusTopLeft: =Round(15 * UI, 0)
+                        RadiusTopRight: =Round(15 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - icoSearch_Rl:
+                            Control: ModernIcon@1.1.1
+                            Properties:
+                              Height: =Round(24 * UI, 0)
+                              Icon: ="Search"
+                              IconColor: =C_Muted
+                              Width: =Round(24 * UI, 0)
+                              X: =Round(16 * UI, 0)
+                              Y: =Round(18 * UI, 0)
+                        - txtSearch_Rl:
+                            Control: Classic/TextInput@2.3.2
+                            Properties:
+                              BorderStyle: =BorderStyle.None
+                              Color: =C_Ink
+                              Default: =""
+                              DelayOutput: =true
+                              Fill: =RGBA(0, 0, 0, 0)
+                              Font: =AppFont
+                              Height: =Parent.Height
+                              HintText: ="Search e.g. allied health, theatre"
+                              Size: =Round(13 * UI, 0)
+                              Width: =Parent.Width - Round(54 * UI, 0)
+                              X: =Round(46 * UI, 0)
+                  - lblCount_Rl:
+                      Control: Label@2.5.1
+                      Properties:
+                        Color: =C_Muted
+                        Font: =AppFont
+                        FontWeight: =FontWeight.Bold
+                        Height: =Round(22 * UI, 0)
+                        LayoutMinHeight: =Round(22 * UI, 0)
+                        Size: =Round(11 * UI, 0)
+                        Text: |-
+                          =With({ n: CountRows(Filter(galRows_Rl.AllItems, Kind = 1)) }, n & If(n = 1, " document", " documents"))
+                        Width: =PageW - Round(40 * UI, 0)
+                        Wrap: =false
+                  - lblEmpty_Rl:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        Color: =C_Muted
+                        Font: =AppFont
+                        Height: =Round(50 * UI, 0)
+                        LayoutMinHeight: =Round(50 * UI, 0)
+                        Size: =Round(12 * UI, 0)
+                        Text: |-
+                          =If(
+                              varRuleLoading, "Loading...",
+                              CountRows(Filter(colRules, Kind = 1)) = 0, "Nothing here yet. Get signal, then tap refresh.",
+                              "Nothing matches. Try fewer words."
+                          )
+                        Visible: =CountRows(galRows_Rl.AllItems) = 0
+                        Width: =PageW - Round(40 * UI, 0)
+                        Wrap: =false
+                  - galRows_Rl:
+                      Control: Gallery@2.15.0
+                      Variant: Vertical
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        Items: |-
+                          =// Same headings as the DMN RBWH Go-Live page. Kind 0 = heading row, Kind 1 = document.
+                          // Every word typed must appear in the document name or its heading. A heading shows only when a document under it shows.
+                          With(
+                              { q: Lower(Trim(txtSearch_Rl.Text)) },
+                              With(
+                                  { hits: Filter(colRules, Kind = 1 && (IsBlank(q) || IsEmpty(Filter(Split(q, " "), !(Value in Hay))))) },
+                                  SortByColumns(
+                                      Filter(colRules As r, If(r.Kind = 0, r.SecN in hits.SecN, r.Path in hits.Path)),
+                                      "SecN", SortOrder.Ascending,
+                                      "Kind", SortOrder.Ascending,
+                                      "Title", SortOrder.Ascending
+                                  )
+                              )
+                          )
+                        LayoutMinHeight: =Round(150 * UI, 0)
+                        TemplatePadding: =0
+                        TemplateSize: =Round(88 * UI, 0)
+                        Width: =PageW - Round(40 * UI, 0)
+                      Children:
+                        - conRow_Rl:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Height: =Parent.TemplateHeight
+                              RadiusBottomLeft: =0
+                              RadiusBottomRight: =0
+                              RadiusTopLeft: =0
+                              RadiusTopRight: =0
+                              Width: =Parent.TemplateWidth
+                            Children:
+                              - lblHead_Rl:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Color: =C_Accent
+                                    Font: =AppFont
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =Round(44 * UI, 0)
+                                    Size: =Round(11 * UI, 0)
+                                    Text: =Upper(ThisItem.Sec)
+                                    VerticalAlign: =VerticalAlign.Bottom
+                                    Visible: =ThisItem.Kind = 0
+                                    Width: =Parent.Width - Round(10 * UI, 0)
+                                    X: =Round(4 * UI, 0)
+                                    Y: =Parent.Height - Round(50 * UI, 0)
+                              - conCard_Rl:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    BorderColor: =C_Line
+                                    BorderThickness: =1
+                                    DropShadow: =DropShadow.None
+                                    Fill: =C_White
+                                    Height: =Round(78 * UI, 0)
+                                    RadiusBottomLeft: =Round(18 * UI, 0)
+                                    RadiusBottomRight: =Round(18 * UI, 0)
+                                    RadiusTopLeft: =Round(18 * UI, 0)
+                                    RadiusTopRight: =Round(18 * UI, 0)
+                                    Visible: =ThisItem.Kind = 1
+                                    Width: =Parent.Width - Round(10 * UI, 0)
+                                    X: =1
+                                    Y: =Round(5 * UI, 0)
+                                  Children:
+                                    - lblRowT_Rl:
+                                        Control: Label@2.5.1
+                                        Properties:
+                                          Color: =C_Ink
+                                          Font: =AppFont
+                                          FontWeight: =FontWeight.Bold
+                                          Height: =Round(44 * UI, 0)
+                                          Size: =Round(12 * UI, 0)
+                                          Text: =ThisItem.Title
+                                          VerticalAlign: =VerticalAlign.Top
+                                          Width: =Parent.Width - Round(62 * UI, 0)
+                                          X: =Round(16 * UI, 0)
+                                          Y: =Round(8 * UI, 0)
+                                    - lblRowM_Rl:
+                                        Control: Label@2.5.1
+                                        Properties:
+                                          Color: =C_Muted
+                                          Font: =AppFont
+                                          Height: =Round(20 * UI, 0)
+                                          Size: =Round(11 * UI, 0)
+                                          Text: ="Updated " & Text(ThisItem.Mod, "d mmm yyyy")
+                                          Width: =Parent.Width - Round(62 * UI, 0)
+                                          Wrap: =false
+                                          X: =Round(16 * UI, 0)
+                                          Y: =Round(52 * UI, 0)
+                                    - icoGo_Rl:
+                                        Control: ModernIcon@1.1.1
+                                        Properties:
+                                          Height: =Round(24 * UI, 0)
+                                          Icon: ="ChevronRight"
+                                          IconColor: =C_Muted
+                                          Width: =Round(24 * UI, 0)
+                                          X: =Parent.Width - Round(36 * UI, 0)
+                                          Y: =Round(27 * UI, 0)
+                                    - btnRow_Rl:
+                                        Control: ModernButton@1.0.0
+                                        Properties:
+                                          Align: =Align.Center
+                                          Appearance: =ButtonAppearance.Transparent
+                                          BorderStyle: =BorderStyle.None
+                                          FontWeight: =""
+                                          Height: =Parent.Height
+                                          OnSelect: |-
+                                            =Set(varRule, ThisItem);
+                                            Navigate(RuleView, ScreenTransition.Cover)
+                                          PaddingBottom: =5
+                                          PaddingLeft: =12
+                                          PaddingRight: =12
+                                          PaddingTop: =5
+                                          RadiusBottomLeft: =4
+                                          RadiusBottomRight: =4
+                                          RadiusTopLeft: =4
+                                          RadiusTopRight: =4
+                                          Text: =""
+                                          VerticalAlign: =VerticalAlign.Middle
+                                          Width: =Parent.Width
+      - btnLoad_Rl:
+          Control: ModernButton@1.0.0
+          Properties:
+            Align: =Align.Center
+            FontWeight: =""
+            Height: =1
+            OnSelect: |-
+              =// LOAD: every PDF in the CITTA Documents library that has a Section picked.
+              // Heading order = the order of the choices in the Section column (change it in SharePoint, the app follows).
+              // The library is under 2000 files, so the filter runs on the device. At about 1,900 files this needs changing.
+              Set(varRuleLoading, true);
+              Set(varRuleOk, true);
+              IfError(
+                  With(
+                      { ch: Choices(Documents.Section) },
+                      With(
+                          { secs: ForAll(Sequence(CountRows(ch)) As i, { Sec: Index(ch, i.Value).Value, SecN: i.Value }) },
+                          ClearCollect(
+                              colRules,
+                              ForAll(secs As s, { Kind: 0, Sec: s.Sec, SecN: s.SecN, Title: "", File: "", Path: "", Mod: DateTime(2000, 1, 1, 0, 0, 0), Hay: "" }),
+                              ForAll(
+                                  Filter(
+                                      Documents,
+                                      !IsBlank(Section.Value) && Lower(Right('File name with extension', 4)) = ".pdf"
+                                  ) As r,
+                                  With(
+                                      {
+                                          f: r.'File name with extension',
+                                          fp: r.'Folder path',
+                                          sc: r.Section.Value
+                                      },
+                                      With(
+                                          {
+                                              t: Left(f, Len(f) - 4),
+                                              p: If(StartsWith(fp, "/"), "", "/") & fp & If(EndsWith(fp, "/"), "", "/") & f
+                                          },
+                                          {
+                                              Kind: 1,
+                                              Sec: sc,
+                                              SecN: Coalesce(LookUp(secs, Sec = sc).SecN, 99),
+                                              Title: t,
+                                              File: f,
+                                              Path: p,
+                                              Mod: r.Modified,
+                                              Hay: Lower(t & " " & sc)
+                                          }
+                                      )
+                                  )
+                              )
+                          )
+                      )
+                  ),
+                  Set(varRuleOk, false);
+                  Notify("Could not load the business rules. Showing the last saved list.", NotificationType.Warning)
+              );
+              If(
+                  varRuleOk,
+                  IfError(SaveData(colRules, "fwRules"), false);
+                  Set(varRuleAt, Now())
+              );
+              Set(varRuleLoading, false)
+            PaddingBottom: =5
+            PaddingLeft: =12
+            PaddingRight: =12
+            PaddingTop: =5
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Size: =Round(11 * UI, 0)
+            Text: =""
+            VerticalAlign: =VerticalAlign.Middle
+            Visible: =false
+            Width: =1
