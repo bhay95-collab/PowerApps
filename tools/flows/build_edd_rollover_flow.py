@@ -3,7 +3,7 @@
 #   python3 tools/flows/build_edd_rollover_flow.py
 #
 # Rules (per Ben, 2 Nov 2026):
-#   - Only rows with a patient name (field_11 not blank).
+#   - Only rows with a patient name (Patient column not blank).
 #   - EDD blank, today or in the past  -> new EDD = today + random 1..7 days.
 #   - AROC EDD (4A/4B/5A only): blank/passed, or EDD was just reset -> new AROC = new EDD + random 0..30 days.
 #   - Variable Rollover_switch = false  -> flow does nothing (use before go-live).
@@ -50,7 +50,7 @@ AROC = "variables('ArocColumn')"
 HAS_AROC = "items('Each_ward')?['hasAroc']"
 
 # rows worth touching: has patient name AND (EDD needs reset OR AROC needs reset)
-filter_expr = ("@and(not(empty(trim(coalesce(item()?['field_11'],'')))),"
+filter_expr = ("@and(not(empty(trim(coalesce(item()?[variables('PatientColumn')],'')))),"
                f"or({passed(FILTER_ITEM, "'EDD'")},"
                f"and({HAS_AROC},{passed(FILTER_ITEM, AROC)})))")
 
@@ -80,7 +80,7 @@ row_actions = {
 
 ward_actions = {
     'Get_ward_rows': http('Get_ward_rows', 'GET',
-        "_api/web/lists/getbytitle('@{items('Each_ward')?['title']}')/items?$select=ID,field_11,EDD"
+        "_api/web/lists/getbytitle('@{items('Each_ward')?['title']}')/items?$select=ID,@{variables('PatientColumn')},EDD"
         "@{if(items('Each_ward')?['hasAroc'],concat(',',variables('ArocColumn')),'')}&$top=5000",
         {'Accept': 'application/json;odata=nometadata'}, {}),
     'Rows_to_update': {'runAfter': {'Get_ward_rows': ['Succeeded']}, 'metadata': {'operationMetadataId': mid('Rows_to_update')},
@@ -92,7 +92,8 @@ ward_actions = {
 
 actions = {
     'Site_address': var('Site_address', 'SiteUrl', 'string', 'https://healthqld.sharepoint.com/teams/PhysioDreamTeam', {}),
-    'AROC_column_internal_name': var('AROC_column_internal_name', 'ArocColumn', 'string', 'AROC_x0020_EDD', {'Site_address': ['Succeeded']}),
+    'Patient_column_internal_name': var('Patient_column_internal_name', 'PatientColumn', 'string', 'Patient', {'Site_address': ['Succeeded']}),
+    'AROC_column_internal_name': var('AROC_column_internal_name', 'ArocColumn', 'string', 'AROC_x0020_EDD', {'Patient_column_internal_name': ['Succeeded']}),
     'Rollover_switch': var('Rollover_switch', 'RolloverOn', 'boolean', True, {'AROC_column_internal_name': ['Succeeded']}),
     'Today_AEST': compose('Today_AEST', "@convertTimeZone(utcNow(),'UTC','E. Australia Standard Time','yyyy-MM-dd')", {'Rollover_switch': ['Succeeded']}),
     'Wards': var('Wards', 'Wards', 'array', [
