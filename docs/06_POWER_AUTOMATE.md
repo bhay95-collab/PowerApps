@@ -60,6 +60,7 @@ Easiest way to make a new one: unzip an existing package from `powerapps/flows/`
 | `GetTeamBriefFiles` | Power Apps | Returns Team Brief files JSON (`filesjson`). Not in repo as zip |
 | `Data Cleanup (all lists)` (`Data_Cleanup_All_Lists.zip`) | Daily 02:30 AEST | Archive/recycle per `05_SHAREPOINT_DATA.md`. Variables: Site_address, Archive_folder, Trigger_count 4999, Batch_size 1000, Training_months_to_keep 12 |
 | `DTVDashboardEmail` (`DTV_Dashboard_Email.zip`, built by `tools/flows/build_dtv_email_flow.py`) | Power Apps: ToEmail, Subject, BodyHtml, FileName, CsvText | DTV Dashboard email: sends the HTML summary with the CSV attached, then responds so the app can show success/failure. Exists because Power Apps' Outlook connector won't take text as an attachment |
+| `EDD Rollover (demo data)` (`EDD_Rollover_Demo.zip`, built by `tools/flows/build_edd_rollover_flow.py`) | Daily 01:00 AEST | **Demo only.** On `Ward_4A/4B/5A/6A_Shared`, rows with a patient name: EDD blank/today/past → today + random 1–7 days. 4A/4B/5A: AROC EDD blank/passed or EDD just reset → new EDD + random 0–30 days. Variables: `SiteUrl`, `ArocColumn` (`AROC_x0020_EDD`), `RolloverOn` (set `false` to stop). **Turn off before go-live** |
 | `Usage Log Cleanup` (`Usage_Log_Cleanup.zip`) | Daily | **Superseded** by Data Cleanup — turn it off |
 
 Known behaviour: waitlist notification re-notifies the first waiting person on each later cancellation; the 48 h escalation then moves on. Accepted.
