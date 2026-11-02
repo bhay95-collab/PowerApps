@@ -46,20 +46,21 @@ def passed(item, field):
 
 ROW = "items('Each_row')"
 FILTER_ITEM = "item()"
-AROC = "variables('ArocColumn')"
+AROC = "outputs('AROC_col')"
+EDDF = "outputs('EDD_col')"
 HAS_AROC = "items('Each_ward')?['hasAroc']"
 
 # rows worth touching: has patient name AND (EDD needs reset OR AROC needs reset)
-filter_expr = ("@and(not(empty(trim(coalesce(item()?[variables('PatientColumn')],'')))),"
-               f"or({passed(FILTER_ITEM, "'EDD'")},"
+filter_expr = ("@and(not(empty(trim(coalesce(item()?[outputs('Patient_col')],'')))),"
+               f"or({passed(FILTER_ITEM, EDDF)},"
                f"and({HAS_AROC},{passed(FILTER_ITEM, AROC)})))")
 
 row_actions = {
-    'Needs_new_EDD': compose('Needs_new_EDD', '@' + passed(ROW, "'EDD'"), {}),
+    'Needs_new_EDD': compose('Needs_new_EDD', '@' + passed(ROW, EDDF), {}),
     'New_EDD': compose('New_EDD',
         "@if(outputs('Needs_new_EDD'),"
         "formatDateTime(addDays(outputs('Today_AEST'),rand(1,8)),'yyyy-MM-dd'),"
-        f"{local_date(ROW, "'EDD'")})",
+        f"{local_date(ROW, EDDF)})",
         {'Needs_new_EDD': ['Succeeded']}),
     'Needs_new_AROC': compose('Needs_new_AROC',
         f"@and({HAS_AROC},or(outputs('Needs_new_EDD'),{passed(ROW, AROC)}))",
@@ -68,7 +69,7 @@ row_actions = {
         "@formatDateTime(addDays(outputs('New_EDD'),rand(0,31)),'yyyy-MM-dd')",
         {'Needs_new_AROC': ['Succeeded']}),
     'Update_body': compose('Update_body',
-        "@union(if(outputs('Needs_new_EDD'),json(concat('{\"EDD\":\"',outputs('New_EDD'),'T00:00:00Z\"}')),json('{}')),"
+        f"@union(if(outputs('Needs_new_EDD'),json(concat('{{\"',{EDDF},'\":\"',outputs('New_EDD'),'T00:00:00Z\"}}')),json('{{}}')),"
         f"if(outputs('Needs_new_AROC'),json(concat('{{\"',{AROC},'\":\"',outputs('New_AROC'),'T00:00:00Z\"}}')),json('{{}}')))",
         {'New_AROC': ['Succeeded']}),
     'Update_row': http('Update_row', 'POST',
@@ -78,11 +79,23 @@ row_actions = {
         {'Update_body': ['Succeeded']}, body="@outputs('Update_body')"),
 }
 
+def field_lookup(name, title, after):
+    return http(name, 'GET',
+        "_api/web/lists/getbytitle('@{items('Each_ward')?['title']}')/fields?$filter=Title eq '" + title + "'&$select=InternalName",
+        {'Accept': 'application/json;odata=nometadata'}, after)
+
 ward_actions = {
+    # look up real internal column names by display name (they differ per list)
+    'Get_patient_field': field_lookup('Get_patient_field', 'Patient', {}),
+    'Get_EDD_field': field_lookup('Get_EDD_field', 'EDD', {'Get_patient_field': ['Succeeded']}),
+    'Get_AROC_field': field_lookup('Get_AROC_field', 'AROC EDD', {'Get_EDD_field': ['Succeeded']}),
+    'Patient_col': compose('Patient_col', "@first(body('Get_patient_field')?['value'])['InternalName']", {'Get_AROC_field': ['Succeeded']}),
+    'EDD_col': compose('EDD_col', "@first(body('Get_EDD_field')?['value'])['InternalName']", {'Patient_col': ['Succeeded']}),
+    'AROC_col': compose('AROC_col', "@if(items('Each_ward')?['hasAroc'],first(body('Get_AROC_field')?['value'])['InternalName'],'')", {'EDD_col': ['Succeeded']}),
     'Get_ward_rows': http('Get_ward_rows', 'GET',
-        "_api/web/lists/getbytitle('@{items('Each_ward')?['title']}')/items?$select=ID,@{variables('PatientColumn')},EDD"
-        "@{if(items('Each_ward')?['hasAroc'],concat(',',variables('ArocColumn')),'')}&$top=5000",
-        {'Accept': 'application/json;odata=nometadata'}, {}),
+        "_api/web/lists/getbytitle('@{items('Each_ward')?['title']}')/items?$select=ID,@{outputs('Patient_col')},@{outputs('EDD_col')}"
+        "@{if(items('Each_ward')?['hasAroc'],concat(',',outputs('AROC_col')),'')}&$top=5000",
+        {'Accept': 'application/json;odata=nometadata'}, {'AROC_col': ['Succeeded']}),
     'Rows_to_update': {'runAfter': {'Get_ward_rows': ['Succeeded']}, 'metadata': {'operationMetadataId': mid('Rows_to_update')},
                        'type': 'Query', 'inputs': {'from': "@body('Get_ward_rows')?['value']", 'where': filter_expr}},
     'Each_row': {'runAfter': {'Rows_to_update': ['Succeeded']}, 'metadata': {'operationMetadataId': mid('Each_row')},
@@ -92,9 +105,7 @@ ward_actions = {
 
 actions = {
     'Site_address': var('Site_address', 'SiteUrl', 'string', 'https://healthqld.sharepoint.com/teams/PhysioDreamTeam', {}),
-    'Patient_column_internal_name': var('Patient_column_internal_name', 'PatientColumn', 'string', 'Patient', {'Site_address': ['Succeeded']}),
-    'AROC_column_internal_name': var('AROC_column_internal_name', 'ArocColumn', 'string', 'AROC_x0020_EDD', {'Patient_column_internal_name': ['Succeeded']}),
-    'Rollover_switch': var('Rollover_switch', 'RolloverOn', 'boolean', True, {'AROC_column_internal_name': ['Succeeded']}),
+    'Rollover_switch': var('Rollover_switch', 'RolloverOn', 'boolean', True, {'Site_address': ['Succeeded']}),
     'Today_AEST': compose('Today_AEST', "@convertTimeZone(utcNow(),'UTC','E. Australia Standard Time','yyyy-MM-dd')", {'Rollover_switch': ['Succeeded']}),
     'Wards': var('Wards', 'Wards', 'array', [
         {'title': 'Ward_4A_Shared', 'hasAroc': True},
@@ -105,7 +116,8 @@ actions = {
         'runAfter': {'Wards': ['Succeeded']}, 'metadata': {'operationMetadataId': mid('Condition_switch_is_on')}, 'type': 'If',
         'expression': {'equals': ["@variables('RolloverOn')", True]},
         'actions': {'Each_ward': {'runAfter': {}, 'metadata': {'operationMetadataId': mid('Each_ward')}, 'type': 'Foreach',
-                                  'foreach': "@variables('Wards')", 'actions': ward_actions}},
+                                  'foreach': "@variables('Wards')", 'actions': ward_actions,
+                                  'runtimeConfiguration': {'concurrency': {'repetitions': 1}}}},
         'else': {'actions': {}}},
 }
 
