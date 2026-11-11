@@ -386,7 +386,7 @@ Screens:
                                     Size: =Round(13 * SF, 0)
                                     Text: ="Remove"
                                     VerticalAlign: =VerticalAlign.Middle
-                                    Width: =90
+                                    Width: =Parent.Width
             - lblStaffEmpty_Ad:
                 Control: Label@2.5.1
                 Properties:
