@@ -443,7 +443,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="All"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =52
+                        Width: =Parent.Width
             - conWd4A_Dp:
                 Control: GroupContainer@1.5.0
                 Variant: ManualLayout
@@ -484,7 +484,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="4A"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =52
+                        Width: =Parent.Width
             - conWd4B_Dp:
                 Control: GroupContainer@1.5.0
                 Variant: ManualLayout
@@ -525,7 +525,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="4B"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =52
+                        Width: =Parent.Width
             - conWd5A_Dp:
                 Control: GroupContainer@1.5.0
                 Variant: ManualLayout
@@ -566,7 +566,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="5A"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =52
+                        Width: =Parent.Width
             - conWd6A_Dp:
                 Control: GroupContainer@1.5.0
                 Variant: ManualLayout
@@ -607,7 +607,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="6A"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =52
+                        Width: =Parent.Width
             - capShow_Dp:
                 Control: Label@2.5.1
                 Properties:
