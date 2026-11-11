@@ -217,7 +217,7 @@ Screens:
                   Color: =RGBA(255, 255, 255, 1)
                   Font: =Font.'Segoe UI'
                   FontWeight: =FontWeight.Bold
-                  Height: =52
+                  Height: =52 * SY
                   PaddingBottom: =0
                   PaddingLeft: =0
                   PaddingRight: =0
