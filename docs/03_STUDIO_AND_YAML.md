@@ -94,6 +94,8 @@ FontWeight: =""   Align: =Align.Center   VerticalAlign: =VerticalAlign.Middle
 
 **GroupContainer** always: `DropShadow: =DropShadow.None` and all four `Radius…` set.
 
+**Tap button inside a pill/box (desktop)**: `Width: =Parent.Width`, `Height: =Parent.Height`. Never a fixed number (e.g. `=52`) — the box scales with `* SX`, the button doesn't, so text drifts off-centre on wide screens.
+
 **Auto-layout child**: `AlignInContainer: =AlignInContainer.SetByContainer`, `FillPortions: =0` (fixed height) and `LayoutMinHeight` = `Height`.
 
 ---
