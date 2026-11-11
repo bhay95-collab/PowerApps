@@ -368,7 +368,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="30 d"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =58
+                        Width: =Parent.Width
             - conThr60_Ac:
                 Control: GroupContainer@1.5.0
                 Variant: ManualLayout
@@ -409,7 +409,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="60 d"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =58
+                        Width: =Parent.Width
             - conThr90_Ac:
                 Control: GroupContainer@1.5.0
                 Variant: ManualLayout
@@ -450,7 +450,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="90 d"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =58
+                        Width: =Parent.Width
             - conThr180_Ac:
                 Control: GroupContainer@1.5.0
                 Variant: ManualLayout
@@ -491,7 +491,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="180 d"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =62
+                        Width: =Parent.Width
             - capScope_Ac:
                 Control: Label@2.5.1
                 Properties:
@@ -544,7 +544,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="Allocated"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =92
+                        Width: =Parent.Width
             - conScopeB_Ac:
                 Control: GroupContainer@1.5.0
                 Variant: ManualLayout
