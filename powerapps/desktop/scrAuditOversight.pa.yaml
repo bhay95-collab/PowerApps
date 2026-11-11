@@ -620,7 +620,7 @@ Screens:
                         Size: =Round(13 * SF, 0)
                         Text: ="Reset"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =79
+                        Width: =Parent.Width
       - Au_Kpi_Total_1:
           Control: GroupContainer@1.5.0
           Variant: ManualLayout
