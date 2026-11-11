@@ -1354,19 +1354,19 @@ Screens:
                         Text: ="Patient no longer found"
                         Width: =560 * SX
                         X: =40 * SX
-                        Y: =16
+                        Y: =16 * SY
                   - lblNfBody_Eq:
                       Control: Label@2.5.1
                       Properties:
                         Align: =Align.Center
                         Color: =RGBA(58, 80, 104, 1)
                         Font: =Font.'Segoe UI'
-                        Height: =116
+                        Height: =116 * SY
                         Size: =Round(13 * SF, 0)
                         Text: =varDischargedEquipment.'Patient Name' & " could not be found on any current ward list. They may have been discharged." & Char(10) & Char(10) & "Is the equipment cleaned and ready to return, or should it stay allocated?"
                         Width: =560 * SX
                         X: =40 * SX
-                        Y: =56
+                        Y: =56 * SY
                   - lblNfLocCap_Eq:
                       Control: Label@2.5.1
                       Properties:
