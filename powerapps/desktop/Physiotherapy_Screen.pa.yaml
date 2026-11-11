@@ -386,7 +386,7 @@ Screens:
                         Size: =Round(13 * SF, 0)
                         Text: ="Up"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =74
+                        Width: =Parent.Width
             - Gallery_Docs_Pt:
                 Control: Gallery@2.15.0
                 Variant: Vertical
