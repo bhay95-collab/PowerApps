@@ -2223,7 +2223,7 @@ Screens:
                                     Color: =If(ThisItem.Diagnosis.Value = "Ortho", RGBA(14, 28, 42, 1), RGBA(58, 80, 104, 1))
                                     Font: =Font.'Segoe UI'
                                     FontWeight: =FontWeight.Bold
-                                    Height: =30
+                                    Height: =Parent.Height
                                     OnSelect: |-
                                       =Patch(colWard, ThisItem, {Diagnosis: If(ThisItem.Diagnosis.Value = "Ortho", Blank(), {Value: "Ortho"}), IsDirty: true})
                                     PaddingBottom: =5
@@ -2237,7 +2237,7 @@ Screens:
                                     Size: =Round(12 * SF, 0)
                                     Text: ="Ortho"
                                     VerticalAlign: =VerticalAlign.Middle
-                                    Width: =84
+                                    Width: =Parent.Width
                         - conDx1_WB:
                             Control: GroupContainer@1.5.0
                             Variant: ManualLayout
@@ -2263,7 +2263,7 @@ Screens:
                                     Color: =If(ThisItem.Diagnosis.Value = "Amp", RGBA(14, 28, 42, 1), RGBA(58, 80, 104, 1))
                                     Font: =Font.'Segoe UI'
                                     FontWeight: =FontWeight.Bold
-                                    Height: =30
+                                    Height: =Parent.Height
                                     OnSelect: |-
                                       =Patch(colWard, ThisItem, {Diagnosis: If(ThisItem.Diagnosis.Value = "Amp", Blank(), {Value: "Amp"}), IsDirty: true})
                                     PaddingBottom: =5
@@ -2277,7 +2277,7 @@ Screens:
                                     Size: =Round(12 * SF, 0)
                                     Text: ="Amp"
                                     VerticalAlign: =VerticalAlign.Middle
-                                    Width: =84
+                                    Width: =Parent.Width
                         - conDx2_WB:
                             Control: GroupContainer@1.5.0
                             Variant: ManualLayout
@@ -2303,7 +2303,7 @@ Screens:
                                     Color: =If(ThisItem.Diagnosis.Value = "TBI", RGBA(14, 28, 42, 1), RGBA(58, 80, 104, 1))
                                     Font: =Font.'Segoe UI'
                                     FontWeight: =FontWeight.Bold
-                                    Height: =30
+                                    Height: =Parent.Height
                                     OnSelect: |-
                                       =Patch(colWard, ThisItem, {Diagnosis: If(ThisItem.Diagnosis.Value = "TBI", Blank(), {Value: "TBI"}), IsDirty: true})
                                     PaddingBottom: =5
@@ -2317,7 +2317,7 @@ Screens:
                                     Size: =Round(12 * SF, 0)
                                     Text: ="TBI"
                                     VerticalAlign: =VerticalAlign.Middle
-                                    Width: =84
+                                    Width: =Parent.Width
                         - conDx3_WB:
                             Control: GroupContainer@1.5.0
                             Variant: ManualLayout
@@ -2343,7 +2343,7 @@ Screens:
                                     Color: =If(ThisItem.Diagnosis.Value = "SCI", RGBA(14, 28, 42, 1), RGBA(58, 80, 104, 1))
                                     Font: =Font.'Segoe UI'
                                     FontWeight: =FontWeight.Bold
-                                    Height: =30
+                                    Height: =Parent.Height
                                     OnSelect: |-
                                       =Patch(colWard, ThisItem, {Diagnosis: If(ThisItem.Diagnosis.Value = "SCI", Blank(), {Value: "SCI"}), IsDirty: true})
                                     PaddingBottom: =5
@@ -2357,7 +2357,7 @@ Screens:
                                     Size: =Round(12 * SF, 0)
                                     Text: ="SCI"
                                     VerticalAlign: =VerticalAlign.Middle
-                                    Width: =84
+                                    Width: =Parent.Width
                         - conDx4_WB:
                             Control: GroupContainer@1.5.0
                             Variant: ManualLayout
@@ -2383,7 +2383,7 @@ Screens:
                                     Color: =If(ThisItem.Diagnosis.Value = "Recon", RGBA(14, 28, 42, 1), RGBA(58, 80, 104, 1))
                                     Font: =Font.'Segoe UI'
                                     FontWeight: =FontWeight.Bold
-                                    Height: =30
+                                    Height: =Parent.Height
                                     OnSelect: |-
                                       =Patch(colWard, ThisItem, {Diagnosis: If(ThisItem.Diagnosis.Value = "Recon", Blank(), {Value: "Recon"}), IsDirty: true})
                                     PaddingBottom: =5
@@ -2397,7 +2397,7 @@ Screens:
                                     Size: =Round(12 * SF, 0)
                                     Text: ="Recon"
                                     VerticalAlign: =VerticalAlign.Middle
-                                    Width: =84
+                                    Width: =Parent.Width
                         - conDx5_WB:
                             Control: GroupContainer@1.5.0
                             Variant: ManualLayout
@@ -2423,7 +2423,7 @@ Screens:
                                     Color: =If(ThisItem.Diagnosis.Value = "Trauma", RGBA(14, 28, 42, 1), RGBA(58, 80, 104, 1))
                                     Font: =Font.'Segoe UI'
                                     FontWeight: =FontWeight.Bold
-                                    Height: =30
+                                    Height: =Parent.Height
                                     OnSelect: |-
                                       =Patch(colWard, ThisItem, {Diagnosis: If(ThisItem.Diagnosis.Value = "Trauma", Blank(), {Value: "Trauma"}), IsDirty: true})
                                     PaddingBottom: =5
@@ -2437,7 +2437,7 @@ Screens:
                                     Size: =Round(12 * SF, 0)
                                     Text: ="Trauma"
                                     VerticalAlign: =VerticalAlign.Middle
-                                    Width: =84
+                                    Width: =Parent.Width
                         - conDx6_WB:
                             Control: GroupContainer@1.5.0
                             Variant: ManualLayout
@@ -2463,7 +2463,7 @@ Screens:
                                     Color: =If(ThisItem.Diagnosis.Value = "Stroke", RGBA(14, 28, 42, 1), RGBA(58, 80, 104, 1))
                                     Font: =Font.'Segoe UI'
                                     FontWeight: =FontWeight.Bold
-                                    Height: =30
+                                    Height: =Parent.Height
                                     OnSelect: |-
                                       =Patch(colWard, ThisItem, {Diagnosis: If(ThisItem.Diagnosis.Value = "Stroke", Blank(), {Value: "Stroke"}), IsDirty: true})
                                     PaddingBottom: =5
@@ -2477,7 +2477,7 @@ Screens:
                                     Size: =Round(12 * SF, 0)
                                     Text: ="Stroke"
                                     VerticalAlign: =VerticalAlign.Middle
-                                    Width: =84
+                                    Width: =Parent.Width
                         - conDx7_WB:
                             Control: GroupContainer@1.5.0
                             Variant: ManualLayout
@@ -2503,7 +2503,7 @@ Screens:
                                     Color: =If(ThisItem.Diagnosis.Value = "Neuro", RGBA(14, 28, 42, 1), RGBA(58, 80, 104, 1))
                                     Font: =Font.'Segoe UI'
                                     FontWeight: =FontWeight.Bold
-                                    Height: =30
+                                    Height: =Parent.Height
                                     OnSelect: |-
                                       =Patch(colWard, ThisItem, {Diagnosis: If(ThisItem.Diagnosis.Value = "Neuro", Blank(), {Value: "Neuro"}), IsDirty: true})
                                     PaddingBottom: =5
@@ -2517,7 +2517,7 @@ Screens:
                                     Size: =Round(12 * SF, 0)
                                     Text: ="Neuro"
                                     VerticalAlign: =VerticalAlign.Middle
-                                    Width: =84
+                                    Width: =Parent.Width
                         - capPT_WB:
                             Control: Label@2.5.1
                             Properties:
@@ -2654,7 +2654,7 @@ Screens:
                                     Size: =Round(20 * SF, 0)
                                     Text: ="−"
                                     VerticalAlign: =VerticalAlign.Middle
-                                    Width: =44
+                                    Width: =Parent.Width
                         - lblAcuVal_WB:
                             Control: Label@2.5.1
                             Properties:
@@ -2708,7 +2708,7 @@ Screens:
                                     Size: =Round(20 * SF, 0)
                                     Text: ="+"
                                     VerticalAlign: =VerticalAlign.Middle
-                                    Width: =44
+                                    Width: =Parent.Width
                         - lblLosVal_WB:
                             Control: Label@2.5.1
                             Properties:
@@ -3002,7 +3002,7 @@ Screens:
                                     Size: =Round(14 * SF, 0)
                                     Text: =""
                                     VerticalAlign: =VerticalAlign.Middle
-                                    Width: =84
+                                    Width: =Parent.Width
                         - conContact_WB:
                             Control: GroupContainer@1.5.0
                             Variant: ManualLayout
@@ -3053,7 +3053,7 @@ Screens:
                                     Size: =Round(14 * SF, 0)
                                     Text: =""
                                     VerticalAlign: =VerticalAlign.Middle
-                                    Width: =84
+                                    Width: =Parent.Width
                         - conNdis_WB:
                             Control: GroupContainer@1.5.0
                             Variant: ManualLayout
@@ -3105,7 +3105,7 @@ Screens:
                                     Size: =Round(14 * SF, 0)
                                     Text: =""
                                     VerticalAlign: =VerticalAlign.Middle
-                                    Width: =84
+                                    Width: =Parent.Width
                         - conMaint_WB:
                             Control: GroupContainer@1.5.0
                             Variant: ManualLayout
@@ -3156,7 +3156,7 @@ Screens:
                                     Size: =Round(14 * SF, 0)
                                     Text: =""
                                     VerticalAlign: =VerticalAlign.Middle
-                                    Width: =84
+                                    Width: =Parent.Width
                         - conDiv_WB:
                             Control: GroupContainer@1.5.0
                             Variant: ManualLayout
