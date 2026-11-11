@@ -521,7 +521,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="All"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =52
+                        Width: =Parent.Width
             - conGrpW_Dh:
                 Control: GroupContainer@1.5.0
                 Variant: ManualLayout
@@ -563,7 +563,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="Patients"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =82
+                        Width: =Parent.Width
             - conGrpE_Dh:
                 Control: GroupContainer@1.5.0
                 Variant: ManualLayout
@@ -647,7 +647,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="Audits"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =78
+                        Width: =Parent.Width
             - capSev_Dh:
                 Control: Label@2.5.1
                 Properties:
@@ -701,7 +701,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="All"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =52
+                        Width: =Parent.Width
             - conSevH_Dh:
                 Control: GroupContainer@1.5.0
                 Variant: ManualLayout
@@ -743,7 +743,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="High"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =66
+                        Width: =Parent.Width
             - conSevM_Dh:
                 Control: GroupContainer@1.5.0
                 Variant: ManualLayout
@@ -785,7 +785,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="Medium"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =82
+                        Width: =Parent.Width
             - conSevL_Dh:
                 Control: GroupContainer@1.5.0
                 Variant: ManualLayout
@@ -827,7 +827,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="Low"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =62
+                        Width: =Parent.Width
             - capWard_Dh:
                 Control: Label@2.5.1
                 Properties:
