@@ -25,7 +25,7 @@ App.Formulas: `Desktop_App_Formulas.txt` (SX/SY/SF/SR, MeEmail, MeName, CanManag
 | `Ward_All` | One board for 4A/4B/5A/6A (`varWard`). Read-only rows + edit panel: AFRM chips, physio picker pop-up, acuity −/+ (0–4), dates, flags, Move bed (swap), Discharge, Save/Discard (optimistic lock), EDD Summary email. 6A: no NDIS, no AROC (`wdShowNDIS`/`wdShowAROC`) |
 | `Handover_All` | Ward handover |
 | `Patient_Detail_Screen` | Patient record, allocate / return equipment (return location + confirm) |
-| `Discharge_Planner` | By EDD: overdue, next 5 working days, no EDD |
+| `Discharge_Planner` | By EDD: overdue, next 5 working days, no EDD. **Month View** pop-up (header button): heat-map calendar of EDDs per day (follows the screen filters; colour scaled to busiest day, min 4; red = EDD passed, still on ward); tap a day → patient list → Patient Detail. State: `dpShowCal`, `dpCalMonth`, `dpCalSel`, `dpCalMax`, `colDpCal` (built by hidden `btnCal_Dp`) |
 | `Equipment_Main`, `All_Allocated_Equipment`, `All_Available_Equipment` | Equipment views; email today's allocation |
 | `scrAuditOversight`, `Audit_Coverage` | Equipment audit results; coverage (re-audit after 30/60/90/180 days) |
 | `Usage_Log` | Manager view of usage log (no patient names) |
