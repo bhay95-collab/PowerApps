@@ -390,7 +390,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="Last 30 days"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =92
+                        Width: =Parent.Width
             - conPre90:
                 Control: GroupContainer@1.5.0
                 Variant: ManualLayout
@@ -435,7 +435,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="Last 90 days"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =92
+                        Width: =Parent.Width
             - conPre365:
                 Control: GroupContainer@1.5.0
                 Variant: ManualLayout
@@ -480,7 +480,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="Last 12 months"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =92
+                        Width: =Parent.Width
             - capFrom_Ul:
                 Control: Label@2.5.1
                 Properties:
@@ -1228,7 +1228,7 @@ Screens:
                         Color: =If(ulSort = "Loans", RGBA(255, 255, 255, 1), RGBA(58, 80, 104, 1))
                         Font: =Font.'Segoe UI'
                         FontWeight: =FontWeight.Bold
-                        Height: =30
+                        Height: =Parent.Height
                         OnSelect: |-
                           =Set(ulSort, "Loans");
                           Select(btnBuild_Ul)
@@ -1243,7 +1243,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="By loans"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =74
+                        Width: =Parent.Width
             - conSortDays:
                 Control: GroupContainer@1.5.0
                 Variant: ManualLayout
@@ -1270,7 +1270,7 @@ Screens:
                         Color: =If(ulSort = "Days", RGBA(255, 255, 255, 1), RGBA(58, 80, 104, 1))
                         Font: =Font.'Segoe UI'
                         FontWeight: =FontWeight.Bold
-                        Height: =30
+                        Height: =Parent.Height
                         OnSelect: |-
                           =Set(ulSort, "Days");
                           Select(btnBuild_Ul)
@@ -1285,7 +1285,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="By days"
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =70
+                        Width: =Parent.Width
             - hUsedItem_Ul:
                 Control: Label@2.5.1
                 Properties:
@@ -1991,7 +1991,7 @@ Screens:
                         Color: =If(ulLogFilter = "All", RGBA(255, 255, 255, 1), RGBA(58, 80, 104, 1))
                         Font: =Font.'Segoe UI'
                         FontWeight: =FontWeight.Bold
-                        Height: =30
+                        Height: =Parent.Height
                         OnSelect: =Set(ulLogFilter, "All")
                         PaddingBottom: =5
                         PaddingLeft: =12
@@ -2004,7 +2004,7 @@ Screens:
                         Size: =Round(12 * SF, 0)
                         Text: ="All  ·  " & CountRows(Filter(colUlF, true))
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =92
+                        Width: =Parent.Width
             - conLogOut:
                 Control: GroupContainer@1.5.0
                 Variant: ManualLayout
@@ -2030,7 +2030,7 @@ Screens:
                         Color: =If(ulLogFilter = "Out", RGBA(255, 255, 255, 1), RGBA(58, 80, 104, 1))
                         Font: =Font.'Segoe UI'
                         FontWeight: =FontWeight.Bold
-                        Height: =30
+                        Height: =Parent.Height
                         OnSelect: =Set(ulLogFilter, "Out")
                         PaddingBottom: =5
                         PaddingLeft: =12
@@ -2069,7 +2069,7 @@ Screens:
                         Color: =If(ulLogFilter = "Back", RGBA(255, 255, 255, 1), RGBA(58, 80, 104, 1))
                         Font: =Font.'Segoe UI'
                         FontWeight: =FontWeight.Bold
-                        Height: =30
+                        Height: =Parent.Height
                         OnSelect: =Set(ulLogFilter, "Back")
                         PaddingBottom: =5
                         PaddingLeft: =12
@@ -2108,7 +2108,7 @@ Screens:
                         Color: =If(ulLogFilter = "Svc", RGBA(255, 255, 255, 1), RGBA(58, 80, 104, 1))
                         Font: =Font.'Segoe UI'
                         FontWeight: =FontWeight.Bold
-                        Height: =30
+                        Height: =Parent.Height
                         OnSelect: =Set(ulLogFilter, "Svc")
                         PaddingBottom: =5
                         PaddingLeft: =12
@@ -2147,7 +2147,7 @@ Screens:
                         Color: =If(ulLogFilter = "Review", RGBA(255, 255, 255, 1), RGBA(58, 80, 104, 1))
                         Font: =Font.'Segoe UI'
                         FontWeight: =FontWeight.Bold
-                        Height: =30
+                        Height: =Parent.Height
                         OnSelect: =Set(ulLogFilter, "Review")
                         PaddingBottom: =5
                         PaddingLeft: =12
