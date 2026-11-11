@@ -225,7 +225,7 @@ Screens:
                         Size: =Round(18 * SF, 0)
                         Text: =""
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =40
+                        Width: =Parent.Width
             - conJump_Lv:
                 Control: GroupContainer@1.5.0
                 Variant: ManualLayout
@@ -295,7 +295,7 @@ Screens:
                         Size: =Round(18 * SF, 0)
                         Text: =""
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =40
+                        Width: =Parent.Width
             - conToday_Lv:
                 Control: GroupContainer@1.5.0
                 Variant: ManualLayout
@@ -376,7 +376,7 @@ Screens:
                         Size: =Round(18 * SF, 0)
                         Text: =""
                         VerticalAlign: =VerticalAlign.Middle
-                        Width: =40
+                        Width: =Parent.Width
       - Gallery_LvDays:
           Control: Gallery@2.15.0
           Variant: Horizontal
